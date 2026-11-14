@@ -1139,7 +1139,7 @@
   // No demo data: everything in the report comes from what the user types.
   let S;
   // ---- keep the report through a page reload (phones and in-app browsers often reload a page in the background) ----
-  const KEEP = ['member', 'pet', 'transcript', 'place', 'saidPlace', 'species', 'memberAsked', 'fields', 'lostPhoto', 'photoNote', 'photoKind',
+  const SAVED_KEYS = ['member', 'pet', 'transcript', 'place', 'saidPlace', 'species', 'memberAsked', 'fields', 'lostPhoto', 'photoNote', 'photoKind',
     'photoBreed', 'photoColour', 'photoLook', 'lostPin', 'contact', 'regSent', 'optionalMode', 'history', 'noMatchReason', 'match'];
   let saveTimer = null;
   function saveState() {
@@ -1147,7 +1147,7 @@
     saveTimer = setTimeout(() => {
       try {
         const o = { skipped: [...S.skipped], current };
-        KEEP.forEach(k => { if (S[k] !== undefined) o[k] = S[k]; });
+        SAVED_KEYS.forEach(k => { if (S[k] !== undefined) o[k] = S[k]; });
         if (o.lostPhoto && o.lostPhoto.startsWith('blob:')) delete o.lostPhoto; // blob links die with the page
         sessionStorage.setItem('buddy-report', JSON.stringify(o));
       } catch (_) { /* storage full or blocked — the prototype still works */ }
@@ -1156,7 +1156,7 @@
   function restoreState() {
     try {
       const o = JSON.parse(sessionStorage.getItem('buddy-report') || 'null'); if (!o) return;
-      KEEP.forEach(k => { if (o[k] !== undefined) S[k] = o[k]; });
+      SAVED_KEYS.forEach(k => { if (o[k] !== undefined) S[k] = o[k]; });
       S.skipped = new Set(o.skipped || []);
     } catch (_) {}
   }
