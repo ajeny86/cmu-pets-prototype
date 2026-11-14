@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
 <title>buddy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -360,6 +360,8 @@
   #lost .title p { font-size: 12px; line-height: 16px; color: var(--muted); margin-top: 6px; }
   .ai-dock { position: sticky; bottom: 0; z-index: 6; margin: 4px -20px -20px; padding: 10px 14px calc(14px + env(safe-area-inset-bottom)); background: var(--white); border-top: 1px solid var(--line); box-shadow: 0 -10px 28px rgba(16, 40, 139, .10); display: flex; flex-direction: column; gap: 8px; }
   @media (min-width: 500px) { .ai-dock { border-radius: 0 0 28px 28px; } }
+  /* phones: while typing in the card, the keyboard needs the room — the AI panel steps aside */
+  @media (pointer: coarse) { body.typing .ai-dock { display: none; } }
   .dock-q { display: flex; align-items: flex-start; gap: 8px; }
   .dock-q img { margin-top: 2px; flex: none; }
   .dock-q p { flex: 1; font-size: 14px; line-height: 19px; font-weight: 600; color: var(--navy); }
@@ -1136,6 +1138,42 @@
   // ---------- state ----------
   // No demo data: everything in the report comes from what the user types.
   let S;
+  // ---- keep the report through a page reload (phones and in-app browsers often reload a page in the background) ----
+  const KEEP = ['member', 'pet', 'transcript', 'place', 'saidPlace', 'species', 'memberAsked', 'fields', 'lostPhoto', 'photoNote', 'photoKind',
+    'photoBreed', 'photoColour', 'photoLook', 'lostPin', 'contact', 'regSent', 'optionalMode', 'history', 'noMatchReason', 'match'];
+  let saveTimer = null;
+  function saveState() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(() => {
+      try {
+        const o = { skipped: [...S.skipped], current };
+        KEEP.forEach(k => { if (S[k] !== undefined) o[k] = S[k]; });
+        if (o.lostPhoto && o.lostPhoto.startsWith('blob:')) delete o.lostPhoto; // blob links die with the page
+        sessionStorage.setItem('buddy-report', JSON.stringify(o));
+      } catch (_) { /* storage full or blocked — the prototype still works */ }
+    }, 250);
+  }
+  function restoreState() {
+    try {
+      const o = JSON.parse(sessionStorage.getItem('buddy-report') || 'null'); if (!o) return;
+      KEEP.forEach(k => { if (o[k] !== undefined) S[k] = o[k]; });
+      S.skipped = new Set(o.skipped || []);
+    } catch (_) {}
+  }
+  // photos are kept small: fast to analyse and small enough to keep through a reload
+  function shrinkPhoto(file, max = 640) {
+    return new Promise(ok => {
+      const url = URL.createObjectURL(file), img = new Image();
+      img.onload = () => {
+        const k = Math.min(1, max / Math.max(img.width, img.height)), c = document.createElement('canvas');
+        c.width = Math.round(img.width * k); c.height = Math.round(img.height * k);
+        c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+        try { ok(c.toDataURL('image/jpeg', .82)); } catch (_) { ok(url); }
+      };
+      img.onerror = () => ok(url);
+      img.src = url;
+    });
+  }
   function freshState() {
     return {
       member: false, pet: '', transcript: '', place: null, saidPlace: null, mark: null, mode: null,
@@ -1252,6 +1290,7 @@
     renderFound();
     renderLostAi();
     if (window.L) attachLostMap();
+    saveState();
   }
 
   function valHTML(f) {
@@ -1548,9 +1587,12 @@
   });
   document.addEventListener('change', e => {
     if (e.target.matches('[data-lostphoto]') && e.target.files[0]) {
-      S.lostPhoto = URL.createObjectURL(e.target.files[0]);
-      S.photoKind = null; S.photoLook = null; S.photoBreed = null; S.photoColour = null; S.photoNote = 'AI is looking at the photo…'; render();
-      analysePhoto(S.lostPhoto);
+      // a small copy of the photo (survives a page reload on the phone)
+      shrinkPhoto(e.target.files[0]).then(url => {
+        S.lostPhoto = url;
+        S.photoKind = null; S.photoLook = null; S.photoBreed = null; S.photoColour = null; S.photoNote = 'AI is looking at the photo…'; render();
+        analysePhoto(S.lostPhoto);
+      });
     }
   });
 
@@ -2644,9 +2686,13 @@
   $('#navPanel').addEventListener('click', e => {
     const n = e.target.closest('[data-nav]');
     if (n) { $('#navPanel').classList.remove('open'); go(n.dataset.nav); }
-    if (e.target.closest('#resetBtn')) { S = freshState(); $$('#replyInput, #nmEmail, #nmPhone, #nmName').forEach(i => { i.value = ''; i.classList.remove('bad'); }); $('#guideInput').value = ''; $('#tellInput').value = ''; $$('[data-time]').forEach(x => x.classList.remove('on')); $('#quickNext').disabled = true; $('#navPanel').classList.remove('open'); go('home'); toast('Prototype restarted'); }
+    if (e.target.closest('#resetBtn')) { try { sessionStorage.removeItem('buddy-report'); } catch (_) {} S = freshState(); $$('#replyInput, #nmEmail, #nmPhone, #nmName').forEach(i => { i.value = ''; i.classList.remove('bad'); }); $('#guideInput').value = ''; $('#tellInput').value = ''; $$('[data-time]').forEach(x => x.classList.remove('on')); $('#quickNext').disabled = true; $('#navPanel').classList.remove('open'); go('home'); toast('Prototype restarted'); }
   });
 
+  // typing in a card field on a phone: hide the AI panel so the keyboard and the field stay visible
+  document.addEventListener('focusin', e => { if (e.target.matches('#lost [data-field], #lost input, #lost textarea') && e.target.id !== 'replyInput') document.body.classList.add('typing'); });
+  document.addEventListener('focusout', () => setTimeout(() => { const a = document.activeElement; if (!a || !a.matches('#lost input, #lost textarea') || a.id === 'replyInput') document.body.classList.remove('typing'); }, 100));
+  restoreState();
   go(location.hash.slice(1) || 'home', { replace: true });
 })();
 </script>
