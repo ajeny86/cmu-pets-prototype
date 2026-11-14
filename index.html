@@ -1240,7 +1240,7 @@
   const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
   let activeRec = null;
   function dictate(btn, input, onDone) {
-    if (!SR) { toast('Voice input isn’t supported in this browser — please type (works in Chrome)'); input && input.focus(); return; }
+    if (!SR) { toast(/WhatsApp|FBAN|FBAV|Instagram|Telegram|Line\//i.test(navigator.userAgent) || /iPhone|iPad/.test(navigator.userAgent) && !/Safari\//.test(navigator.userAgent) ? 'The mic doesn’t work inside this app’s browser — open the link in Safari or Chrome' : 'Voice input isn’t supported in this browser — open the link in Safari or Chrome, or type'); input && input.focus(); return; }
     if (activeRec) { activeRec.stop(); return; } // tap again to stop
     const r = new SR();
     r.lang = /^ru/i.test(navigator.language) ? 'ru-RU' : 'en-US';
@@ -1249,7 +1249,7 @@
     btn.classList.add('rec'); activeRec = r;
     if (input) input.placeholder = 'Listening… speak now';
     r.onresult = e => { text = [...e.results].map(x => x[0].transcript).join(''); if (input) input.value = text; };
-    r.onerror = e => toast(e.error === 'not-allowed' || e.error === 'service-not-allowed' ? 'Microphone access is blocked — allow it in the browser, or type' : e.error === 'no-speech' ? 'Didn’t catch that — try again' : 'Voice input failed — please type');
+    r.onerror = e => toast(e.error === 'service-not-allowed' ? 'Turn on Dictation on your phone (Settings → General → Keyboard), then try again' : e.error === 'not-allowed' ? 'Microphone access is blocked — allow it for this site in the browser, or type' : e.error === 'no-speech' ? 'Didn’t catch that — try again' : 'Voice input failed — please type');
     r.onend = () => {
       btn.classList.remove('rec'); activeRec = null;
       if (input) input.placeholder = input.dataset.ph || input.placeholder.replace('Listening… speak now', 'Say or type your answer…');
