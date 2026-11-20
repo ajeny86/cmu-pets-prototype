@@ -6,7 +6,7 @@
 <title>buddy</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Google+Sans+Flex:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
@@ -640,62 +640,163 @@
   .toast { background: var(--navy); border-radius: 999px; }
   .flyer h3 { color: var(--pink); }
   .qr { border-color: var(--navy); background: conic-gradient(var(--navy) 25%, transparent 0 50%, var(--navy) 0 75%, transparent 0) 0 0/16px 16px; }
+
+  /* ================= v6 look (start-screen mockup, applied everywhere) =================
+     soft mint→blue page, no white header bar, big navy titles, frosted cards without hard borders,
+     navy primary buttons, blue icons with a light fill, Clue as the AI guide */
+  :root { --page-grad: linear-gradient(180deg, #f3f7f5 0%, #eef4f2 55%, #eaf0f6 100%); --frost: rgba(255,255,255,.72); --soft-shadow: 0 8px 22px rgba(16,40,139,.07); --sub: #4a5683; }
+  html, body { background: #e9eeec; }
+  .screen, .screen.flow, .screen.home { background: var(--page-grad); }
+  @media (min-width: 500px) {
+    .screen { border-radius: 32px; box-shadow: 0 20px 60px rgba(16,40,139,.14), 0 0 0 1px rgba(16,40,139,.04); }
+  }
+
+  /* header: logo on the page, bell + avatar */
+  .home-header, .flow-header { background: transparent; height: 62px; padding: 18px 18px 6px 18px; }
+  .hdr-icons { gap: 12px; }
+  .who { display: none; }
+  .avatar { display: block; width: 38px; height: 38px; border-radius: 50%; background: #dfe5fa url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Ccircle cx='12' cy='9' r='3.6' fill='%23f3f5ff' stroke='%2310288b' stroke-width='1.8'/%3E%3Cpath d='M5.5 19.5c.8-3.2 3.4-5.2 6.5-5.2s5.7 2 6.5 5.2' fill='%23f3f5ff' stroke='%2310288b' stroke-width='1.8' stroke-linecap='round'/%3E%3C/svg%3E") center/26px no-repeat; box-shadow: 0 0 0 2px #fff, 0 4px 10px rgba(16,40,139,.15); }
+  body.member .avatar { background: url(assets/max.webp) center/cover; }
+  .account.member::after { display: none; }
+
+  /* type */
+  .title h1, .welcome h1 { font-size: 32px; line-height: 35px; font-weight: 800; letter-spacing: -1px; color: var(--navy); }
+  .title p, .welcome p { font-size: 14px; line-height: 19px; color: var(--muted); margin-top: 8px; }
+  .question h2, .sec h3 { font-weight: 800; letter-spacing: -.4px; }
+  .back { color: var(--muted); font-weight: 600; }
+
+  /* buttons: navy primary, soft white secondary */
+  .pill { border: 0; background: rgba(255,255,255,.85); box-shadow: 0 4px 12px rgba(16,40,139,.07); color: var(--navy); }
+  .pill:hover { background: #fff; }
+  .pill.primary, .pill.navy { background: var(--navy); border: 0; color: #fff; box-shadow: 0 8px 18px rgba(16,40,139,.28); }
+  .pill.primary:hover, .pill.navy:hover { background: #0c1f70; }
+  .pill.on { background: #dfe5fa; box-shadow: inset 0 0 0 1.5px var(--navy); }
+  .ask, .ai-send { background: var(--navy); box-shadow: 0 6px 14px rgba(16,40,139,.3); }
+  .ask:hover, .ai-send:hover { background: #0c1f70; }
+
+  /* cards: frosted, no hard borders, no boxes inside boxes */
+  .card, .choice, .details, .item, .match-card, .options, .status, .map, .transcript, .composer, .guide, .nm-reg, .poster-warn {
+    border: 0 !important; }
+  .choice, .item, .match-card, .options, .status, .map, .composer, .nm-reg { background: var(--frost); border-radius: 22px; box-shadow: var(--soft-shadow); }
+  .details { background: var(--frost); border-radius: 22px; box-shadow: var(--soft-shadow); }
+  .choice.dark { background: var(--navy); box-shadow: 0 10px 24px rgba(16,40,139,.25); }
+  .choice:hover { box-shadow: 0 10px 26px rgba(16,40,139,.12); }
+  .choice b { font-weight: 800; letter-spacing: -.3px; }
+  .opt + .opt { border-top: 1px solid rgba(16,40,139,.06); }
+  .opt:hover, .opt.sel { background: rgba(223,229,250,.6); }
+  .opt.sel b::before { background: var(--navy); border-color: var(--navy); box-shadow: inset 0 0 0 2px #fff; }
+  .bubble.ai { background: var(--frost); border: 0; box-shadow: var(--soft-shadow); }
+  .search-wrap input, .chat-input input, .composer textarea { background: #fff; border: 0; box-shadow: var(--soft-shadow); }
+  .badge { background: #dfe5fa; color: var(--navy); }
+
+  /* report card: the page itself is the surface — fields are soft white pills */
+  #lost .details { background: none; box-shadow: none; border-radius: 0; border-top: 1px solid rgba(16,40,139,.08) !important; }
+  #lost .fin, #lost .contact-form input { background: rgba(255,255,255,.85); box-shadow: 0 2px 8px rgba(16,40,139,.05); }
+  #lost .fin:focus { background: #fff; }
+  #lost .photo-row .ph { background-color: rgba(255,255,255,.85); box-shadow: var(--soft-shadow); }
+
+  /* AI dock: Clue asks the questions */
+  .ai-dock { background: rgba(255,255,255,.94); border-top: 0; border-radius: 24px 24px 0 0; box-shadow: 0 -10px 30px rgba(16,40,139,.10); backdrop-filter: blur(8px); }
+  .dock-q { align-items: center; }
+  .dock-q .dock-clue { width: 34px; height: auto; margin: -4px 0 -2px; }
+  .dock-mic { background: #fff; border: 0; box-shadow: 0 4px 12px rgba(16,40,139,.10); }
+  .dock-row textarea { border: 0; background: #f1f4fb; }
+  .dock-row textarea:focus { background: #fff; box-shadow: inset 0 0 0 1.5px var(--navy); }
+
+  .chat-clue { width: 34px; height: auto; margin: -6px 0; }
+  /* numbered steps: text flows as one line (pet name no longer breaks it into columns) */
+  .steps-ol li { display: block; position: relative; padding-left: 32px; min-height: 22px; }
+  .steps-ol li::before { position: absolute; left: 0; top: -2px; display: grid; }
+
+  /* ---------- Home (start screen) ---------- */
+  .screen.home { padding-bottom: 120px; }
+  .screen.home .welcome { height: auto; padding-top: 22px; gap: 0; }
+  .screen.home .welcome h1 { font-size: 34px; line-height: 37px; letter-spacing: -1.1px; }
+  .screen.home .welcome p { max-width: 220px; }
+  .screen.home .guide { background: none; box-shadow: none; padding: 0; margin-top: 26px; display: flex; flex-direction: column; gap: 14px; }
+  .clue-row { display: flex; align-items: center; gap: 6px; }
+  .clue-row .clue { width: 128px; height: auto; flex: none; margin-left: -8px; filter: drop-shadow(0 10px 12px rgba(91,75,196,.18)); }
+  .say { position: relative; flex: 1; background: var(--frost); border-radius: 22px 22px 22px 8px; padding: 12px 14px 13px; box-shadow: var(--soft-shadow); }
+  .say::before { content: ''; position: absolute; left: -6px; top: 30px; width: 14px; height: 14px; background: var(--frost); transform: rotate(45deg); border-radius: 3px; }
+  .say h2 { position: relative; font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.5px; }
+  .say h2 em { font-style: normal; color: var(--pink); }
+  .say p { position: relative; margin-top: 4px; font-size: 13px; line-height: 18px; color: var(--muted); }
+  .ask-pill { display: flex; align-items: center; gap: 4px; min-height: 56px; border-radius: 28px; background: #fff; padding: 7px 7px 7px 20px; box-shadow: 0 10px 28px rgba(16,40,139,.10); cursor: text; }
+  .ask-pill:focus-within { box-shadow: 0 10px 28px rgba(16,40,139,.16), inset 0 0 0 1.5px #c9d1ee; }
+  .ask-pill textarea { flex: 1; border: 0; outline: none; resize: none; background: transparent; font-size: 16px; line-height: 21px; color: var(--navy); height: 22px; min-height: 22px; max-height: 88px; padding: 0; }
+  .ask-pill textarea::placeholder { color: #8a93b3; }
+  .ask-pill .ai-mic { width: 40px; height: 40px; flex: none; }
+  .ask-pill .ai-send { width: 42px; height: 42px; flex: none; border-radius: 50%; display: grid; place-items: center; }
+  .topics-h { margin-top: 30px; font-size: 18px; font-weight: 800; letter-spacing: -.4px; }
+  .topics { margin-top: 12px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  /* tile tints checked against the page: tile ≥1.15:1, titles ≥9:1, subtitles ≥5:1, icons ≥4.5:1 */
+  .topic { display: flex; align-items: center; gap: 10px; border-radius: 20px; padding: 13px 10px 13px 12px; min-height: 70px; text-align: left; box-shadow: 0 6px 16px rgba(16,40,139,.07), inset 0 1px 0 rgba(255,255,255,.65); transition: transform .15s, box-shadow .15s; }
+  .topic:hover { transform: translateY(-1px); box-shadow: 0 10px 22px rgba(16,40,139,.10), inset 0 1px 0 rgba(255,255,255,.65); }
+  .topic svg { flex: none; }
+  .topic span { min-width: 0; }
+  .topic b { display: block; font-size: 13.5px; line-height: 17px; font-weight: 800; letter-spacing: -.35px; white-space: nowrap; color: var(--navy); }
+  .topic small { display: block; font-size: 11px; line-height: 14px; color: var(--sub); margin-top: 2px; }
+  .topic.c-navy { background: #d6def8; } .topic.c-pink { background: #f5d8fa; } .topic.c-green { background: #cdeadb; } .topic.c-lilac { background: #dfd9fc; }
+
+  /* ---------- bottom tab bar: on Home and the main sections ---------- */
+  .tabbar { display: none; position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 393px; height: calc(92px + env(safe-area-inset-bottom)); z-index: 12; }
+  body[data-screen="home"] .tabbar, body[data-screen="hub"] .tabbar, body[data-screen="services"] .tabbar,
+  body[data-screen="adoption"] .tabbar, body[data-screen="shop"] .tabbar { display: block; }
+  body[data-screen="hub"] .screen.active, body[data-screen="services"] .screen.active, body[data-screen="adoption"] .screen.active, body[data-screen="shop"] .screen.active { padding-bottom: 120px; }
+  .tab-bg { position: absolute; left: 0; top: 0; width: 100%; height: 92px; filter: drop-shadow(0 -3px 10px rgba(16,40,139,.07)); }
+  .tabbar::after { content: ''; position: absolute; left: 0; right: 0; top: 91px; bottom: 0; background: #fff; }
+  .tab-fab { position: absolute; left: 50%; top: -22px; width: 54px; height: 54px; margin-left: -27px; border-radius: 50%; background: var(--pink); display: grid; place-items: center; box-shadow: 0 8px 18px rgba(243,124,255,.45); z-index: 1; }
+  .tab-fab:hover { filter: brightness(1.04); }
+  .tabs { position: absolute; left: 10px; right: 10px; top: 16px; display: grid; grid-template-columns: repeat(5, 1fr); text-align: center; z-index: 1; }
+  .tab { display: flex; flex-direction: column; align-items: center; gap: 4px; font-size: 11px; font-weight: 600; color: #7c86ad; }
+  .tab svg { width: 52px; height: 30px; padding: 2px 13px; border-radius: 15px; box-sizing: border-box; }
+  .tab:not(.on) svg { opacity: .8; }
+  .tab.on { color: var(--navy); }
+  .tab.on svg { background: #e6eaf8; }
+  .tab.plus { justify-content: flex-end; padding-top: 38px; color: #c23ad1; white-space: nowrap; letter-spacing: -.2px; }
+  /* the flow button sits above the bar */
+  body[data-screen="home"] .nav-btn, body[data-screen="hub"] .nav-btn, body[data-screen="services"] .nav-btn, body[data-screen="adoption"] .nav-btn, body[data-screen="shop"] .nav-btn { bottom: 108px; }
+  body[data-screen="home"] .toast, body[data-screen="hub"] .toast, body[data-screen="services"] .toast, body[data-screen="adoption"] .toast, body[data-screen="shop"] .toast { bottom: 120px; }
 </style>
 </head>
 <body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs><linearGradient id="icf" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#f3f5ff"/><stop offset="1" stop-color="#cfd8f6"/></linearGradient></defs></svg>
 <main class="app">
 
 <!-- =============== 1. HOMEPAGE =============== -->
 <section class="screen home" id="home">
   <header class="home-header">
-    <img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy">
-    <div class="hdr-icons"><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn account" id="accountBtn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div>
+    <img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy">
+    <div class="hdr-icons"><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn account" id="accountBtn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div>
   </header>
   <div class="welcome">
     <h1>How can we<br>help you today?</h1>
-    <p>One place for every part of pet life.</p>
+    <p>Everything for you and your pet, in one place.</p>
   </div>
+  <!-- Clue, the AI guide: stands on the page, his words in a bubble -->
   <div class="guide">
-    <label class="ai-box" for="guideInput">
-      <span class="ai-label"><img src="assets/sparkle.svg" width="16" height="16" alt="">AI Guide</span>
-      <textarea id="guideInput" rows="2" placeholder="Tell me what happened or what you need…"></textarea>
-      <span class="ai-actions">
-        <button type="button" class="ai-mic" id="homeMic" aria-label="Speak"><img src="assets/mic.svg" width="20" height="20" alt=""></button>
-        <button type="button" class="ai-send" id="askGuide" aria-label="Ask AI Guide"><img src="assets/arrow-right.svg" width="20" height="20" alt=""></button>
-      </span>
+    <div class="clue-row">
+      <img class="clue" src="assets/clue.png" width="128" height="134" alt="Clue">
+      <div class="say"><h2>Hi! I’m <em>Clue</em></h2><p>Adoption, care, lost &amp; found, shop — just ask, I’ll take you there.</p></div>
+    </div>
+    <label class="ask-pill" for="guideInput">
+      <textarea id="guideInput" rows="1" placeholder="Ask me anything…"></textarea>
+      <button type="button" class="ai-mic" id="homeMic" aria-label="Speak"><img src="assets/mic.svg" width="22" height="22" alt=""></button>
+      <button type="button" class="ai-send" id="askGuide" aria-label="Ask Clue"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </label>
   </div>
-  <div class="explore">
-    <h2>Explore on your own</h2>
-    <p>Go straight to what you need.</p>
+  <h2 class="topics-h">Or explore by topic</h2>
+  <div class="topics">
+    <button class="topic c-navy" data-go="hub"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6" fill="#e6ebfb"/><path d="M15 15l4.5 4.5"/></svg><span><b>Lost &amp; Found</b><small>Report or find</small></span></button>
+    <button class="topic c-pink" data-section="adoption"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#a524b6" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path fill="#fce3fe" d="M12 19.5s-7.2-4.4-7.2-10a4.1 4.1 0 0 1 7.2-2.7 4.1 4.1 0 0 1 7.2 2.7c0 5.6-7.2 10-7.2 10z"/></svg><span><b>Adoption</b><small>Find a friend</small></span></button>
+    <button class="topic c-green" data-section="services"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#00594d" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><rect x="4" y="7.5" width="16" height="12" rx="3" fill="#def3e7"/><path d="M9 7.5V6a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v1.5M12 10.8v5.4M9.3 13.5h5.4"/></svg><span><b>Services &amp; Care</b><small>Vets &amp; grooming</small></span></button>
+    <button class="topic c-lilac" data-section="shop"><svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="#5241c0" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true"><path fill="#ebe8ff" d="M5.5 8.5h13l-1 10.5a1.6 1.6 0 0 1-1.6 1.5H8.1a1.6 1.6 0 0 1-1.6-1.5z"/><path d="M9 8.5V7a3 3 0 0 1 6 0v1.5"/></svg><span><b>Shop</b><small>Pet essentials</small></span></button>
   </div>
-  <div class="cards">
-    <button class="card" data-section="adoption">
-      <div class="card-id">01<img src="assets/arrow-ne.svg" width="18" height="18" alt=""></div>
-      <b>Adoption</b><span>Find a new friend</span>
-    </button>
-    <button class="card" data-go="hub">
-      <div class="card-id">02<img src="assets/arrow-ne.svg" width="18" height="18" alt=""></div>
-      <b>Lost &amp; Found</b><span>Reconnect with a pet</span>
-    </button>
-    <button class="card" data-section="services">
-      <div class="card-id">03<img src="assets/arrow-ne.svg" width="18" height="18" alt=""></div>
-      <b>Services &amp; Care</b><span>Find trusted pet care</span>
-    </button>
-    <button class="card" data-section="shop">
-      <div class="card-id">04<img src="assets/arrow-ne.svg" width="18" height="18" alt=""></div>
-      <b>Shop</b><span>Everyday pet essentials</span>
-    </button>
-  </div>
-  <footer class="footer">
-    <p>For pets. For people. For every day.</p>
-    <p>About buddy   ·   Help</p>
-  </footer>
 </section>
 
 <!-- =============== LOST & FOUND HUB (Pet Platform → Lost Pet / Found Pet) =============== -->
 <section class="screen flow" id="hub">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="home">‹  Home</button>
   <div class="title"><h1>Lost &amp; Found</h1><p>Tell us what happened. We’ll guide you step by step.</p></div>
   <div class="ai-msg" id="hubAi" hidden><b>✧  AI Guide</b><p class="note" id="hubQuote" style="font-size:12px;line-height:16px"></p><p>I’m not sure yet — did you lose a pet or find one?</p></div>
@@ -717,7 +818,7 @@
 
 <!-- =============== ALREADY A MEMBER? =============== -->
 <section class="screen flow" id="member">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="hub">‹  Lost &amp; Found</button>
   <div class="title"><h1>Are you already a member?</h1><p>Members report in seconds — your pet’s profile is already saved.</p></div>
   <div class="choices">
@@ -735,7 +836,7 @@
 
 <!-- =============== GUEST · TELL US (Inform Lost & Found: voice/write) =============== -->
 <section class="screen flow" id="tell">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="member">‹  Lost &amp; Found</button>
   <div class="title"><h1>What happened?</h1><p>Say it in your own words. AI will turn it into a report.</p></div>
   <div class="composer">
@@ -751,7 +852,7 @@
 
 <!-- =============== 02 · LOST · INITIAL INFORMATION =============== -->
 <section class="screen flow" id="lost">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-back>‹  Lost &amp; Found</button>
   <div class="title"><h1>Let’s help find <span class="petName">your pet</span></h1><p id="lostAiGot"></p></div>
 
@@ -767,7 +868,7 @@
 
   <!-- 3 · AI Guide dock: always visible at the bottom, asks for what's missing, voice or text -->
   <div class="ai-dock" id="lostAi">
-    <div class="dock-q"><img src="assets/sparkle.svg" width="16" height="16" alt=""><p id="lostAiAsk"></p><button class="dock-skip" id="skipBtn">Skip</button></div>
+    <div class="dock-q"><img class="dock-clue" src="assets/clue.png" width="34" height="36" alt="Clue"><p id="lostAiAsk"></p><button class="dock-skip" id="skipBtn">Skip</button></div>
     <div class="row-pills" id="dockReady" hidden><button class="pill primary" id="readyGo">Publish &amp; search →</button><button class="pill" id="readyMore">Add more details</button></div>
     <p class="dock-privacy" id="dockPrivacy" hidden>🔒 Photo, description and city will be public · your email and home stay private.</p>
     <div class="dock-row composer">
@@ -780,7 +881,7 @@
 
 <!-- =============== MEMBER · LOST BUTTON (Lost Location + Time/Date only) =============== -->
 <section class="screen flow" id="quick">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="member">‹  Lost &amp; Found</button>
   <div class="title"><h1>Report <span class="petName">your pet</span> as lost</h1><p>Your profile details are already in the report.</p></div>
   <div class="progress" data-progress="full"></div>
@@ -800,7 +901,7 @@
 
 <!-- =============== 03 · LOCATION CLARIFICATION =============== -->
 <section class="screen flow" id="location">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-back>‹  Lost &amp; Found</button>
   <div class="title"><h1>Let’s find the right place</h1><p>No account needed. One step at a time.</p></div>
   <div class="progress" data-progress="full" data-hint="Includes optional details. Skip what you don’t know."></div>
@@ -837,7 +938,7 @@
 
 <!-- =============== 4. LOST REPORT · USER CONFIRM =============== -->
 <section class="screen flow" id="confirm">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="location">‹  Location</button>
   <div class="title"><h1>Check <span class="petName">your pet</span>’s report</h1><p>Confirm before we start searching. You can edit anything.</p></div>
   <div class="progress" data-progress="full"></div>
@@ -853,7 +954,7 @@
 
 <!-- =============== 5. AI CHECKING · MATCH =============== -->
 <section class="screen flow" id="checking">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <div class="badge">✓</div>
   <div class="title"><h1>Report submitted</h1><p id="checkSub"></p></div>
   <div class="status" id="searchStatus" data-title="Searching for your post" data-steps="Read your report"></div>
@@ -862,7 +963,7 @@
 
 <!-- =============== FOUND A MATCH? (Ask if matches are correct) =============== -->
 <section class="screen flow" id="match">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="lost">‹  My report</button>
   <div class="title"><h1>Is this <span class="petName">your pet</span>?</h1><p>We found 1 possible match. You decide — nothing is shared until you confirm.</p></div>
   <div class="match-card">
@@ -884,14 +985,14 @@
   </div>
   <div class="row-pills">
     <button class="pill primary block" id="matchYes">Yes, it’s <span class="petName">your pet</span></button>
-    <button class="pill navy block" id="matchNo">No, not my pet</button>
+    <button class="pill block" id="matchNo">No, not my pet</button>
   </div>
   <p class="note">Confirming opens a private chat. Phone numbers and addresses stay hidden.</p>
 </section>
 
 <!-- =============== 6. MATCH → REUNITE + 7. MAP / TIMELINE =============== -->
 <section class="screen flow" id="reunite">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <div class="badge">♥</div>
   <div class="title"><h1><span class="petName">your pet</span> is marked as found</h1><p>Great news. Here’s how to reunite safely.</p></div>
   <ol class="steps-ol">
@@ -913,7 +1014,7 @@
 
 <!-- =============== 6. AI NEXT STEPS + 7. DIDN'T FIND BUT MAP =============== -->
 <section class="screen flow" id="nextsteps">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <div class="title"><h1>No match yet for <span class="petName">your pet</span></h1><p id="nmSub"></p></div>
   <!-- who gets notified: one quiet line; an email field only for guests who didn't leave one -->
   <p class="nm-notify" id="nmNotify"></p>
@@ -975,7 +1076,7 @@
 
 <!-- =============== FOUND · SUBMIT PICTURE =============== -->
 <section class="screen flow" id="found-photo">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="hub">‹  Lost &amp; Found</button>
   <div class="title"><h1>Thanks for helping!</h1><p>Take a photo of the animal. AI will create the report.</p></div>
   <div class="ai-msg"><b>✧  AI helper</b><p>Approach calmly and from the side. Don’t chase. If it has a collar, check for a tag — a vet can scan for a chip for free.</p></div>
@@ -991,14 +1092,14 @@
 
 <!-- =============== FOUND · AI ANALYSES PICTURE =============== -->
 <section class="screen flow" id="found-analyse">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <div class="title"><h1>Creating the report</h1><p>AI analyses the picture.</p></div>
   <div class="status" id="analyseStatus" data-title="Working on it" data-steps="Read your photo|Detected: dog · medium size|Added spot location and time|Searched 9 lost-pet reports nearby"></div>
 </section>
 
 <!-- =============== FOUND · USER CAN EDIT THE INFO =============== -->
 <section class="screen flow" id="found-edit">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="found-photo">‹  Photo</button>
   <div class="title"><h1>Check the found report</h1><p>AI filled this in from your photo. Edit anything that’s wrong.</p></div>
   <div class="details" id="foundDetails"></div>
@@ -1015,7 +1116,7 @@
 
 <!-- =============== FOUND · REPORT CREATED + HELP MORE? =============== -->
 <section class="screen flow" id="found-created">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <div class="badge">✓</div>
   <div class="title"><h1>Report created</h1><p id="foundSub">Owners nearby can now see it.</p></div>
   <div class="status" data-static><div class="st-title"><img src="assets/sparkle.svg" alt="">Status</div><div class="st done">Found report published</div><div class="st done">Compared with 9 lost reports · no match yet</div></div>
@@ -1030,7 +1131,7 @@
 
 <!-- =============== FOUND · HELP MORE (share + repository) =============== -->
 <section class="screen flow" id="found-help">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="found-created">‹  Report</button>
   <div class="title"><h1>Help this dog get home</h1><p>Share in your neighbourhood.</p></div>
   <div class="list">
@@ -1048,7 +1149,7 @@
 
 <!-- =============== FOUND · GOOD JOB =============== -->
 <section class="screen flow" id="found-thanks">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <div class="badge">♥</div>
   <div class="title"><h1>Good job, thank you!</h1><p>You may have just helped a pet get home. We’ll let you know if the owner is found.</p></div>
   <button class="pill primary" data-go="home" style="align-self:flex-start">Back home</button>
@@ -1056,7 +1157,7 @@
 
 <!-- =============== SERVICES & CARE =============== -->
 <section class="screen flow" id="services">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-back>‹  Home</button>
   <div class="title"><h1>Services &amp; Care</h1><p>Trusted care for your pet, nearby.</p></div>
   <div class="ai-msg sec-ai" hidden><b>✧  AI Guide</b><p class="note sec-quote" style="font-size:12px;line-height:16px"></p><p class="sec-answer"></p></div>
@@ -1066,7 +1167,7 @@
 
 <!-- =============== ADOPTION =============== -->
 <section class="screen flow" id="adoption">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-back>‹  Home</button>
   <div class="title"><h1>Adoption</h1><p>Find a new friend from shelters near you.</p></div>
   <div class="ai-msg sec-ai" hidden><b>✧  AI Guide</b><p class="note sec-quote" style="font-size:12px;line-height:16px"></p><p class="sec-answer"></p></div>
@@ -1076,7 +1177,7 @@
 
 <!-- =============== SHOP =============== -->
 <section class="screen flow" id="shop">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-back>‹  Home</button>
   <div class="title"><h1>Shop</h1><p>Everyday pet essentials.</p></div>
   <div class="ai-msg sec-ai" hidden><b>✧  AI Guide</b><p class="note sec-quote" style="font-size:12px;line-height:16px"></p><p class="sec-answer"></p></div>
@@ -1086,7 +1187,7 @@
 
 <!-- =============== UNCLEAR MESSAGE → WHERE TO? =============== -->
 <section class="screen flow" id="route">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="home">‹  Home</button>
   <div class="ai-msg"><b>✧  AI Guide</b><p class="note" id="routeQuote" style="font-size:12px;line-height:16px"></p><p>I’m not sure what you need. Where should I take you?</p></div>
   <div class="choices">
@@ -1100,9 +1201,9 @@
 
 <!-- =============== NEITHER → CHATBOT =============== -->
 <section class="screen flow" id="chat">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><img src="assets/bell.svg" width="24" height="24" alt=""></button><button class="icon-btn" data-account aria-label="Profile"><img src="assets/profile.svg" width="26" height="26" alt=""></button></div></div>
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="home">‹  Home</button>
-  <div class="guide-head"><img src="assets/sparkle.svg" width="20" height="20" alt="">AI Guide · Chat</div>
+  <div class="guide-head"><img class="chat-clue" src="assets/clue.png" width="34" height="36" alt="">Clue · Chat</div>
   <div class="chat" id="chatLog"><div class="bubble ai">Hi! I can help with lost &amp; found pets, care and more. What do you need?</div></div>
   <div class="row-pills">
     <button class="pill" data-go="member">I lost a pet</button>
@@ -1111,6 +1212,18 @@
   <div class="chat-input"><input id="chatInput" placeholder="Type a message…"><button class="pill primary" id="chatSend">↑</button></div>
 </section>
 
+<!-- bottom tab bar on the main screens; the pink + is "Create account" for guests, "New report" for members -->
+<nav class="tabbar" id="tabbar" aria-label="Main">
+  <svg class="tab-bg" viewBox="0 0 393 92" preserveAspectRatio="none" aria-hidden="true"><path d="M0 20 Q0 6 14 6 H148 C165 6 167 34 196.5 34 C226 34 228 6 245 6 H379 Q393 6 393 20 V92 H0 Z" fill="#fff"/></svg>
+  <button class="tab-fab" id="tabPlus" aria-label="Create account"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
+  <div class="tabs">
+    <button class="tab" data-tab="home"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M4.4 10.4 12 4.2l7.6 6.2V19a1.6 1.6 0 0 1-1.6 1.6h-3.2v-3.9a2.8 2.8 0 0 0-5.6 0v3.9H6A1.6 1.6 0 0 1 4.4 19z"/></svg><span>Home</span></button>
+    <button class="tab" data-tab="pets"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><g fill="url(#icf)" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="6.2" r="2.2"/><circle cx="6.6" cy="9.2" r="2"/><circle cx="17.4" cy="9.2" r="2"/><path d="M12 12.1c-2.7 0-5.6 3.3-5.6 5.6 0 2 2 2.5 3.4 1.9.8-.4 1.4-.6 2.2-.6s1.4.2 2.2.6c1.4.6 3.4.1 3.4-1.9 0-2.3-2.9-5.6-5.6-5.6z"/></g></svg><span>My pets</span></button>
+    <span class="tab plus" id="tabPlusLabel">Create account</span>
+    <button class="tab" data-tab="profile"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><g fill="url(#icf)" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"><circle cx="12" cy="8.1" r="3.7"/><path d="M4.8 19.3c.6-3.6 3.6-6.1 7.2-6.1s6.6 2.5 7.2 6.1c.1.7-.4 1.3-1.1 1.3H5.9c-.7 0-1.2-.6-1.1-1.3z"/></g></svg><span>Profile</span></button>
+    <button class="tab" data-tab="settings"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M18.39 9.15 L21.16 9.89 L21.16 14.11 L18.39 14.85 L17.66 16.11 L18.41 18.87 L14.75 20.99 L12.73 18.96 L11.27 18.96 L9.25 20.99 L5.59 18.87 L6.34 16.11 L5.61 14.85 L2.84 14.11 L2.84 9.89 L5.61 9.15 L6.34 7.89 L5.59 5.13 L9.25 3.01 L11.27 5.04 L12.73 5.04 L14.75 3.01 L18.41 5.13 L17.66 7.89 Z"/><circle cx="12" cy="12" r="2.7" fill="#fff" stroke="currentColor" stroke-width="2"/></svg><span>Settings</span></button>
+  </div>
+</nav>
 </main>
 
 <div class="modal" id="flyerModal">
@@ -1270,7 +1383,11 @@
   function render() {
     $$('.petName').forEach(s => s.textContent = P());
     $$('.who').forEach(w => w.textContent = S.member ? 'Member' : 'Guest');
-    $('#accountBtn').classList.toggle('member', S.member);
+    document.body.classList.toggle('member', !!S.member);
+    // tab bar: the pink + is "Create account" for guests and "New report" for members
+    $('#tabPlusLabel').textContent = S.member ? 'New report' : 'Create account';
+    $('#tabPlus').setAttribute('aria-label', $('#tabPlusLabel').textContent);
+    $$('#tabbar [data-tab]').forEach(t => t.classList.toggle('on', t.dataset.tab === 'home' && current === 'home'));
     $$('.transcriptText').forEach(p => p.textContent = '“' + S.transcript + '”');
     $$('[data-transcript]').forEach(l => { l.hidden = !S.transcript.trim(); if (l.hidden) l.nextElementSibling.classList.remove('open'); });
     $('#hubAi').hidden = true; // unclear messages now go to the “route” screen
@@ -1907,6 +2024,19 @@
     const st = $('#tellStatus'); st.dataset.steps = steps.join('|');
     runStatus(st, () => go('lost'), 420);
   }
+  // bottom tab bar
+  $('#tabbar').addEventListener('click', e => {
+    const t = e.target.closest('[data-tab]');
+    if (e.target.closest('#tabPlus')) {
+      if (S.member) return go('hub');
+      return toast('Sign-up opens here — your details from reports are filled in (prototype)');
+    }
+    if (!t) return;
+    if (t.dataset.tab === 'home') return go('home');
+    if (t.dataset.tab === 'pets') return toast(S.member ? `${PROFILE.name} · ${PROFILE.breed} · ${PROFILE.city}` : 'Sign in to see your pets');
+    if (t.dataset.tab === 'profile') { S.member = !S.member; if (S.member) applyProfile(); else toast('Signed out'); return render(); }
+    if (t.dataset.tab === 'settings') return toast('Settings — language, notifications, privacy (prototype)');
+  });
   document.addEventListener('click', e => { if (!e.target.closest('[data-account]')) return; S.member = !S.member; if (S.member) applyProfile(); else toast('Signed out'); render(); });
 
   // the demo member's saved pet — a signed-in member gets the card filled from here
