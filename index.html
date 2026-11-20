@@ -768,6 +768,89 @@
   /* the flow button sits above the bar */
   .nav-btn { bottom: 108px; }
   .toast { bottom: 120px; }
+
+  /* the prototype's flow navigator is gone from the site (restart lives in Settings) */
+  .nav-btn, .nav-panel { display: none !important; }
+
+  /* ================= report a lost pet (mid-fi structure, start-screen look) ================= */
+  #lost.screen { gap: 0; padding-left: 16px; padding-right: 16px; }
+  .rp-bar { display: grid; grid-template-columns: 44px 1fr 56px; align-items: center; margin: -2px -4px 0; }
+  .rp-back { width: 40px; height: 40px; border-radius: 50%; background: #fff; display: grid; place-items: center; box-shadow: 0 6px 16px rgba(16,40,139,.07); }
+  .rp-bar h1 { text-align: center; font-size: 18px; font-weight: 800; letter-spacing: -.4px; }
+  .rp-step { display: flex; flex-direction: column; align-items: flex-end; gap: 5px; font-size: 12px; }
+  .rp-dots { display: flex; gap: 5px; }
+  .rp-dots i { width: 9px; height: 9px; border-radius: 50%; background: #d7ddf0; }
+  .rp-dots i.on { background: var(--pink); }
+  .rp-hero { padding-top: 22px; }
+  .rp-hero h2 { font-size: 30px; line-height: 33px; font-weight: 800; letter-spacing: -1px; display: flex; align-items: center; gap: 8px; }
+  .rp-hero > p { margin-top: 8px; font-size: 14px; line-height: 19px; color: var(--muted); }
+  .rp-hero .rp-member { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
+  .rp-hero .rp-member.on { color: #00594d; font-weight: 600; }
+  .link-btn { color: var(--navy); font-weight: 700; text-decoration: underline; }
+
+  /* photo */
+  .rp-drop { margin-top: 18px; height: 112px; border-radius: 24px; border: 2px dashed #b9c3e6; background: rgba(255,255,255,.5); display: flex; align-items: center; gap: 16px; padding: 0 20px; cursor: pointer; }
+  .rp-drop:hover { background: rgba(255,255,255,.75); }
+  .rp-cam { width: 56px; height: 56px; flex: none; border-radius: 50%; background: #fff; box-shadow: 0 3px 10px rgba(16,40,139,.08); display: grid; place-items: center; }
+  .rp-cam svg { width: 28px; height: 28px; }
+  .rp-drop b { display: block; font-size: 17px; font-weight: 800; letter-spacing: -.3px; }
+  .rp-drop small { display: block; font-size: 13px; line-height: 17px; color: var(--sub); margin-top: 3px; }
+  .rp-shot { display: flex; gap: 16px; align-items: center; margin-top: 18px; }
+  .rp-pic { position: relative; width: 150px; height: 120px; flex: none; border-radius: 22px; background: #dfe5fa center/cover; box-shadow: 0 8px 18px rgba(16,40,139,.14); cursor: pointer; }
+  .rp-pic-x { position: absolute; top: 7px; right: 7px; width: 28px; height: 28px; border-radius: 50%; background: rgba(255,255,255,.94); display: grid; place-items: center; }
+  .rp-pic-x svg { width: 16px; height: 16px; }
+  .rp-kind { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 16px; background: #dfe5fa; font-size: 15px; font-weight: 800; }
+  .rp-kind svg { width: 18px; height: 18px; }
+  .rp-shot h4 { margin-top: 10px; font-size: 13px; font-weight: 600; color: var(--sub); }
+  .rp-shot ul { margin: 4px 0 0; padding-left: 18px; font-size: 14px; line-height: 20px; }
+  .rp-shot li::marker { color: #c23ad1; }
+  .rp-busy, .rp-note { font-size: 13px; line-height: 18px; color: var(--sub); }
+  .rp-busy { font-weight: 600; animation: pulse-pink 1.1s infinite; border-radius: 8px; }
+
+  /* sections: headings and rows straight on the page */
+  .rp-sec { padding-top: 24px; }
+  .rp-sec h3 { font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.5px; }
+  .rp-row { display: grid; grid-template-columns: 96px minmax(0, 1fr); gap: 6px; align-items: start; margin-top: 12px; }
+  .rp-label { display: flex; align-items: flex-start; gap: 8px; padding-top: 12px; font-size: 13px; line-height: 16px; color: var(--sub); }
+  .rp-label svg { width: 20px; height: 20px; flex: none; margin-top: -2px; }
+  .rp-label i { font-style: normal; color: #c23ad1; }
+  .rp-field { position: relative; display: flex; align-items: center; }
+  #lost .rp-field .fin { width: 100%; height: 44px; border: 0; border-radius: 22px; background: rgba(255,255,255,.9); box-shadow: 0 3px 10px rgba(16,40,139,.06); padding: 0 40px 0 16px; font-size: 14.5px; color: var(--navy); outline: none; }
+  #lost .rp-field .fin::placeholder { color: #8a93b3; }
+  #lost .rp-field .fin:focus { background: #fff; box-shadow: 0 3px 10px rgba(16,40,139,.08), inset 0 0 0 1.5px var(--navy); }
+  #lost .rp-field .fin.from-ai, #lost .rp-chip.on.from-ai { box-shadow: 0 3px 10px rgba(16,40,139,.06), inset 0 0 0 1.5px #f37cff; font-weight: 600; }
+  .rp-field .rp-ok, .rp-field .rp-x, .rp-field .rp-in-btn { position: absolute; right: 12px; width: 20px; height: 20px; display: grid; place-items: center; }
+  .rp-field .rp-ok { pointer-events: none; }
+  .rp-field .rp-x svg, .rp-field .rp-in-btn svg { width: 18px; height: 18px; }
+  .rp-field .suggest { top: 48px; }
+  .rp-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .rp-chips.under { margin-top: 8px; }
+  .rp-chip { height: 38px; border-radius: 19px; background: rgba(255,255,255,.9); box-shadow: 0 3px 10px rgba(16,40,139,.06); padding: 0 11px; display: inline-flex; align-items: center; gap: 5px; font-size: 13.5px; font-weight: 600; color: var(--navy); }
+  .rp-chip svg { width: 18px; height: 18px; flex: none; }
+  .rp-chip.sm { height: 34px; font-size: 13px; }
+  .rp-chip:hover { background: #fff; }
+  .rp-chip.on { background: #dfe5fa; box-shadow: inset 0 0 0 1.5px var(--navy); }
+  .rp-hint { font-size: 12px; color: var(--muted); margin: 8px 0 6px; }
+  .rp-map { margin-top: 8px; height: 150px !important; border-radius: 18px !important; }
+  .rp-row.need .fin, .rp-row.need .rp-chip { box-shadow: inset 0 0 0 1.5px #e0452b; }
+  .rp-privacy { margin-top: 18px; }
+
+  /* Clue's bar: pinned above the tab bar */
+  #lost .rp-dock { padding: 10px 10px 10px 8px; gap: 8px; }
+  .rp-tip { font-size: 13px; line-height: 17px; color: var(--sub); padding: 0 6px 0 64px; }
+  .rp-tip b { color: var(--navy); }
+  .rp-ready { display: flex; align-items: center; gap: 8px; padding: 0 4px; }
+  .rp-ready span { flex: 1; font-size: 13px; font-weight: 700; color: #00594d; }
+  .rp-go { height: 36px; padding: 0 16px; border-radius: 18px; background: var(--navy); color: #fff; font-size: 14px; font-weight: 700; box-shadow: 0 6px 14px rgba(16,40,139,.25); }
+  .rp-talk { display: flex; align-items: center; gap: 8px; }
+  .rp-clue { width: 52px; height: auto; flex: none; margin: -14px -2px -6px 0; filter: drop-shadow(0 6px 8px rgba(91,75,196,.2)); }
+  #lost .rp-talk textarea { flex: 1; min-width: 0; height: 46px; min-height: 46px; max-height: 96px; border: 0; border-radius: 23px; background: #f1f4fb; padding: 13px 16px; font-size: 14px; line-height: 20px; color: var(--navy); resize: none; outline: none; }
+  #lost .rp-talk textarea::placeholder { color: #7a84a8; }
+  #lost .rp-talk textarea:focus { background: #fff; box-shadow: inset 0 0 0 1.5px var(--navy); }
+  .rp-mic { width: 46px; height: 46px; flex: none; border-radius: 50%; background: #fff; box-shadow: 0 4px 12px rgba(16,40,139,.14); display: grid; place-items: center; }
+  .rp-mic.rec { background: #fde8fe; animation: pulse-pink 1.1s infinite; }
+  /* send is navy — the pink is kept for the + in the tab bar */
+  .rp-send { width: 46px; height: 46px; flex: none; border-radius: 50%; background: var(--navy); display: grid; place-items: center; box-shadow: 0 6px 14px rgba(16,40,139,.28); }
 </style>
 </head>
 <body>
@@ -863,29 +946,29 @@
 
 <!-- =============== 02 · LOST · INITIAL INFORMATION =============== -->
 <section class="screen flow" id="lost">
-  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
-  <button class="back" data-back>‹  Lost &amp; Found</button>
-  <div class="title"><h1>Let’s help find <span class="petName">your pet</span></h1><p id="lostAiGot"></p></div>
-
-  <!-- 1 · members: sign in and the card fills from the profile; guests just fill it in by hand -->
-  <div class="member-bar" id="ownerCard">
-    <span id="ownerCaption"></span>
-    <button class="edit-btn" id="ownerSignIn">Sign in</button>
+  <!-- report a lost pet · structure from the mid-fi, look from the start screen: no cards, no boxes inside boxes -->
+  <div class="rp-bar">
+    <button class="rp-back" data-back aria-label="Back"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#10288b" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg></button>
+    <h1>Report a lost pet</h1>
+    <div class="rp-step"><b id="rpStep">1 of 3</b><span class="rp-dots"><i class="on"></i><i id="rpDot2"></i><i></i></span></div>
   </div>
+  <div class="rp-hero">
+    <h2 id="rpTitle">Let’s find your pet</h2>
+    <p id="rpSub">Add a photo, and I’ll recognise key details. You can then add the rest by voice or text.</p>
+    <p class="rp-member" id="ownerCard"><span id="ownerCaption"></span> <button class="link-btn" id="ownerSignIn">Sign in</button></p>
+  </div>
+  <div id="rpPhoto"></div>
+  <div id="lostForm"></div>
 
-  <!-- 2 · pet details recognised from the message -->
-  <div class="details" data-details="edit"></div>
-  <p class="note">Your words stay here. Nothing is published yet.</p>
-
-  <!-- 3 · AI Guide dock: always visible at the bottom, asks for what's missing, voice or text -->
-  <div class="ai-dock" id="lostAi">
-    <div class="dock-q"><img class="dock-clue" src="assets/clue.png" width="34" height="36" alt="Clue"><p id="lostAiAsk"></p><button class="dock-skip" id="skipBtn">Skip</button></div>
-    <div class="row-pills" id="dockReady" hidden><button class="pill primary" id="readyGo">Publish &amp; search →</button><button class="pill" id="readyMore">Add more details</button></div>
-    <p class="dock-privacy" id="dockPrivacy" hidden>🔒 Photo, description and city will be public · your email and home stay private.</p>
-    <div class="dock-row composer">
-      <button class="dock-mic" id="dockMic" aria-label="Answer by voice"><img src="assets/mic.svg" width="22" height="22" alt=""></button>
-      <textarea id="replyInput" rows="1" placeholder="Say or type your answer…"></textarea>
-      <button class="pill primary dock-send" id="sendBtn">Send ↑</button>
+  <!-- Clue: pinned above the tab bar — talk or type, and the answer is spread over the fields -->
+  <div class="ai-dock rp-dock" id="lostAi">
+    <div class="rp-ready" id="dockReady" hidden><span id="lostAiAsk">✓ All set — I can start searching now</span><button class="rp-go" id="readyGo">Continue →</button></div>
+    <p class="rp-tip" id="rpTip"><b>Tell me the details</b> by voice or text, and I’ll fill in the form.</p>
+    <div class="rp-talk">
+      <img class="rp-clue" src="assets/clue.png" width="52" height="54" alt="Clue">
+      <textarea id="replyInput" rows="1" placeholder="Tell me — voice or text"></textarea>
+      <button class="rp-mic" id="dockMic" aria-label="Speak"><svg viewBox="0 0 24 24" width="22" height="22"><rect x="9" y="3" width="6" height="11" rx="3" fill="url(#icf)" stroke="#10288b" stroke-width="1.8"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none" stroke="#10288b" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+      <button class="rp-send" id="sendBtn" aria-label="Send"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
     </div>
   </div>
 </section>
@@ -1282,6 +1365,8 @@
       const o = JSON.parse(sessionStorage.getItem('buddy-report') || 'null'); if (!o) return;
       SAVED_KEYS.forEach(k => { if (o[k] !== undefined) S[k] = o[k]; });
       S.skipped = new Set(o.skipped || []);
+      // older saves: bring the fields in line with the current form (new "contact" field, new required set)
+      S.fields = freshState().fields.map(t => Object.assign({}, t, (S.fields || []).find(f => f.k === t.k) || {}, { req: t.req, label: t.label }));
     } catch (_) {}
   }
   // photos are kept small: fast to analyse and small enough to keep through a reload
@@ -1303,15 +1388,16 @@
       member: false, pet: '', transcript: '', place: null, saidPlace: null, mark: null, mode: null,
       foundPhoto: null, now: null, history: [], skipped: new Set(), asking: null, species: null, memberAsked: false,
       fields: [
-        // required: species, name, city, traits-or-photo · everything else optional
+        // required (mid-fi): animal, where, when, your contact · everything else optional
         { k: 'species', label: 'Animal',        v: '', s: 'missing',  req: true },
-        { k: 'name',   label: 'Pet name',       v: '', s: 'missing',  req: true },
-        { k: 'traits', label: 'Relevant Characteristics', v: '', s: 'missing', req: true },
-        { k: 'city',   label: 'City / Area',    v: '', s: 'missing',  req: true },
+        { k: 'name',   label: 'Name',           v: '', s: 'optional' },
+        { k: 'traits', label: 'Special features', v: '', s: 'optional' },
+        { k: 'city',   label: 'Where',          v: '', s: 'missing',  req: true },
         { k: 'lost',   label: 'Exact place',    v: '', s: 'optional' },
-        { k: 'time',   label: 'Time / Date',    v: '', s: 'optional' },
-        { k: 'chip',   label: 'Chip / Collar',  v: '', s: 'optional' },
+        { k: 'time',   label: 'When',           v: '', s: 'missing',  req: true },
+        { k: 'chip',   label: 'Microchip / collar', v: '', s: 'optional' },
         { k: 'home',   label: 'Home Location',  v: '', s: 'optional' },
+        { k: 'contact', label: 'Your contact',  v: '', s: 'missing',  req: true },
       ],
       found: [
         { k: 'animal', label: 'Animal',        v: 'Dog · medium size (from photo)' },
@@ -1438,7 +1524,7 @@
   };
   const emptyStatus = k => (F(k).req && !(k === 'traits' && S.lostPhoto) ? 'missing' : 'optional');
   // traits requirement is met by a photo too
-  const isMissingReq = f => f.req && !f.v && !(f.k === 'traits' && S.lostPhoto);
+  const isMissingReq = f => f.req && !f.v && !(f.k === 'traits' && S.lostPhoto) && !(f.k === 'city' && F('lost').v);
   const flabel = f => `${f.label}${f.req ? '<i class="req">*</i>' : ''}`;
   function statusCell(f) {
     if (f.s === 'check') return `<span class="fok" title="Filled by AI">✓</span>`; // same tick for every filled field
@@ -1539,14 +1625,14 @@
       f.date = null; return setField('time', timeFromChip(chip));
     }
     const tc = e.target.closest('[data-time-custom]');
-    if (tc) { const i = tc.closest('.fcol').querySelector('[data-time-date]'); i.hidden = false; try { i.showPicker(); } catch (_) { i.focus(); } return; }
+    if (tc) { const i = tc.closest('.fcol, .rp-chips').querySelector('[data-time-date]'); i.hidden = false; try { i.showPicker(); } catch (_) { i.focus(); } return; }
     const tp = e.target.closest('[data-time-part]');
     if (tp) { const f = F('time'); f.part = tp.dataset.timePart; return setField('time', dayLabel(f)); }
     const sg = e.target.closest('[data-suggest]'); if (sg) { if (sg.dataset.k === 'lost') S.lostPin = null; return setField(sg.dataset.k || 'lost', sg.dataset.suggest); }
     if (e.target.closest('[data-loc-gps]')) {
       return useCurrentLocation();
     }
-    const lm = e.target.closest('[data-loc-map]'); if (lm) { const d = lm.closest('.details'); d.dataset.map = d.dataset.map === '1' ? '' : '1'; if (document.activeElement && document.activeElement.matches('[data-field]')) document.activeElement.blur(); return render(); }
+    const lm = e.target.closest('[data-loc-map]'); if (lm) { const d = lm.closest('.details, #lostForm'); d.dataset.map = d.dataset.map === '1' ? '' : '1'; if (document.activeElement && document.activeElement.matches('[data-field]')) document.activeElement.blur(); return render(); }
   });
   document.addEventListener('change', e => {
     if (!e.target.matches('[data-time-date]') || !e.target.value) return;
@@ -1685,6 +1771,8 @@
       // into Relevant Characteristics: that field is for what a photo can't show (marks, character, habits)
       S.photoBreed = r.kind ? r.breed : null; S.photoColour = r.kind ? (r.coat === 'tabby' ? `${col} tabby` : col) : null;
       S.photoLook = [S.photoBreed, S.photoColour].filter(Boolean).join(', ');
+      // what the photo shows goes into Special features (marked ✧, with a ✕ to remove)
+      if (S.photoLook && !F('traits').v) setFieldQuiet('traits', cap(S.photoLook), 'check');
       if (r.breed) notes.push(`looks like a ${r.breed}`);
       if (r.failed) notes.push('photo recognition is offline right now');
       else if (!r.kind) notes.push('I couldn’t clearly see an animal — a closer photo helps matching');
@@ -1710,7 +1798,8 @@
     if (f.k === 'species') S.species = v ? v.toLowerCase() : null;
     if (f.k === 'lost') S.saidPlace = v || null;
     inp.className = `fin ${f.s}`;
-    inp.closest('.frow').querySelector('.fstat').innerHTML = statusCell(f);
+    const fst = inp.closest('.frow') && inp.closest('.frow').querySelector('.fstat'); if (fst) fst.innerHTML = statusCell(f);
+    if (f.k === 'contact') noteContact(v);
     render();
   });
   document.addEventListener('change', e => {
@@ -1942,6 +2031,8 @@
   const cap = s => s.replace(/^./, c => c.toUpperCase());
   function normPlace(p) {
     const NOM = { 'парке': 'парк', 'сквере': 'сквер', 'улице': 'улица', 'лесу': 'лес', 'дворе': 'двор', 'доме': 'дом', 'районе': 'район', 'пляже': 'пляж', 'озере': 'озеро', 'площади': 'площадь', 'набережной': 'набережная', 'станции': 'станция', 'школы': 'школа', 'школе': 'школа', 'магазина': 'магазин', 'остановки': 'остановка', 'метро': 'метро', 'подъезда': 'подъезд', 'парка': 'парк', 'сквера': 'сквер', 'дома': 'дом' };
+    // a place never ends with a time ("near the park this morning")
+    p = p.replace(/\s+(this morning|this evening|tonight|today|yesterday\b.*|just now|an? hours? ago|\d+\s*(hours?|minutes?|days?) ago|утром|вечером|сегодня|вчера.*|только что|час назад)\s*$/i, '').trim();
     const [w, ...rest] = p.split(/\s+/);
     return cap([NOM[w.toLowerCase()] || w, ...rest].join(' '));
   }
@@ -1972,7 +2063,7 @@
     const N = '([A-ZА-ЯЁ][a-zа-яё]+)';
     const nameRes = [
       /(?:зовут|кличк[аеуи]|по имени|имя)\s*[:\-—]?\s*[«"]?([А-ЯЁA-Zа-яёa-z][а-яёa-z]+)/,
-      /(?:named|called|name is|name's)\s+([A-Za-z][a-z]+)/,
+      /(?:named|called|name is|name's)\s+(?:is\s+)?([A-Za-z][a-z]+)/,
       new RegExp(`${SP}\\s+[«"]?${N}`),                                   // "my cat Luna", "собаку Рекс"
       new RegExp(`${N}\\s+(?:the\\s+|my\\s+)?${SP}(?![a-zа-яё])`),         // "Luna Cat", "Luna the cat"
       new RegExp(`(?:lost|missing|потерял[аи]?|пропал[аи]?|ищу)\\s+(?:my\\s+|our\\s+)?${N}`), // "I lost Luna"
@@ -2015,7 +2106,8 @@
     const traits = sentences(raw).filter(s => TRAIT_RE.test(s.replace(/(red|black|white|brown|красн|черн|чёрн|бел)\w*\s+(collar|ошейник)\w*/gi, '')));
     if (traits.length) {
       const t = traits.map(s => s.replace(/^.*?(?=(он|она|he|she|it)\s)/i, '')).join(' ');
-      F('traits').v = merge && F('traits').v ? F('traits').v + ' ' + t : t;
+      const t2 = t.replace(/\b(her|his|its|the|my)?\s*(cat'?s|dog'?s|pet'?s)?\s*name[ds]?\s*(is\s+)?[A-ZА-ЯЁ][a-zа-яё]+[,.]?\s*/gi, '').replace(/(my\s+)?(number|phone|email)[^.]*\.?/gi, '').replace(/\s+/g, ' ').replace(/^[,.\s]+|[,\s]+$/g, '').replace(/^./, c => c.toUpperCase());
+      F('traits').v = merge && F('traits').v ? F('traits').v + ' ' + t2 : t2;
       F('traits').s = 'check'; found.traits = true;
     } else if (merge && raw && !asked && !found.name && !found.time && !found.place && !found.chip) {
       F('traits').v = (F('traits').v ? F('traits').v + ' ' : '') + raw; F('traits').s = 'check';
@@ -2046,7 +2138,7 @@
     if (t.dataset.tab === 'home') return go('home');
     if (t.dataset.tab === 'pets') return toast(S.member ? `${PROFILE.name} · ${PROFILE.breed} · ${PROFILE.city}` : 'Sign in to see your pets');
     if (t.dataset.tab === 'profile') { S.member = !S.member; if (S.member) applyProfile(); else toast('Signed out'); return render(); }
-    if (t.dataset.tab === 'settings') return toast('Settings — language, notifications, privacy (prototype)');
+    if (t.dataset.tab === 'settings') { if (confirm('Settings (prototype)\n\nStart the prototype over? Your report will be cleared.')) { try { sessionStorage.removeItem('buddy-report'); } catch (_) {} location.hash = '#home'; location.reload(); } return; }
   });
   document.addEventListener('click', e => { if (!e.target.closest('[data-account]')) return; S.member = !S.member; if (S.member) applyProfile(); else toast('Signed out'); render(); });
 
@@ -2063,7 +2155,7 @@
     const otherPet = (nameSaid && nameSaid.toLowerCase() !== PROFILE.name.toLowerCase()) ||
                      (spSaid && spSaid.toLowerCase() !== PROFILE.species.toLowerCase());
     const fill = (k, v) => { if (!F(k).v) Object.assign(F(k), { v, s: 'ok' }); };
-    fill('home', PROFILE.home); fill('city', PROFILE.city);
+    fill('home', PROFILE.home); fill('city', PROFILE.city); fill('contact', PROFILE.phone); noteContact(PROFILE.phone);
     if (otherPet) { toast(`Signed in · your profile pet is ${PROFILE.name}, so I kept ${nameSaid || 'this pet'}’s details from your message`); return; }
     fill('species', PROFILE.species); fill('name', PROFILE.name); fill('traits', PROFILE.traits); fill('chip', PROFILE.chip);
     setPet(F('name').v); S.species = F('species').v.toLowerCase();
@@ -2109,41 +2201,95 @@
       chip: `Does ${n} have a microchip or a collar?`,
     }[k];
   }
+  // ---------- report page (mid-fi structure): photo · pet details · last seen · identification · contact ----------
+  const RP_ICON = {
+    paw: '<g fill="url(#icf)" stroke="#10288b" stroke-width="1.8"><circle cx="12" cy="6.2" r="2.2"/><circle cx="6.6" cy="9.2" r="2"/><circle cx="17.4" cy="9.2" r="2"/><path d="M12 12.1c-2.7 0-5.6 3.3-5.6 5.6 0 2 2 2.5 3.4 1.9.8-.4 1.4-.6 2.2-.6s1.4.2 2.2.6c1.4.6 3.4.1 3.4-1.9 0-2.3-2.9-5.6-5.6-5.6z"/></g>',
+    tag: '<path d="M3.5 12.2V5a1.5 1.5 0 0 1 1.5-1.5h7.2l8.3 8.3a1.5 1.5 0 0 1 0 2.1l-6.4 6.4a1.5 1.5 0 0 1-2.1 0z" fill="url(#icf)" stroke="#10288b" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="8" r="1.4" fill="#fff" stroke="#10288b" stroke-width="1.6"/>',
+    spark: '<path d="M12 3l2.2 6.8L21 12l-6.8 2.2L12 21l-2.2-6.8L3 12l6.8-2.2z" fill="url(#icf)" stroke="#10288b" stroke-width="1.8" stroke-linejoin="round"/>',
+    pin: '<path d="M12 21s-6.5-6.2-6.5-11a6.5 6.5 0 0 1 13 0c0 4.8-6.5 11-6.5 11z" fill="url(#icf)" stroke="#10288b" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="10" r="2.2" fill="#fff" stroke="#10288b" stroke-width="1.6"/>',
+    clock: '<circle cx="12" cy="12" r="8.5" fill="url(#icf)" stroke="#10288b" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="#10288b" stroke-width="1.8" stroke-linecap="round"/>',
+    chip: '<rect x="6" y="6" width="12" height="12" rx="3" fill="url(#icf)" stroke="#10288b" stroke-width="1.8"/><path d="M9.5 3v3M14.5 3v3M9.5 18v3M14.5 18v3M3 9.5h3M3 14.5h3M18 9.5h3M18 14.5h3" stroke="#10288b" stroke-width="1.8" stroke-linecap="round"/>',
+    user: '<g fill="url(#icf)" stroke="#10288b" stroke-width="1.8"><circle cx="12" cy="8.1" r="3.7"/><path d="M4.8 19.3c.6-3.6 3.6-6.1 7.2-6.1s6.6 2.5 7.2 6.1c.1.7-.4 1.3-1.1 1.3H5.9c-.7 0-1.2-.6-1.1-1.3z"/></g>',
+    map: '<path d="M3.5 6.5l5-2 7 2 5-2v13l-5 2-7-2-5 2z" fill="url(#icf)" stroke="#10288b" stroke-width="1.8" stroke-linejoin="round"/><path d="M8.5 4.5v13M15.5 6.5v13" fill="none" stroke="#10288b" stroke-width="1.8"/>',
+    gps: '<circle cx="12" cy="12" r="3.5" fill="url(#icf)" stroke="#10288b" stroke-width="2"/><path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="#10288b" stroke-width="2" stroke-linecap="round"/>',
+    cal: '<rect x="4" y="5.5" width="16" height="14.5" rx="3" fill="url(#icf)" stroke="#10288b" stroke-width="1.8"/><path d="M4 10h16M8.5 3.5v4M15.5 3.5v4" fill="none" stroke="#10288b" stroke-width="1.8"/>',
+    cat: '<path d="M5 5l3.5 3h7L19 5v8a7 7 0 0 1-14 0z" fill="url(#icf)" stroke="#10288b" stroke-width="1.8" stroke-linejoin="round"/><circle cx="9.5" cy="12.5" r=".9" fill="#10288b"/><circle cx="14.5" cy="12.5" r=".9" fill="#10288b"/>',
+    dog: '<path d="M7 7h10a3 3 0 0 1 3 3v3a8 8 0 0 1-16 0v-3a3 3 0 0 1 3-3z" fill="url(#icf)" stroke="#10288b" stroke-width="1.8" stroke-linejoin="round"/><circle cx="10" cy="13" r=".9" fill="#10288b"/><circle cx="14" cy="13" r=".9" fill="#10288b"/>',
+    more: '<g fill="#10288b"><circle cx="6" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="18" cy="12" r="1.8"/></g>',
+    cam: '<path d="M4 8.5A2.5 2.5 0 0 1 6.5 6h1.8l1.4-2h4.6l1.4 2h1.8A2.5 2.5 0 0 1 20 8.5v8a2.5 2.5 0 0 1-2.5 2.5h-11A2.5 2.5 0 0 1 4 16.5z" fill="url(#icf)" stroke="#10288b" stroke-width="1.8" stroke-linejoin="round"/><circle cx="12" cy="12.5" r="3.4" fill="#fff" stroke="#10288b" stroke-width="1.8"/>',
+    ok: '<path d="M5 12.5l4.5 4.5L19 7.5" fill="none" stroke="#05a544" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round"/>',
+    x: '<path d="M7 7l10 10M17 7L7 17" fill="none" stroke="#9ea8cc" stroke-width="2.4" stroke-linecap="round"/>',
+  };
+  const ico = (k, c = '') => `<svg class="${c}" viewBox="0 0 24 24" aria-hidden="true">${RP_ICON[k]}</svg>`;
+  // a field filled by Clue (from the message, the photo or your words) glows pink until you touch it
+  const aiCls = f => (f.s === 'check' && f.v ? ' from-ai' : '');
+  const tick = f => (f.v && !isMissingReq(f) && f.s === 'ok' ? ico('ok', 'rp-ok') : f.fromPhoto && f.v ? `<button type="button" class="rp-x" data-clear="${f.k}" aria-label="Clear">${ico('x')}</button>` : '');
+  function noteContact(v) {
+    const email = EMAIL_RE.test(v) ? v : '', phone = !email && /^\+?[\d\s()-]{7,}$/.test(v) ? v : '';
+    if (email || phone) S.contact = Object.assign({ name: 'you', email: '', phone: '' }, S.contact || {}, email ? { email } : { phone });
+  }
+  function rpRow(f, iconKey, control) {
+    return `<div class="rp-row frow${f.s === 'check' && f.v ? ' asking-ai' : ''}" data-k="${f.k}"><label class="rp-label">${ico(iconKey)}<span>${f.label}${f.req ? ' <i>*</i>' : ''}</span></label><div class="rp-ctl">${control}</div></div>`;
+  }
+  function renderLostPhoto() {
+    const box = $('#rpPhoto'); if (!box) return;
+    if (!S.lostPhoto) {
+      box.innerHTML = `<label class="rp-drop"><input type="file" accept="image/*" data-lostphoto hidden><span class="rp-cam">${ico('cam')}</span><span><b>Add a photo</b><small>A clear photo helps us identify your pet.</small></span></label>`;
+      return;
+    }
+    const busy = /looking/i.test(S.photoNote || '');
+    const feats = [S.photoBreed && `looks like a ${S.photoBreed}`, S.photoColour].filter(Boolean);
+    box.innerHTML = `<div class="rp-shot"><label class="rp-pic" style="background-image:url(${S.lostPhoto})"><input type="file" accept="image/*" data-lostphoto hidden><button type="button" class="rp-pic-x" data-photo-remove aria-label="Remove photo">${ico('x')}</button></label>
+      <div>${busy ? '<span class="rp-busy">Looking at the photo…</span>' : S.photoKind ? `<span class="rp-kind">${ico(S.photoKind === 'Dog' ? 'dog' : 'cat')}${esc(S.photoKind)}</span>` : ''}
+        ${!busy && feats.length ? `<h4>Detected features:</h4><ul>${feats.map(x => `<li>${esc(x)}</li>`).join('')}</ul>` : !busy ? `<p class="rp-note">${esc((S.photoNote || '').replace(/^✧\s*/, ''))}</p>` : ''}</div></div>`;
+  }
+  function renderLostForm() {
+    const box = $('#lostForm'); if (!box) return;
+    if (box.contains(document.activeElement) && document.activeElement.matches('[data-field]')) return; // don't redraw under the cursor
+    const sp = (F('species').v || '').toLowerCase();
+    const spChip = (val, key, label) => `<button type="button" class="rp-chip${sp === val ? ' on' + aiCls(F('species')) : ''}" data-species="${label}">${ico(key)}${label}</button>`;
+    const isOther = sp && sp !== 'cat' && sp !== 'dog';
+    const fin = (f, ph, extra = '') => `<input class="fin ${f.s}${aiCls(f)}" data-field="${f.k}" value="${esc(f.v)}" placeholder="${ph}" autocomplete="off"${extra}>`;
+    const tf = F('time'), today = isoDay(new Date()), hour = new Date().getHours();
+    const parts = tf.date ? DAY_PARTS.filter(p => tf.date !== today || p[2] <= hour) : [];
+    const where = F('lost').v || F('city').v, whereF = F('lost').v ? F('lost') : F('city');
+    const mapOpen = box.dataset.map === '1' || !!S.lostPin;
+    box.innerHTML = `
+      <section class="rp-sec"><h3>Pet details</h3>
+        ${rpRow(F('species'), 'paw', `<div class="rp-chips">${spChip('cat', 'cat', 'Cat')}${spChip('dog', 'dog', 'Dog')}<button type="button" class="rp-chip${isOther ? ' on' : ''}" data-species="Other">${ico('more')}${isOther ? esc(cap(sp)) : 'Other'}</button></div>`)}
+        ${rpRow(F('name'), 'tag', `<div class="rp-field">${fin(F('name'), 'Enter name (if known)')}${tick(F('name'))}</div>`)}
+        ${rpRow(F('traits'), 'spark', `<div class="rp-field">${fin(F('traits'), 'e.g. collar, pattern, size…')}${tick(F('traits'))}</div>`)}
+      </section>
+      <section class="rp-sec"><h3>Last seen</h3>
+        ${rpRow(Object.assign({}, whereF, { label: 'Where?', req: true, k: 'lost' }), 'pin', `<div class="rp-field ac"><input class="fin ${whereF.s}${aiCls(whereF)}" data-field="lost" data-ac="places" value="${esc(where)}" placeholder="Add place (street, area or landmark)" autocomplete="off"><button type="button" class="rp-in-btn" data-loc-map aria-label="Mark on map">${ico('map')}</button><div class="suggest" hidden></div></div>
+          <div class="rp-chips under"><button type="button" class="rp-chip sm" data-loc-gps>${ico('gps')}My location</button>${mapOpen ? '' : `<button type="button" class="rp-chip sm" data-loc-map>${ico('map')}Mark on map</button>`}</div>
+          <div class="map-canvas mini-map real rp-map" data-loc-canvas ${mapOpen ? '' : 'hidden'}><span class="map-hint">Tap where ${esc(P())} was last seen</span></div>`)}
+        ${rpRow(Object.assign({}, tf, { label: 'When?' }), 'clock', `<div class="rp-chips">${TIME_CHIPS.map(t => `<button type="button" class="rp-chip sm${tf.chip === t ? ' on' + aiCls(tf) : ''}" data-time-pick="${t}">${t}</button>`).join('')}<button type="button" class="rp-chip sm${tf.date && !tf.chip ? ' on' : ''}" data-time-custom>${ico('cal')}${tf.date && !tf.chip ? esc(fmtDay(new Date(tf.date + 'T12:00'))) : 'Pick a date'}</button><input type="date" class="fin" data-time-date max="${today}" value="${tf.date || ''}" hidden></div>
+          ${parts.length ? `<p class="rp-hint">What part of the day?</p><div class="rp-chips">${parts.map(p => `<button type="button" class="rp-chip sm${tf.part === p[0] ? ' on' : ''}" data-time-part="${p[0]}">${p[0]}</button>`).join('')}<button type="button" class="rp-chip sm${tf.date && tf.part === '' ? ' on' : ''}" data-time-part="">Not sure</button></div>` : ''}
+          ${tf.v && !tf.chip && !tf.date ? `<p class="rp-hint">✧ ${esc(tf.v)}</p>` : ''}`)}
+      </section>
+      <section class="rp-sec"><h3>Identification</h3>
+        ${rpRow(F('chip'), 'chip', `<div class="rp-field">${fin(F('chip'), 'Number, collar or none')}${tick(F('chip'))}</div>`)}
+      </section>
+      <section class="rp-sec"><h3>Contact</h3>
+        ${rpRow(F('contact'), 'user', `<div class="rp-field">${fin(F('contact'), 'Phone or email for a reply', ' inputmode="email"')}${tick(F('contact'))}</div>`)}
+      </section>
+      <p class="note rp-privacy">🔒 Photo, description and area are public · your contact stays private until you choose to share it.</p>`;
+  }
   function renderLostAi() {
     if (!S.lostPhoto) setTimeout(() => loadMobilenet().catch(() => {}), 1500); // warm up the photo model while the user types
     if (!$('#lostAi')) return;
-    const got = [];
-    if (F('species').v) got.push(`animal — ${F('species').v.toLowerCase()}`);
-    if (F('name').v) got.push(`name — ${F('name').v}`);
-    if (F('city').v) got.push(`city — ${F('city').v}`);
-    if (F('time').v) got.push(`time — ${F('time').v}`);
-    if (F('lost').v) got.push(`place — ${F('lost').v}`);
-    if (F('traits').v) got.push('appearance');
-    if (F('chip').v) got.push('chip / collar');
-    const lostWhat = S.species ? `your ${S.species}` : 'your pet';
-    $('#lostAiGot').textContent = got.length ? `Got it — you lost ${lostWhat}. From your messages I took: ${got.join(' · ')}.` : `Got it — you lost ${lostWhat}. I need a few details to start the search.`;
-    const k = nextAsk(); S.asking = k === 'photo' ? null : k;
-    const ready = !k; // all required details are in
-    // ready state: short headline + plain explanation (two lines, not one bold block)
-    const optLeft = ['lost', 'time', 'chip'].filter(x => !F(x).v).map(x => ({ lost: 'exact place', time: 'time', chip: 'chip' }[x]));
-    $('#lostAiAsk').innerHTML = k ? esc(question(k))
-      : S.optionalMode || !optLeft.length
-        ? `<span class="ready-title">✓ ${optLeft.length ? 'Ready to publish' : 'Everything’s in'}</span><span class="ready-sub">Publish ${esc(P())}’s report — I’ll start searching right away.</span>`
-        : `<span class="ready-title">✓ All required details are in</span><span class="ready-sub">Publish now, or add optional details below — ${optLeft.join(', ')}.</span>`;
-    $('#lostAi').classList.toggle('is-ready', ready);
-    // once the required details are in, "Publish" never goes away — also while the AI asks the optional questions
-    const canPublish = ready || (S.optionalMode && OPT_ORDER.includes(k));
-    $('#dockReady').hidden = !canPublish;
-    $('#dockPrivacy').hidden = !ready;
-    $('#readyMore').hidden = ready && S.optionalMode;
-    $('#readyMore').textContent = S.optionalMode ? 'Not now' : 'Add more details';
-    $('#lostAi .dock-row').hidden = ready;
-    $('#replyInput').placeholder = $('#replyInput').dataset.ph = k === 'photo' ? 'Or describe it…' : 'Say or type your answer…';
-    $('#sendBtn').textContent = 'Send ↑';
-    // required questions can't be skipped; the photo and optional ones can
-    $('#skipBtn').hidden = !k || REQ_ORDER.includes(k);
-    $('#skipBtn').textContent = k === 'photo' ? 'No photo' : 'Skip';
-    $$('#lost .frow').forEach(r => r.classList.toggle('asking', r.dataset.k === k));
+    renderLostPhoto(); renderLostForm();
+    const has = !!S.lostPhoto;
+    $('#rpStep').textContent = has ? '2 of 3' : '1 of 3';
+    $('#rpDot2').classList.toggle('on', has);
+    $('#rpTitle').innerHTML = has ? `Photo added <svg viewBox="0 0 24 24" width="28" height="28" aria-hidden="true">${RP_ICON.ok}</svg>` : `Let’s find ${S.pet ? esc(S.pet) : 'your pet'}`;
+    $('#rpSub').textContent = has ? 'I’ve recognised some details from the photo. Please check them and add what’s missing.' : 'Add a photo, and I’ll recognise key details. You can then add the rest by voice or text.';
+    const left = requiredLeft();
+    $('#dockReady').hidden = left.length > 0;
+    const anyFilled = S.fields.some(f => f.v && f.k !== 'species' && f.k !== 'city');
+    $('#replyInput').placeholder = $('#replyInput').dataset.ph = anyFilled || has ? 'Add anything else…' : 'Tell me — voice or text';
+    $('#rpTip').hidden = anyFilled || has || left.length === 0;
     renderOwner();
   }
 
@@ -2158,15 +2304,6 @@
     $('#ownerCard').classList.toggle('on', !!S.member);
   }
   $('#ownerSignIn').addEventListener('click', () => { S.member = true; applyProfile(); render(); });
-  $('#skipBtn').addEventListener('click', () => { const k = nextAsk(); if (k) { S.skipped.add(k); renderLostAi(); } });
-  // show the optional fields (they sit under the dock) and let the AI walk through them
-  $('#readyMore').addEventListener('click', () => {
-    // pressed by mistake? "Not now" goes back to the ready state
-    if (S.optionalMode) { S.optionalMode = false; return renderLostAi(); }
-    S.optionalMode = true; renderLostAi();
-    const h = $('#lost #optHead'); if (h) h.scrollIntoView({ behavior: 'smooth', block: 'start' });
-    setTimeout(() => { const i = $('#lost [data-field=lost]'); if (i && !i.value) i.focus({ preventScroll: true }); }, 450);
-  });
   $('#readyGo').addEventListener('click', () => proceed());
   // continue: required details must be there; contact is optional
   function proceed() {
@@ -2180,32 +2317,39 @@
     S.fields.forEach(f => { if (f.s === 'check') f.s = 'ok'; });
     go('checking'); // publishing = start searching (no separate review screen)
   }
+  // Clue's bar: whatever you say or type is spread over the fields (animal, name, marks, place, time, chip, contact)
   $('#sendBtn').addEventListener('click', () => {
-    const typedReply = $('#replyInput').value.trim();
-    const asked0 = S.asking;
-    // names and places are kept exactly as typed; everything else gets typo-corrected
-    const v = typedReply && !['name', 'lost', 'city'].includes(asked0) ? autocorrect(typedReply) : typedReply;
-    if (v) {
-      const asked = S.asking;
-      const f = parseStory(v, { merge: true, asked });
-      // the answer is for the question we asked, even if it doesn't match a pattern
-      if (asked && !F(asked).v) {
-        let val = v.replace(/[.!]+$/, '');
-        if (asked === 'name') { val = cap(val.split(/[\s,.]+/).filter(w => !/^(его|её|ее|зовут|кличка|имя|it|his|her|name|is|named|called|он|она)$/i.test(w))[0] || val); setPet(val); }
-        if (asked === 'species') { val = val.replace(/^(it'?s|it is|a|an|my|это|у меня)\s+/i, ''); S.species = val.toLowerCase(); }
-        if (asked === 'lost') { val = normPlace(val.replace(/^(возле|около|рядом с|недалеко от|у|в|во|на|near|at|in|by)\s+/i, '')); S.saidPlace = val; }
-        if (asked === 'city') { val = findCity(val) || val.replace(/^(in|в|во|из)\s+/i, ''); }
-        if (asked === 'time') { const ch = chipFromText(val); F('time').chip = ch; if (ch) val = timeFromChip(ch); }
-        Object.assign(F(asked), { v: cap(val), s: 'ok' });
-      } else if (asked && F(asked).s === 'check') F(asked).s = 'ok';
-      $('#replyInput').value = '';
-      render();
-      const got = [f.name && 'name', f.time && 'time', f.place && 'place', f.chip && 'chip/collar', f.traits && 'appearance'].filter(Boolean);
-      toast(got.length ? `Added: ${got.join(', ')}` : asked ? 'Added to the report' : 'Added to characteristics');
-      return;
+    const typed = $('#replyInput').value.trim();
+    if (!typed) {
+      const left = requiredLeft();
+      if (!left.length) return proceed();
+      $('#replyInput').focus();
+      return toast(`Tell me, or fill in: ${left.map(f => f.label.toLowerCase()).join(', ')}`);
     }
-    if (nextAsk()) { $('#replyInput').focus(); toast('Type or say an answer' + ($('#skipBtn').hidden ? '' : ' — or skip')); return; }
-    proceed();
+    const before = Object.fromEntries(S.fields.map(f => [f.k, f.v]));
+    const v = autocorrect(typed);
+    parseStory(v, { merge: true });
+    // contact: an email or a phone number anywhere in the message
+    const em = typed.match(/[^\s@,;]+@[^\s@,;]+\.[a-z]{2,}/i), ph = typed.match(/\+?\d[\d\s()-]{6,}\d/);
+    const c = (em && em[0]) || (ph && ph[0].trim());
+    if (c && !F('contact').v) { Object.assign(F('contact'), { v: c, s: 'check' }); noteContact(c); }
+    if (F('species').v) S.species = F('species').v.toLowerCase();
+    $('#replyInput').value = '';
+    const changed = S.fields.filter(f => f.v && f.v !== before[f.k] && f.k !== 'home').map(f => f.k === 'lost' || f.k === 'city' ? 'where' : f.label.toLowerCase());
+    render();
+    toast(changed.length ? `✧ Filled in: ${[...new Set(changed)].join(', ')}` : 'Added to special features');
+  });
+
+  document.addEventListener('click', e => {
+    const sc = e.target.closest('[data-species]');
+    if (sc) {
+      let val = sc.dataset.species;
+      if (val === 'Other') { val = (prompt('What kind of animal? (bird, rabbit, lizard…)') || '').trim(); if (!val) return; val = cap(val); }
+      S.species = val.toLowerCase(); return setField('species', val);
+    }
+    const cl = e.target.closest('[data-clear]');
+    if (cl) { e.preventDefault(); const f = F(cl.dataset.clear); f.fromPhoto = false; return setField(cl.dataset.clear, ''); }
+    if (e.target.closest('[data-photo-remove]')) { e.preventDefault(); S.lostPhoto = null; S.photoKind = null; S.photoBreed = null; S.photoColour = null; S.photoLook = null; S.photoNote = null; S.fields.forEach(f => { if (f.fromPhoto) Object.assign(f, { v: '', s: emptyStatus(f.k), fromPhoto: false }); }); return render(); }
   });
 
   // ---------- member · quick ----------
