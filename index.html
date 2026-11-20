@@ -822,6 +822,11 @@
   .tab.on { color: var(--navy); }
   .tab.on svg { background: #e6eaf8; }
   .tab.plus { justify-content: flex-end; padding-top: 38px; color: #c23ad1; white-space: nowrap; letter-spacing: -.2px; }
+  /* signed in: no "Create account" — the bar is just the four tabs */
+  .tab-bg .tb-flat { display: none; }
+  .tabbar.member .tab-bg .tb-notch, .tabbar.member .tab-fab, .tabbar.member .tab.plus { display: none; }
+  .tabbar.member .tab-bg .tb-flat { display: inline; }
+  .tabbar.member .tabs { grid-template-columns: repeat(4, 1fr); }
   /* the flow button sits above the bar */
   .nav-btn { bottom: 108px; }
   .toast { bottom: 120px; }
@@ -841,8 +846,13 @@
   .rp-hero { padding-top: 22px; }
   .rp-hero h2 { font-size: 30px; line-height: 33px; font-weight: 800; letter-spacing: -1px; display: flex; align-items: center; gap: 8px; }
   .rp-hero > p { margin-top: 8px; font-size: 14px; line-height: 19px; color: var(--muted); }
-  .rp-hero .rp-member { font-size: 12.5px; color: var(--muted); margin-top: 8px; }
-  .rp-hero .rp-member.on { color: #00594d; font-weight: 600; }
+  .rp-hero .rp-member { display: flex; align-items: center; gap: 10px; margin: 2px 0 16px; padding: 10px 10px 10px 14px; border-radius: 22px; background: #fff; box-shadow: 0 6px 18px rgba(16,40,139,.08); font-size: 13px; line-height: 17px; color: var(--navy); }
+  .rp-hero .rp-member svg { flex: none; }
+  .rp-hero .rp-member span { flex: 1; min-width: 0; }
+  .rp-hero .rp-member span b { display: block; font-size: 14px; font-weight: 800; }
+  .rp-signin { flex: none; height: 38px; padding: 0 18px; border-radius: 19px; background: var(--navy); color: #fff; font-size: 14px; font-weight: 700; }
+  .rp-hero .rp-member.on { background: none; box-shadow: none; padding: 0; margin: 0 0 12px; color: #00594d; font-weight: 600; }
+  .rp-hero .rp-member.on svg { display: none; }
   .link-btn { color: var(--navy); font-weight: 700; text-decoration: underline; }
 
   /* photo */
@@ -1079,9 +1089,9 @@
     <div class="rp-step"><b id="rpStep">1 of 3</b><span class="rp-dots"><i class="on"></i><i id="rpDot2"></i><i></i></span></div>
   </div>
   <div class="rp-hero">
+    <div class="rp-member" id="ownerCard"><svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true"><g fill="url(#icf)" stroke="#10288b" stroke-width="1.9" stroke-linejoin="round"><circle cx="12" cy="8.1" r="3.7"/><path d="M4.8 19.3c.6-3.6 3.6-6.1 7.2-6.1s6.6 2.5 7.2 6.1c.1.7-.4 1.3-1.1 1.3H5.9c-.7 0-1.2-.6-1.1-1.3z"/></g></svg><span id="ownerCaption"></span><button class="rp-signin" id="ownerSignIn">Sign in</button></div>
     <h2 id="rpTitle">Let’s find your pet</h2>
     <p id="rpSub">Add a photo, and I’ll recognise key details. You can then add the rest by voice or text.</p>
-    <p class="rp-member" id="ownerCard"><span id="ownerCaption"></span> <button class="link-btn" id="ownerSignIn">Sign in</button></p>
   </div>
   <div id="rpPhoto"></div>
   <div id="lostForm"></div>
@@ -1526,7 +1536,7 @@
 
 <!-- bottom tab bar on the main screens; the pink + is "Create account" for guests, "New report" for members -->
 <nav class="tabbar" id="tabbar" aria-label="Main">
-  <svg class="tab-bg" viewBox="0 0 393 92" preserveAspectRatio="none" aria-hidden="true"><path d="M0 20 Q0 6 14 6 H148 C165 6 167 34 196.5 34 C226 34 228 6 245 6 H379 Q393 6 393 20 V92 H0 Z" fill="#fff"/></svg>
+  <svg class="tab-bg" viewBox="0 0 393 92" preserveAspectRatio="none" aria-hidden="true"><path class="tb-notch" d="M0 20 Q0 6 14 6 H148 C165 6 167 34 196.5 34 C226 34 228 6 245 6 H379 Q393 6 393 20 V92 H0 Z" fill="#fff"/><path class="tb-flat" d="M0 20 Q0 6 14 6 H379 Q393 6 393 20 V92 H0 Z" fill="#fff"/></svg>
   <button class="tab-fab" id="tabPlus" aria-label="Create account"><svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M12 5v14M5 12h14"/></svg></button>
   <div class="tabs">
     <button class="tab" data-tab="home"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="currentColor" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M4.4 10.4 12 4.2l7.6 6.2V19a1.6 1.6 0 0 1-1.6 1.6h-3.2v-3.9a2.8 2.8 0 0 0-5.6 0v3.9H6A1.6 1.6 0 0 1 4.4 19z"/></svg><span>Home</span></button>
@@ -1700,9 +1710,8 @@
     $$('.petName').forEach(s => s.textContent = P());
     $$('.who').forEach(w => w.textContent = S.member ? 'Member' : 'Guest');
     document.body.classList.toggle('member', !!S.member);
-    // tab bar: the pink + is "Create account" for guests and "New report" for members
-    $('#tabPlusLabel').textContent = S.member ? 'New report' : 'Create account';
-    $('#tabPlus').setAttribute('aria-label', $('#tabPlusLabel').textContent);
+    // tab bar: guests get the pink "Create account"; signed-in members don't need it
+    $('#tabbar').classList.toggle('member', !!S.member);
     $$('#tabbar [data-tab]').forEach(t => t.classList.toggle('on', t.dataset.tab === 'home' && current === 'home'));
     $$('.transcriptText').forEach(p => p.textContent = '“' + S.transcript + '”');
     $$('[data-transcript]').forEach(l => { l.hidden = !S.transcript.trim(); if (l.hidden) l.nextElementSibling.classList.remove('open'); });
@@ -2628,7 +2637,7 @@
     $('#ownerSignIn').hidden = S.member;
     $('#ownerCaption').innerHTML = S.member
       ? '✓ Signed in — filled in from your profile.'
-      : 'Already a member? Sign in and we’ll fill this in from your profile.';
+      : '<b>Already have an account?</b>Sign in — we’ll fill this in from your profile.';
     $('#ownerCard').classList.toggle('on', !!S.member);
   }
   $('#ownerSignIn').addEventListener('click', () => { S.member = true; applyProfile(); render(); });
