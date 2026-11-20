@@ -624,6 +624,22 @@
 
   /* real map (Leaflet + OpenStreetMap) */
   .map-canvas.real, #mapCanvas { background: #e9ecf5; height: 200px; z-index: 0; }
+  .seen-route { display: flex; flex-direction: column; gap: 8px; margin-top: 18px; }
+  .seen-route[hidden] { display: none; }
+  .seen-route h3 { margin: 0; font-size: 17px; font-weight: 800; color: var(--navy); letter-spacing: -.2px; }
+  .seen-route .sr-hint { margin: 0; font-size: 13.5px; line-height: 19px; color: var(--muted); }
+  #seenMap { height: 240px; border-radius: 20px; cursor: crosshair; }
+  .sr-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: 13.5px; font-weight: 600; color: var(--navy); }
+  .sr-btns { display: flex; gap: 6px; flex: none; }
+  .sr-btns .pill { padding: 8px 14px; font-size: 13px; }
+  .sr-btns .pill:disabled { opacity: .45; }
+  #foundMap { height: 240px; }
+  .fh-vets { display: flex; flex-direction: column; gap: 6px; }
+  .fh-vets[hidden] { display: none; }
+  .fh-vets h3 { margin: 4px 0 0; font-size: 19px; font-weight: 800; color: var(--navy); letter-spacing: -.3px; }
+  .fh-vets .sec-text { margin: 0; }
+  .leaflet-tooltip.area-tip { background: #b02fc0; color: #fff; border: 0; border-radius: 999px; font-weight: 700; font-size: 11.5px; padding: 3px 9px; box-shadow: none; }
+  .leaflet-tooltip.area-tip::before { display: none; }
   .mini-map.real { height: 210px; cursor: default; }
   .map-canvas .leaf { position: absolute; inset: 0; }
   .map-canvas .map-hint { z-index: 500; }
@@ -1266,6 +1282,12 @@
       <button class="opt" data-now="home"><b>I took it home</b><span>We’ll notify you when a matching lost report appears.</span></button>
       <button class="opt" data-now="seen"><b>I only saw it</b><span>Your sighting helps owners track the pet.</span></button>
     </div>
+    <div class="seen-route" id="seenRoute" hidden>
+      <h3>Which way did it go?</h3>
+      <p class="sr-hint">Tap the map along the way it went. The last point is where you last saw it.</p>
+      <div class="map-canvas real" id="seenMap"></div>
+      <div class="sr-row"><span id="seenNote">Seen here · tap where it went</span><span class="sr-btns"><button class="pill" id="seenUndo" disabled>Undo</button><button class="pill" id="seenClear" disabled>Clear</button></span></div>
+    </div>
   </div>
   <button class="pill primary" id="foundCreate" style="align-self:flex-start" disabled>Create report</button>
 </section>
@@ -1275,7 +1297,7 @@
   <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <div class="badge">✓</div>
   <div class="title"><h1>Report created</h1><p id="foundSub">Owners nearby can now see it.</p></div>
-  <div class="status" data-static><div class="st-title"><img src="assets/sparkle.svg" alt="">Status</div><div class="st done">Found report published</div><div class="st done">Compared with 9 lost reports · no match yet</div></div>
+  <div class="status" data-static><div class="st-title"><img src="assets/sparkle.svg" alt="">Status</div><div class="st done" id="foundSt1">Found report published</div><div class="st done">Compared with 9 lost reports · no match yet</div></div>
   <div class="question">
     <h2>Do you want to help more?</h2>
     <div class="choices">
@@ -1295,9 +1317,14 @@
     <div class="item"><div><b>Printable flyer / social template</b><span>“FOUND” poster with photo and QR code.</span></div><button class="pill" data-flyer="found">View</button></div>
   </div>
   <div class="map">
-    <b style="font-size:13px">Saved to reports near where you found it</b>
+    <b style="font-size:13px" id="foundMapTitle">Saved to reports near where you found it</b>
     <div class="map-canvas real" id="foundMap"></div>
     <small id="repoNote">Owners searching this area will see your report first.</small>
+  </div>
+  <div class="fh-vets" id="foundVetsBox" hidden>
+    <h3>Vets &amp; shelters nearby</h3>
+    <p class="sec-text">If it’s no longer in the search area, it may be brought to one of these — the nearest to where it was last seen.</p>
+    <div class="nm-list ns-vets" id="foundVets"><p class="sec-text">Looking for vets and shelters nearby…</p></div>
   </div>
   <label class="switch">Notify me when a matching lost report appears<input type="checkbox" checked></label>
   <button class="pill" data-go="found-thanks" style="align-self:flex-start">Done</button>
@@ -1409,7 +1436,8 @@
   let S;
   // ---- keep the report through a page reload (phones and in-app browsers often reload a page in the background) ----
   const SAVED_KEYS = ['member', 'pet', 'transcript', 'place', 'saidPlace', 'species', 'memberAsked', 'fields', 'lostPhoto', 'photoNote', 'photoKind',
-    'photoBreed', 'photoColour', 'photoLook', 'lostPin', 'contact', 'regSent', 'optionalMode', 'history', 'noMatchReason', 'match'];
+    'photoBreed', 'photoColour', 'photoLook', 'lostPin', 'contact', 'regSent', 'optionalMode', 'history', 'noMatchReason', 'match',
+    'now', 'foundPath', 'seenStart', 'lastSeenName'];
   let saveTimer = null;
   function saveState() {
     clearTimeout(saveTimer);
@@ -2555,12 +2583,56 @@
     const b = e.target.closest('.opt'); if (!b) return;
     $$('#whereNow .opt').forEach(x => x.classList.toggle('sel', x === b));
     S.now = b.dataset.now; $('#foundCreate').disabled = false;
+    $('#seenRoute').hidden = S.now !== 'seen';
+    if (S.now === 'seen') openSeenRoute();
   });
-  $('#foundCreate').addEventListener('click', () => {
-    $('#foundSub').textContent = { with: 'Stay nearby if you can — an owner may contact you soon.', home: 'We’ll notify you as soon as a matching lost report appears.', seen: 'Your sighting is now visible to owners nearby.' }[S.now];
-    $('#repoNote').textContent = S.now === 'home' ? 'You took it home — new lost reports near here will be checked against it and you’ll be notified.' : 'Owners searching this area will see your report first.';
-    go('found-created');
-  });
+  // "I only saw it": the finder marks the way the animal went; the last point = where it was last seen
+  let seenMap = null, seenLayer = null;
+  async function openSeenRoute() {
+    if (!S.seenStart) S.seenStart = near(await cityOrDefault(), .003, -.004);
+    if (!S.foundPath) S.foundPath = [];
+    if (!seenMap) {
+      seenMap = makeMap($('#seenMap'), S.seenStart, 16);
+      seenMap.on('click', e => { S.foundPath.push([e.latlng.lat, e.latlng.lng]); S.lastSeenName = null; drawSeen(); nameLastSeen(); saveState(); });
+    }
+    setTimeout(() => {
+      seenMap.invalidateSize();
+      if (S.foundPath.length) seenMap.fitBounds([S.seenStart, ...S.foundPath], { padding: [50, 50], maxZoom: 16 });
+    }, 0);
+    drawSeen();
+  }
+  function nameLastSeen() {
+    const p = S.foundPath[S.foundPath.length - 1]; if (!p) return;
+    placeName(p).then(n => { if (n && S.foundPath[S.foundPath.length - 1] === p) { S.lastSeenName = n; drawSeen(); saveState(); } });
+  }
+  function seenRouteLayer(m, path, start) {
+    const g = L.layerGroup().addTo(m), pts = [start, ...path];
+    if (pts.length > 1) L.polyline(pts, { color: '#10288b', weight: 2.5, dashArray: '5 6' }).addTo(g);
+    L.marker(start, { icon: pinIcon('green', 'Seen here') }).addTo(g);
+    path.forEach((p, i) => { const last = i === path.length - 1; L.marker(p, { icon: pinIcon(last ? '' : 'ink small', last ? 'Last seen' : '') }).addTo(g); });
+    return g;
+  }
+  function drawSeen() {
+    if (!seenMap) return;
+    if (seenLayer) seenLayer.remove();
+    seenLayer = seenRouteLayer(seenMap, S.foundPath, S.seenStart);
+    const n = S.foundPath.length;
+    $('#seenNote').textContent = !n ? 'Seen here · tap where it went'
+      : `Last seen ${S.lastSeenName ? 'at ' + S.lastSeenName : 'at the pink point'}`;
+    $('#seenUndo').disabled = $('#seenClear').disabled = !n;
+  }
+  $('#seenUndo').addEventListener('click', () => { S.foundPath.pop(); S.lastSeenName = null; drawSeen(); nameLastSeen(); saveState(); });
+  $('#seenClear').addEventListener('click', () => { S.foundPath = []; S.lastSeenName = null; drawSeen(); saveState(); });
+  function foundTexts() {
+    if (!S.now) return;
+    const seen = S.now === 'seen', route = seen && S.foundPath && S.foundPath.length;
+    $('#foundSub').textContent = { with: 'Stay nearby if you can — an owner may contact you soon.', home: 'We’ll notify you as soon as a matching lost report appears.', seen: route ? 'Your sighting and the way it went are now visible to owners nearby.' : 'Your sighting is now visible to owners nearby.' }[S.now];
+    $('#foundSt1').textContent = seen ? (route ? `Sighting published · route and last-seen point${S.lastSeenName ? ' (' + S.lastSeenName + ')' : ''}` : 'Sighting published') : 'Found report published';
+    $('#foundMapTitle').textContent = seen ? (route ? 'Where it was seen and where it went' : 'Where it was seen') : 'Saved to reports near where you found it';
+    $('#repoNote').textContent = S.now === 'home' ? 'You took it home — new lost reports near here will be checked against it and you’ll be notified.'
+      : seen ? 'Dashed circle = search area: where it most likely is now. Owners searching here will see your sighting first.' : 'Owners searching this area will see your report first.';
+  }
+  $('#foundCreate').addEventListener('click', () => { foundTexts(); go('found-created'); });
 
   // ---------- other sections: Services & Care · Adoption · Shop ----------
   const speciesOf = q => /(cat|kitten|кош|кот)/i.test(q || '') ? 'cat' : /(dog|puppy|собак|пёс|пес|щен)/i.test(q || '') ? 'dog' : null;
@@ -2982,6 +3054,17 @@
   }
   function drawFoundHere() {
     drawStaticMap('foundMap', (m, c) => {
+      $('#foundVetsBox').hidden = S.now !== 'seen';
+      if (S.now === 'seen') {
+        const start = S.seenStart || near(c, .003, -.004), path = S.foundPath || [], last = path[path.length - 1] || start;
+        // search area: where it is most likely now — around the last point it was seen
+        m.invalidateSize();
+        L.circle(last, { radius: 350, color: '#b02fc0', weight: 1.5, dashArray: '5 5', fillColor: '#f37cff', fillOpacity: .12 }).addTo(m);
+        seenRouteLayer(m, path, start);
+        m.fitBounds(L.latLng(last).toBounds(800).extend(start), { padding: [20, 20], maxZoom: 16 });
+        drawFoundVets(m, last, start);
+        return;
+      }
       const f = near(c, .003, -.004);
       L.circle(f, { radius: 600, color: '#05a544', weight: 1, fillOpacity: .08 }).addTo(m);
       L.marker(f, { icon: pinIcon('green', 'Found here') }).addTo(m);
@@ -3038,6 +3121,27 @@
     vetMap.fitBounds([c, ...places.slice(0, 4).map(p => p.ll)], { padding: [24, 24], maxZoom: 16 });
     S.vets = places;
   }
+  // found pet · "I only saw it": vets & shelters nearest to the last-seen point, on the same map as the route
+  let foundVetMarkers = [];
+  async function drawFoundVets(m, last, start) {
+    $('#foundVets').innerHTML = '<p class="sec-text">Looking for vets and shelters nearby…</p>';
+    const places = (await fetchVets(last)).slice(0, 4);
+    if (staticMaps.foundMap !== m) return;
+    m.invalidateSize();
+    const label = p => `${p.km < 1 ? Math.round(p.km * 1000 / 10) * 10 + ' m' : p.km.toFixed(1) + ' km'} · ${p.shelter ? 'Shelter' : 'Vet'}${p.hours ? ' · ' + p.hours : ''}`;
+    $('#foundVets').innerHTML = places.map((p, i) => `<div class="nm-row" data-fvet="${i}"><span class="num${p.shelter ? ' shelter' : ''}">${i + 1}</span><div><b>${esc(p.name)}${i === 0 ? '<i class="near">Nearest</i>' : ''}</b><span>${esc(label(p))}</span></div>` +
+      (p.phone ? `<a class="pill" href="tel:${esc(p.phone.replace(/[^\d+]/g, ''))}">Call</a>` : `<button class="pill" data-toast="No phone listed — tap the row to see it on the map">Call</button>`) + `</div>`).join('');
+    foundVetMarkers = places.map((p, i) => L.marker(p.ll, { icon: L.divIcon({ className: 'lpin-wrap', html: `<div class="lnum${p.shelter ? ' shelter' : ''}">${i + 1}</div>`, iconSize: [28, 28], iconAnchor: [14, 14] }) })
+      .addTo(m).bindTooltip(p.name, { direction: 'top', offset: [0, -12] }));
+    m.fitBounds(L.latLng(last).toBounds(800).extend(start).extend(places.slice(0, 3).map(p => p.ll)), { padding: [24, 24], maxZoom: 16 });
+    S.foundVets = places;
+  }
+  document.addEventListener('click', e => {
+    const row = e.target.closest('[data-fvet]'); if (!row || e.target.closest('.pill') || !staticMaps.foundMap) return;
+    const i = +row.dataset.fvet; staticMaps.foundMap.setView(S.foundVets[i].ll, 16); foundVetMarkers[i].openTooltip();
+    $$('#foundVets .nm-row').forEach(r => r.classList.toggle('sel', r === row));
+    $('#foundMap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
   document.addEventListener('click', e => {
     const row = e.target.closest('[data-vet]'); if (!row || e.target.closest('.pill') || !vetMap) return;
     const p = S.vets[+row.dataset.vet]; vetMap.setView(p.ll, 16); vetMarkers[+row.dataset.vet + 1].openTooltip();
@@ -3047,7 +3151,8 @@
 
   const onEnter = {
     reunite: () => drawReunite(),
-    'found-help': () => drawFoundHere(),
+    'found-help': () => { foundTexts(); drawFoundHere(); },
+    'found-created': () => foundTexts(),
     tell: () => { $('#tellStatus').hidden = true; },
     location: () => {
       const said = S.saidPlace, name = P();
@@ -3095,7 +3200,7 @@
     nextsteps: () => { renderNoMatch(); drawVets(); },
     'found-photo': () => { const ph = $('#foundPh'); ph.classList.remove('photo'); ph.style.backgroundImage = ''; },
     'found-analyse': () => runStatus($('#analyseStatus'), () => setTimeout(() => current === 'found-analyse' && go('found-edit', { replace: true }), 400), 600),
-    'found-edit': () => { $$('#whereNow .opt').forEach(x => x.classList.remove('sel')); $('#foundCreate').disabled = true; },
+    'found-edit': () => { $$('#whereNow .opt').forEach(x => x.classList.remove('sel')); $('#foundCreate').disabled = true; $('#seenRoute').hidden = true; },
   };
 
   // ---------- flow navigator ----------
