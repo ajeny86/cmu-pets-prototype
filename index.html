@@ -862,6 +862,55 @@
   .rp-mic.rec { background: #fde8fe; animation: pulse-pink 1.1s infinite; }
   .rp-send { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #dfe4f5; color: #8f99c0; transition: background .15s, color .15s; }
   .rp-send.on { background: var(--navy); color: #fff; }
+
+  /* ================= No match yet (mid-fi structure, start-screen look, no cards) ================= */
+  #nextsteps.screen { gap: 0; padding-left: 16px; padding-right: 16px; }
+  #nextsteps .title h1 { font-size: 30px; line-height: 33px; }
+  .ns-sec { padding-top: 26px; }
+  .ns-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+  .ns-head h3 { font-size: 20px; line-height: 24px; font-weight: 800; letter-spacing: -.5px; }
+  .ns-head-2 { margin-top: 18px; }
+  .ns-live { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 12px; border-radius: 14px; background: #d9f1e3; color: #00594d; font-size: 13px; font-weight: 700; }
+  .ns-live i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); box-shadow: 0 0 0 3px rgba(5,165,68,.18); }
+  .ns-report { display: flex; align-items: center; gap: 14px; width: 100%; margin-top: 14px; text-align: left; }
+  .ns-pic { width: 128px; height: 112px; flex: none; border-radius: 20px; background: #dfe5fa center/cover; box-shadow: 0 8px 18px rgba(16,40,139,.14); display: grid; place-items: center; font-size: 46px; }
+  .ns-pic.none { background: linear-gradient(160deg, #e6eaf8, #d6def8); }
+  .ns-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
+  .ns-tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 13px; background: #d7262e; color: #fff; font-size: 12.5px; font-weight: 700; }
+  .ns-tag svg { width: 15px; height: 15px; }
+  .ns-tag svg * { fill: #fff !important; stroke: #fff !important; }
+  .ns-name { font-size: 26px; line-height: 30px; font-weight: 800; letter-spacing: -.6px; margin: 2px 0 2px; }
+  .ns-line { display: flex; align-items: flex-start; gap: 7px; font-size: 13px; line-height: 17px; color: var(--sub); }
+  .ns-line svg { width: 16px; height: 16px; flex: none; margin-top: 1px; }
+  .ns-line span { min-width: 0; overflow: hidden; text-overflow: ellipsis; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; }
+  .ns-chev { flex: none; width: 30px; height: 30px; border-radius: 50%; background: #e6eaf8; color: var(--navy); font-size: 20px; line-height: 28px; text-align: center; }
+  .ns-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 16px; }
+  .ns-btn { height: 46px; border-radius: 23px; background: rgba(255,255,255,.92); box-shadow: 0 4px 12px rgba(16,40,139,.08); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 14.5px; font-weight: 700; color: var(--navy); }
+  .ns-btn.off { background: rgba(255,255,255,.45); color: #8f99c0; box-shadow: none; }
+  .ns-tip { display: flex; align-items: center; gap: 10px; margin-top: 14px; }
+  .ns-tip svg { flex: none; }
+  .ns-tip div { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .ns-tip b { font-size: 14px; line-height: 18px; font-weight: 800; }
+  .ns-tip span { font-size: 12px; line-height: 16px; color: var(--sub); }
+  .ns-add { flex: none; height: 36px; padding: 0 14px; border-radius: 18px; background: #fff; box-shadow: 0 4px 12px rgba(16,40,139,.10); font-size: 13px; font-weight: 700; color: var(--navy); }
+  #nextsteps .nm-phone-form { margin-top: 12px; }
+  .ns-notify { margin-top: 12px; font-size: 12.5px; line-height: 17px; color: var(--sub); }
+  .ns-notify b { color: var(--navy); }
+  #nextsteps .vet-map { height: 170px; border-radius: 20px; }
+  .ns-all { font-size: 13px; text-decoration: none; }
+  .ns-vets { margin-top: 6px; }
+  .ns-vets .nm-row:nth-child(n+4) { display: none; }
+  .ns-vets.all .nm-row { display: flex; }
+  .ns-vets .nm-row + .nm-row { border-top-color: rgba(16,40,139,.07); }
+  .ns-24 { margin-top: 22px; }
+  .ns-24 summary { list-style: none; display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 0; }
+  .ns-24 summary::-webkit-details-marker { display: none; }
+  .ns-24 summary span { flex: 1; font-size: 17px; font-weight: 800; letter-spacing: -.3px; }
+  .ns-fold { font-style: normal; font-size: 20px; color: var(--muted); transition: transform .2s; }
+  .ns-24[open] .ns-fold { transform: rotate(180deg); }
+  .ns-24 .nm-tips { margin-top: 8px; }
+  .ns-24 .note { margin-top: 10px; }
+  .ns-edit { align-self: center; margin-top: 24px; height: 52px; padding: 0 28px; border-radius: 26px; background: var(--navy); color: #fff; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; box-shadow: 0 10px 22px rgba(16,40,139,.28); }
 </style>
 </head>
 <body>
@@ -1123,31 +1172,47 @@
 <section class="screen flow" id="nextsteps">
   <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <div class="title"><h1>No match yet for <span class="petName">your pet</span></h1><p id="nmSub"></p></div>
-  <!-- who gets notified: one quiet line; an email field only for guests who didn't leave one -->
-  <p class="nm-notify" id="nmNotify"></p>
+
+  <!-- 1 · the report itself: summary, share / print, and the contact the poster needs — straight on the page, no cards -->
+  <section class="ns-sec">
+    <div class="ns-head"><h3>Your lost pet report</h3><span class="ns-live"><i></i>Live</span></div>
+    <button class="ns-report" data-go="lost" aria-label="Open the report"><span class="ns-pic" id="nsPic"></span><span class="ns-info" id="nsInfo"></span><span class="ns-chev" aria-hidden="true">›</span></button>
+    <div class="ns-actions">
+      <button class="ns-btn" id="nmShare"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v6.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Share post</button>
+      <button class="ns-btn" id="nsPrint"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M7 8V4h10v4" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><rect x="3.5" y="8" width="17" height="8.5" rx="2.5" fill="url(#icf)" stroke="currentColor" stroke-width="1.9"/><rect x="7" y="13.5" width="10" height="6.5" rx="1" fill="#fff" stroke="currentColor" stroke-width="1.9"/></svg>Print poster</button>
+    </div>
+    <div class="ns-tip" id="nsContactTip"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><circle cx="12" cy="12" r="9" fill="url(#icf)" stroke="#5241c0" stroke-width="1.8"/><path d="M12 11v5.5" stroke="#5241c0" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="7.8" r="1.2" fill="#5241c0"/></svg><div><b>Want a poster to print and put up?</b><span>Add the owner’s name and a phone — people on the street can only call.</span></div><button class="ns-add" id="nsAddContact">Add contact</button></div>
+    <div class="nm-phone-form" id="nmPhoneBox" hidden>
+      <div class="nm-email"><input id="nmName" autocomplete="given-name" placeholder="Owner’s name"></div>
+      <div class="nm-email"><input id="nmPhone" type="tel" autocomplete="tel" placeholder="+351 912 345 678"><button class="pill primary" id="nmPhoneSave">Add to poster</button></div>
+    </div>
+    <p class="ns-notify" id="nsNotify"></p>
+  </section>
+
+  <!-- 2 · vets & shelters on the map, nearest first -->
+  <section class="ns-sec">
+    <div class="map-canvas real vet-map" id="vetMap"></div>
+    <div class="ns-head ns-head-2"><h3>Vets &amp; shelters nearby</h3><button class="link-btn ns-all" id="nsVetAll">See all →</button></div>
+    <p class="sec-text" id="vetSub" hidden></p>
+    <div class="nm-list ns-vets" id="vetList"><p class="sec-text">Looking for vets and shelters nearby…</p></div>
+  </section>
+
+  <!-- 3 · what to do — folded, opens on tap -->
+  <details class="ns-24"><summary><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="url(#icf)" stroke="#5241c0" stroke-width="1.8"/><path d="M8 12.2l2.8 2.8L16 9.6" fill="none" stroke="#5241c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>What to do in the next 24 hours</span><i class="ns-fold" aria-hidden="true">⌄</i></summary>
+    <ul class="nm-tips" id="nmTips"></ul><p class="note" id="nmMovement"></p></details>
+
+  <button class="ns-edit" data-go="lost"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4 20h4L19 9l-4-4L4 16z" fill="none" stroke="#fff" stroke-width="2" stroke-linejoin="round"/><path d="M13.5 6.5l4 4" stroke="#fff" stroke-width="2"/></svg>Edit my report</button>
+
+  <!-- kept for the logic behind them (email alerts, sign-up, poster preview), not shown on this page -->
+  <div hidden>
+    <p class="nm-notify" id="nmNotify"></p>
   <div class="nm-email" id="nmEmailBox" hidden>
     <input id="nmEmail" type="email" autocomplete="email" placeholder="name@mail.com">
     <button class="pill primary" id="nmEmailSave">Notify me</button>
   </div>
-  <!-- ready-made social post -->
-  <div class="sec">
-    <h3 id="posterTitle">Your post is ready</h3>
-    <p class="sec-text" id="posterSub">Share it in local groups — the more people see <span class="petName">your pet</span>, the better.</p>
-    <!-- optional: a phone makes the poster printable (people on the street can only call) -->
-    <div class="nm-phone-form" id="nmPhoneBox">
-      <div class="nm-email"><input id="nmName" autocomplete="given-name" placeholder="Your name — who to ask for"></div>
-      <div class="nm-email"><input id="nmPhone" type="tel" autocomplete="tel" placeholder="+351 912 345 678"><button class="pill primary" id="nmPhoneSave">Add to poster</button></div>
-    </div>
-    <!-- social poster: drawn at a fixed proportion and scaled with the card (cqw units), like a real square post image -->
-    <div class="poster-wrap"><article class="poster" id="poster" data-flyer aria-label="Lost pet poster"></article></div>
-    <div class="row-pills">
-      <button class="pill primary" id="nmShare">Share</button>
-      <button class="pill" id="copyLink">Copy link</button>
-      <button class="pill" data-flyer>Download</button>
-    </div>
-  </div>
-
-  <!-- guests: one-tap sign-up built from what they already entered -->
+    <h3 id="posterTitle"></h3><p id="posterSub"></p>
+    <div class="poster-wrap"><article class="poster" id="poster" aria-label="Lost pet poster"></article></div>
+    <button id="copyLink">Copy link</button>
   <div class="nm-reg" id="nmReg" hidden>
     <b id="nmRegTitle">Keep searching with a free account</b>
     <p id="nmRegText"></p>
@@ -1159,25 +1224,6 @@
     <button class="pill primary" id="nmRegBtn">Create account</button>
   </div>
 
-  <!-- vets & shelters nearby -->
-  <div class="sec">
-    <h3>Call vets &amp; shelters nearby</h3>
-    <p class="sec-text" id="vetSub">Found pets are often brought here first.</p>
-    <div class="map-canvas real vet-map" id="vetMap"></div>
-    <div class="nm-list" id="vetList"><p class="sec-text">Looking for vets and shelters nearby…</p></div>
-  </div>
-
-  <!-- what to do in the next 24 hours -->
-  <div class="sec">
-    <h3>Next 24 hours</h3>
-    <ul class="nm-tips" id="nmTips"></ul>
-  </div>
-
-  <p class="note" id="nmMovement"></p>
-
-  <div class="row-pills">
-    <button class="pill navy" data-go="lost">Edit my report</button>
-    <button class="pill" data-go="home">Back home</button>
   </div>
 </section>
 
@@ -2637,7 +2683,29 @@
     const tips = [...(TIPS[S.species] ? [TIPS[S.species]] : []), ...TIPS.common].map(t => t.replace('{n}', n));
     $('#nmTips').innerHTML = tips.map(t => `<li>${esc(t)}</li>`).join('');
     $('#nmMovement').textContent = `If people report sightings in different places, I’ll map where ${n} may be moving.`;
+    renderNsReport();
   }
+  // report summary on "No match yet": photo, name, when / where / features; poster contact; who gets notified
+  function renderNsReport() {
+    if (!$('#nsInfo')) return;
+    const n = cap(P()), sp = (S.species || 'pet').toLowerCase(), phone = posterPhone(), c = S.contact || {};
+    const emoji = { cat: '🐈', dog: '🐕', bird: '🦜', rabbit: '🐇', hamster: '🐹', lizard: '🦎', turtle: '🐢' }[sp] || '🐾';
+    $('#nsPic').innerHTML = ''; $('#nsPic').style.backgroundImage = S.lostPhoto ? `url(${S.lostPhoto})` : ''; $('#nsPic').classList.toggle('none', !S.lostPhoto); if (!S.lostPhoto) $('#nsPic').textContent = emoji;
+    const where = [F('lost').v, F('city').v].filter(Boolean).join(', ');
+    const feats = F('traits').v || S.photoLook || '';
+    const row = (ic, t) => t ? `<span class="ns-line">${ico(ic)}<span>${esc(t)}</span></span>` : '';
+    $('#nsInfo').innerHTML = `<span class="ns-tag">${ico('paw')}Lost ${esc(sp)}</span><b class="ns-name">${esc(n)}</b>${row('cal', F('time').v)}${row('pin', where)}${row('spark', feats)}`;
+    $('#nsContactTip').hidden = !!phone || !!S.phoneEditing;
+    $('#nsPrint').classList.toggle('off', !phone);
+    $('#nsNotify').innerHTML = S.member ? '✓ We’ll notify your buddy account if a found pet looks like ' + esc(n) + '.'
+      : c.email || c.phone ? `✓ We’ll let you know at <b>${esc(c.email || c.phone)}</b> if a found pet looks like ${esc(n)}. <button class="link-btn" id="nmPhoneChange">Change</button>`
+      : '';
+  }
+  document.addEventListener('click', e => {
+    if (e.target.closest('#nsAddContact, #nsAddContact2')) { S.phoneEditing = true; renderPoster(); setTimeout(() => $('#nmName').focus(), 50); return; }
+    if (e.target.closest('#nsPrint')) { if (posterPhone()) return openFlyer(false); S.phoneEditing = true; renderPoster(); toast('Add a phone first — people on the street can only call'); setTimeout(() => $('#nmPhone').focus(), 50); return; }
+    if (e.target.closest('#nsVetAll')) { const l = $('#vetList'); l.classList.toggle('all'); $('#nsVetAll').textContent = l.classList.contains('all') ? 'Show less' : 'See all →'; }
+  });
   // 1 · top: email for match alerts (guests) + the account offer
   function renderNmNotify() {
     const n = P(), c = S.contact || {};
@@ -2720,7 +2788,8 @@
     $('#posterSub').innerHTML = phone
       ? (S.member ? `On the poster: <b>${esc(PROFILE.owner)}, ${esc(PROFILE.phone)}</b> from your profile. ` : `On the poster: <b>${esc([S.contact.owner, phone].filter(Boolean).join(', '))}</b> <button class="link-btn" id="nmPhoneChange">Change</button> `) + `Share it online and print it for the street.`
       : `To print it for walls and shop windows, add your phone — people on the street can only call. Without it, you can still share it online.`;
-    $('#nmPhoneBox').hidden = S.member || (!!phone && !S.phoneEditing);
+    $('#nmPhoneBox').hidden = !S.phoneEditing;
+    renderNsReport();
     if (S.phoneEditing) { $('#nmPhone').value = phone || ''; $('#nmName').value = (S.contact && S.contact.owner) || ''; }
   }
   function posterHTML() {
