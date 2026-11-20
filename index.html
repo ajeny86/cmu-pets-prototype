@@ -837,7 +837,12 @@
 
   /* Clue's bar: pinned above the tab bar */
   #lost .rp-dock { padding: 10px 10px 10px 8px; gap: 8px; }
-  .rp-tip { font-size: 13px; line-height: 17px; color: var(--sub); padding: 0 6px 0 64px; }
+  .rp-tip { font-size: 13px; line-height: 17px; color: var(--sub); padding: 0 6px 0 64px; cursor: pointer; }
+  .rp-tip .rp-skip { font-size: 12px; margin-left: 4px; color: var(--muted); }
+  /* the field Clue is asking about: a soft pink glow + a small marker on the label */
+  #lost .rp-row.asking .fin, #lost .rp-row.asking .rp-chip:not(.on) { box-shadow: 0 3px 10px rgba(16,40,139,.06), inset 0 0 0 1.5px #f8b6ff; }
+  #lost .rp-row.asking .rp-label span { color: var(--navy); font-weight: 700; }
+  #lost .rp-row.asking .rp-label svg { filter: drop-shadow(0 0 4px rgba(243,124,255,.6)); }
   .rp-tip b { color: var(--navy); }
   .rp-ready { display: flex; align-items: center; gap: 8px; padding: 0 4px; }
   .rp-ready span { flex: 1; font-size: 13px; font-weight: 700; color: #00594d; }
@@ -1807,7 +1812,7 @@
       // a small copy of the photo (survives a page reload on the phone)
       shrinkPhoto(e.target.files[0]).then(url => {
         S.lostPhoto = url;
-        S.photoKind = null; S.photoLook = null; S.photoBreed = null; S.photoColour = null; S.photoNote = 'AI is looking at the photo…'; render();
+        S.photoKind = null; S.photoAck = false; S.photoAckK = null; S.photoLook = null; S.photoBreed = null; S.photoColour = null; S.photoNote = 'AI is looking at the photo…'; render();
         analysePhoto(S.lostPhoto);
       });
     }
@@ -2276,6 +2281,16 @@
       </section>
       <p class="note rp-privacy">🔒 Photo, description and area are public · your contact stays private until you choose to share it.</p>`;
   }
+  // what Clue asks next: required first (animal → where → when → contact), then optional ones you can skip
+  function rpNext() {
+    const filled = S.fields.some(f => f.v && !['species', 'city'].includes(f.k));
+    if (!S.lostPhoto && !filled && !S.skipped.has('start')) return 'start';
+    if (!F('species').v) return 'species';
+    if (!F('city').v && !F('lost').v) return 'where';
+    if (!F('time').v) return 'time';
+    if (!F('contact').v) return 'contact';
+    return ['name', 'traits', 'chip'].find(x => !F(x).v && !S.skipped.has(x)) || null;
+  }
   function renderLostAi() {
     if (!S.lostPhoto) setTimeout(() => loadMobilenet().catch(() => {}), 1500); // warm up the photo model while the user types
     if (!$('#lostAi')) return;
@@ -2287,9 +2302,27 @@
     $('#rpSub').textContent = has ? 'I’ve recognised some details from the photo. Please check them and add what’s missing.' : 'Add a photo, and I’ll recognise key details. You can then add the rest by voice or text.';
     const left = requiredLeft();
     $('#dockReady').hidden = left.length > 0;
-    const anyFilled = S.fields.some(f => f.v && f.k !== 'species' && f.k !== 'city');
-    $('#replyInput').placeholder = $('#replyInput').dataset.ph = anyFilled || has ? 'Add anything else…' : 'Tell me — voice or text';
-    $('#rpTip').hidden = anyFilled || has || left.length === 0;
+    // Clue walks you through the form: after every step he asks for the next thing that's missing
+    const k = rpNext(); S.asking = k;
+    const n = S.pet || (S.species ? `your ${S.species}` : 'your pet');
+    const ask = {
+      start: '<b>Start with a photo</b> — or just tell me what happened, and I’ll fill in the form.',
+      species: '<b>What kind of animal is it?</b> Tap one above — or tell me.',
+      where: `<b>Where did you last see ${esc(n)}?</b> A street, park or landmark.`,
+      time: '<b>When was that?</b> Tap a time above — or just tell me.',
+      contact: '<b>How can people reach you?</b> Type a phone number or email.',
+      name: `<b>What’s ${S.species ? 'your ' + esc(S.species) + '’s' : 'your pet’s'} name?</b> Optional — skip if you don’t know.`,
+      traits: `<b>Anything special about ${esc(n)}?</b> Collar, marks or character — optional.`,
+      chip: `<b>Is ${esc(n)} microchipped or wearing a collar?</b> Optional.`,
+    }[k];
+    // say what the photo showed, once, in front of the next question
+    if (S.photoAckK && S.photoAckK !== k) S.photoAck = true; // the "nice photo" line goes away after the next step
+    const photoSaid = S.lostPhoto && S.photoKind && !S.photoAck ? `Nice photo — I see a ${esc(S.photoKind.toLowerCase())}! ` : '';
+    if (photoSaid) S.photoAckK = k;
+    $('#rpTip').innerHTML = k ? `${photoSaid}${ask}${['name', 'traits', 'chip'].includes(k) ? ' <button class="link-btn rp-skip" data-rp-skip>Skip</button>' : ''}` : '';
+    $('#rpTip').hidden = !k;
+    $$('#lost .rp-row').forEach(r => r.classList.toggle('asking', r.dataset.k === k || (k === 'where' && r.dataset.k === 'lost')));
+    $('#replyInput').placeholder = $('#replyInput').dataset.ph = { start: 'Tell me — voice or text', contact: 'Phone or email…', where: 'e.g. near the park on Main Street', time: 'e.g. this morning, an hour ago' }[k] || (k ? 'Type or tell me…' : 'Add anything else…');
     renderOwner();
   }
 
@@ -2327,12 +2360,23 @@
       return toast(`Tell me, or fill in: ${left.map(f => f.label.toLowerCase()).join(', ')}`);
     }
     const before = Object.fromEntries(S.fields.map(f => [f.k, f.v]));
-    const v = autocorrect(typed);
-    parseStory(v, { merge: true });
+    const asked = S.asking && S.asking !== 'start' ? S.asking : null;
+    // names and places are kept as typed; everything else gets typo-corrected
+    const v = ['name', 'where', 'contact'].includes(asked) ? typed : autocorrect(typed);
+    parseStory(v, { merge: true, asked });
     // contact: an email or a phone number anywhere in the message
     const em = typed.match(/[^\s@,;]+@[^\s@,;]+\.[a-z]{2,}/i), ph = typed.match(/\+?\d[\d\s()-]{6,}\d/);
     const c = (em && em[0]) || (ph && ph[0].trim());
     if (c && !F('contact').v) { Object.assign(F('contact'), { v: c, s: 'check' }); noteContact(c); }
+    // the answer belongs to the question Clue just asked, even if it didn't match a pattern
+    const plain = typed.replace(/[.!]+$/, '').trim();
+    if (asked === 'species' && !F('species').v) Object.assign(F('species'), { v: cap(plain.replace(/^(it'?s|it is|a|an|my|это)\s+/i, '')), s: 'check' });
+    if (asked === 'where' && !F('lost').v && !F('city').v) { const city = findCity(plain); if (city) Object.assign(F('city'), { v: city, s: 'check' }); else { S.saidPlace = normPlace(plain.replace(/^(near|at|in|by|возле|около|у|в|на)\s+/i, '')); Object.assign(F('lost'), { v: S.saidPlace, s: 'check' }); } }
+    if (asked === 'time' && !F('time').v) { const ch = chipFromText(plain); Object.assign(F('time'), { v: ch ? timeFromChip(ch) : cap(plain), s: 'check', chip: ch }); }
+    if (asked === 'contact' && !F('contact').v) { Object.assign(F('contact'), { v: plain, s: 'check' }); noteContact(plain); }
+    if (asked === 'name' && !F('name').v) { const nm = cap(plain.split(/[\s,.]+/).filter(w => !/^(her|his|its|name|is|named|called|зовут|кличка|имя|его|её|ее)$/i.test(w))[0] || plain); setPet(nm); Object.assign(F('name'), { v: nm, s: 'check' }); }
+    if (asked === 'traits' && !F('traits').v) Object.assign(F('traits'), { v: cap(plain), s: 'check' });
+    if (asked === 'chip' && !F('chip').v) Object.assign(F('chip'), { v: cap(plain), s: 'check' });
     if (F('species').v) S.species = F('species').v.toLowerCase();
     $('#replyInput').value = '';
     const changed = S.fields.filter(f => f.v && f.v !== before[f.k] && f.k !== 'home').map(f => f.k === 'lost' || f.k === 'city' ? 'where' : f.label.toLowerCase());
@@ -2341,6 +2385,9 @@
   });
 
   document.addEventListener('click', e => {
+    if (e.target.closest('[data-rp-skip]')) { S.skipped.add(S.asking); return render(); }
+    // tapping Clue's question shows the field he's asking about
+    if (e.target.closest('#rpTip') && S.asking) { const r = $(`#lost .rp-row[data-k="${S.asking === 'where' ? 'lost' : S.asking}"]`); if (r) r.scrollIntoView({ behavior: 'smooth', block: 'center' }); return; }
     const sc = e.target.closest('[data-species]');
     if (sc) {
       let val = sc.dataset.species;
