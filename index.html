@@ -876,7 +876,7 @@
   .ns-pic { width: 128px; height: 112px; flex: none; border-radius: 20px; background: #dfe5fa center/cover; box-shadow: 0 8px 18px rgba(16,40,139,.14); display: grid; place-items: center; font-size: 46px; }
   .ns-pic.none { background: linear-gradient(160deg, #e6eaf8, #d6def8); }
   .ns-info { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 4px; }
-  .ns-tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 13px; background: #d7262e; color: #fff; font-size: 12.5px; font-weight: 700; }
+  .ns-tag { align-self: flex-start; display: inline-flex; align-items: center; gap: 5px; height: 26px; padding: 0 10px; border-radius: 13px; background: #b02fc0; color: #fff; font-size: 12.5px; font-weight: 700; box-shadow: 0 4px 10px rgba(176,47,192,.25); }
   .ns-tag svg { width: 15px; height: 15px; }
   .ns-tag svg * { fill: #fff !important; stroke: #fff !important; }
   .ns-name { font-size: 26px; line-height: 30px; font-weight: 800; letter-spacing: -.6px; margin: 2px 0 2px; }
@@ -905,7 +905,10 @@
   .ns-24 { margin-top: 22px; }
   .ns-24 summary { list-style: none; display: flex; align-items: center; gap: 10px; cursor: pointer; padding: 6px 0; }
   .ns-24 summary::-webkit-details-marker { display: none; }
-  .ns-24 summary span { flex: 1; font-size: 17px; font-weight: 800; letter-spacing: -.3px; }
+  .ns-24 summary span { flex: 1; font-size: 17px; font-weight: 800; letter-spacing: -.3px; color: #b02fc0; }
+  .ns-24 summary svg rect { stroke: #b02fc0; fill: #fbe3fe; }
+  .ns-24 summary svg path { stroke: #b02fc0; }
+  .ns-24 .ns-fold { color: #b02fc0; }
   .ns-fold { font-style: normal; font-size: 20px; color: var(--muted); transition: transform .2s; }
   .ns-24[open] .ns-fold { transform: rotate(180deg); }
   .ns-24 .nm-tips { margin-top: 8px; }
@@ -1175,7 +1178,7 @@
 
   <!-- 1 · the report itself: summary, share / print, and the contact the poster needs — straight on the page, no cards -->
   <section class="ns-sec">
-    <div class="ns-head"><h3>Your lost pet report</h3><span class="ns-live"><i></i>Live</span></div>
+    <div class="ns-head"><h3>Your lost pet report</h3></div>
     <button class="ns-report" data-go="lost" aria-label="Open the report"><span class="ns-pic" id="nsPic"></span><span class="ns-info" id="nsInfo"></span><span class="ns-chev" aria-hidden="true">›</span></button>
     <div class="ns-actions">
       <button class="ns-btn" id="nmShare"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 3v12M7.5 7.5 12 3l4.5 4.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M5 12v6.5A1.5 1.5 0 0 0 6.5 20h11a1.5 1.5 0 0 0 1.5-1.5V12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>Share post</button>
