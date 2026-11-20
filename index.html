@@ -738,11 +738,15 @@
   .topic small { display: block; font-size: 11px; line-height: 14px; color: var(--sub); margin-top: 2px; }
   .topic.c-navy { background: #d6def8; } .topic.c-pink { background: #f5d8fa; } .topic.c-green { background: #cdeadb; } .topic.c-lilac { background: #dfd9fc; }
 
-  /* ---------- bottom tab bar: on Home and the main sections ---------- */
-  .tabbar { display: none; position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 393px; height: calc(92px + env(safe-area-inset-bottom)); z-index: 12; }
-  body[data-screen="home"] .tabbar, body[data-screen="hub"] .tabbar, body[data-screen="services"] .tabbar,
-  body[data-screen="adoption"] .tabbar, body[data-screen="shop"] .tabbar { display: block; }
-  body[data-screen="hub"] .screen.active, body[data-screen="services"] .screen.active, body[data-screen="adoption"] .screen.active, body[data-screen="shop"] .screen.active { padding-bottom: 120px; }
+  /* ---------- bottom tab bar: on every page ---------- */
+  .tabbar { display: block; position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 393px; height: calc(92px + env(safe-area-inset-bottom)); z-index: 12; }
+  .screen.active { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
+  /* phones: while typing, the keyboard needs the room — the bar steps aside */
+  @media (pointer: coarse) { body.typing .tabbar { display: none; } }
+  /* report page: Clue's panel floats just above the bar */
+  #lost.screen.active { padding-bottom: 0; }
+  #lost .ai-dock { bottom: calc(104px + env(safe-area-inset-bottom)); margin: 8px -8px 104px; padding: 10px 14px 12px; border-radius: 24px; box-shadow: 0 10px 30px rgba(16,40,139,.14); }
+  body[data-screen="lost"] .toast { bottom: 250px; }
   .tab-bg { position: absolute; left: 0; top: 0; width: 100%; height: 92px; filter: drop-shadow(0 -3px 10px rgba(16,40,139,.07)); }
   .tabbar::after { content: ''; position: absolute; left: 0; right: 0; top: 91px; bottom: 0; background: #fff; }
   .tab-fab { position: absolute; left: 50%; top: -22px; width: 54px; height: 54px; margin-left: -27px; border-radius: 50%; background: var(--pink); display: grid; place-items: center; box-shadow: 0 8px 18px rgba(243,124,255,.45); z-index: 1; }
@@ -755,8 +759,8 @@
   .tab.on svg { background: #e6eaf8; }
   .tab.plus { justify-content: flex-end; padding-top: 38px; color: #c23ad1; white-space: nowrap; letter-spacing: -.2px; }
   /* the flow button sits above the bar */
-  body[data-screen="home"] .nav-btn, body[data-screen="hub"] .nav-btn, body[data-screen="services"] .nav-btn, body[data-screen="adoption"] .nav-btn, body[data-screen="shop"] .nav-btn { bottom: 108px; }
-  body[data-screen="home"] .toast, body[data-screen="hub"] .toast, body[data-screen="services"] .toast, body[data-screen="adoption"] .toast, body[data-screen="shop"] .toast { bottom: 120px; }
+  .nav-btn { bottom: 108px; }
+  .toast { bottom: 120px; }
 </style>
 </head>
 <body>
