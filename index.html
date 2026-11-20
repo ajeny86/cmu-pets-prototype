@@ -13,8 +13,8 @@
   :root {
     /* buddy design system (Figma · POC B v2) */
     --navy: #10288b; --pink: #f37cff; --green: #05a544; --green-dark: #00594d; --teal: #175a54;
-    --periwinkle: #9ea8cc; --periwinkle-2: #8090cb; --mint: #f8fff7; --cream: #fffdf8; --sage: #a9d4c4;
-    --ink: var(--navy); --muted: #6f7cab; --line: #d9e1d5; --line-2: var(--periwinkle); --card-line: #d4d4d4;
+    --periwinkle: #9ea8cc; --periwinkle-2: #8090cb; --mint: #f5f7fd; --cream: #fffdf8; --sage: #a9d4c4;
+    --ink: var(--navy); --muted: #5a6696; --line: #dfe3f0; --line-2: var(--periwinkle); --card-line: #d4d4d4;
     --surface: var(--mint); --white: #ffffff; --accent: var(--green); --accent-soft: #d6f2df;
     --danger: #e0452b; --page: #f5f5f5;
     --btn-shadow: 0 6px 8px rgba(0, 89, 77, .12);
@@ -644,8 +644,8 @@
   /* ================= v6 look (start-screen mockup, applied everywhere) =================
      soft mint→blue page, no white header bar, big navy titles, frosted cards without hard borders,
      navy primary buttons, blue icons with a light fill, Clue as the AI guide */
-  :root { --page-grad: linear-gradient(180deg, #f3f7f5 0%, #eef4f2 55%, #eaf0f6 100%); --frost: rgba(255,255,255,.72); --soft-shadow: 0 8px 22px rgba(16,40,139,.07); --sub: #4a5683; }
-  html, body { background: #e9eeec; }
+  :root { --page-grad: linear-gradient(180deg, #f5f6fc 0%, #eff1fa 55%, #eaedf8 100%); --frost: rgba(255,255,255,.72); --soft-shadow: 0 8px 22px rgba(16,40,139,.07); --sub: #4a5683; }
+  html, body { background: #e6e9f3; }
   .screen, .screen.flow, .screen.home { background: var(--page-grad); }
   @media (min-width: 500px) {
     .screen { border-radius: 32px; box-shadow: 0 20px 60px rgba(16,40,139,.14), 0 0 0 1px rgba(16,40,139,.04); }
@@ -724,7 +724,7 @@
   .ask-pill { display: flex; align-items: center; gap: 4px; min-height: 56px; border-radius: 28px; background: #fff; padding: 7px 7px 7px 20px; box-shadow: 0 10px 28px rgba(16,40,139,.10); cursor: text; }
   .ask-pill:focus-within { box-shadow: 0 10px 28px rgba(16,40,139,.16), inset 0 0 0 1.5px #c9d1ee; }
   .ask-pill textarea { flex: 1; border: 0; outline: none; resize: none; background: transparent; font-size: 16px; line-height: 21px; color: var(--navy); height: 22px; min-height: 22px; max-height: 88px; padding: 0; }
-  .ask-pill textarea::placeholder { color: #8a93b3; }
+  .ask-pill textarea::placeholder { color: #767fa3; }
   .ask-pill .ai-mic { width: 40px; height: 40px; flex: none; }
   .ask-pill .ai-send { width: 42px; height: 42px; flex: none; border-radius: 50%; display: grid; place-items: center; }
   .topics-h { margin-top: 30px; font-size: 18px; font-weight: 800; letter-spacing: -.4px; }
@@ -816,7 +816,7 @@
   .rp-label i { font-style: normal; color: #c23ad1; }
   .rp-field { position: relative; display: flex; align-items: center; }
   #lost .rp-field .fin { width: 100%; height: 44px; border: 0; border-radius: 22px; background: rgba(255,255,255,.9); box-shadow: 0 3px 10px rgba(16,40,139,.06); padding: 0 40px 0 16px; font-size: 14.5px; color: var(--navy); outline: none; }
-  #lost .rp-field .fin::placeholder { color: #8a93b3; }
+  #lost .rp-field .fin::placeholder { color: #767fa3; }
   #lost .rp-field .fin:focus { background: #fff; box-shadow: 0 3px 10px rgba(16,40,139,.08), inset 0 0 0 1.5px var(--navy); }
   #lost .rp-field .fin.from-ai, #lost .rp-chip.on.from-ai { box-shadow: 0 3px 10px rgba(16,40,139,.06), inset 0 0 0 1.5px #f37cff; font-weight: 600; }
   .rp-field .rp-ok, .rp-field .rp-x, .rp-field .rp-in-btn { position: absolute; right: 12px; width: 20px; height: 20px; display: grid; place-items: center; }
@@ -850,7 +850,7 @@
   .rp-talk { display: flex; align-items: center; gap: 8px; }
   .rp-clue { width: 52px; height: auto; flex: none; margin: -14px -2px -6px 0; filter: drop-shadow(0 6px 8px rgba(91,75,196,.2)); }
   #lost .rp-talk textarea { flex: 1; min-width: 0; height: 46px; min-height: 46px; max-height: 96px; border: 0; border-radius: 23px; background: #f1f4fb; padding: 13px 16px; font-size: 14px; line-height: 20px; color: var(--navy); resize: none; outline: none; }
-  #lost .rp-talk textarea::placeholder { color: #7a84a8; }
+  #lost .rp-talk textarea::placeholder { color: #767fa3; }
   #lost .rp-talk textarea:focus { background: #fff; box-shadow: inset 0 0 0 1.5px var(--navy); }
   .rp-mic { width: 46px; height: 46px; flex: none; border-radius: 50%; background: #fff; box-shadow: 0 4px 12px rgba(16,40,139,.14); display: grid; place-items: center; }
   .rp-mic.rec { background: #fde8fe; animation: pulse-pink 1.1s infinite; }
@@ -1402,7 +1402,7 @@
         { k: 'time',   label: 'When',           v: '', s: 'missing',  req: true },
         { k: 'chip',   label: 'Microchip / collar', v: '', s: 'optional' },
         { k: 'home',   label: 'Home Location',  v: '', s: 'optional' },
-        { k: 'contact', label: 'Your contact',  v: '', s: 'missing',  req: true },
+        { k: 'contact', label: 'Your contact',  v: '', s: 'optional' },
       ],
       found: [
         { k: 'animal', label: 'Animal',        v: 'Dog · medium size (from photo)' },
@@ -2277,7 +2277,8 @@
         ${rpRow(F('chip'), 'chip', `<div class="rp-field">${fin(F('chip'), 'Number, collar or none')}${tick(F('chip'))}</div>`)}
       </section>
       <section class="rp-sec"><h3>Contact</h3>
-        ${rpRow(F('contact'), 'user', `<div class="rp-field">${fin(F('contact'), 'Phone or email for a reply', ' inputmode="email"')}${tick(F('contact'))}</div>`)}
+        ${rpRow(F('contact'), 'user', `<div class="rp-field">${fin(F('contact'), 'Phone or email (optional)', ' inputmode="email"')}${tick(F('contact'))}</div>
+          ${F('contact').v ? '' : '<p class="rp-hint">Add it if you want us to search for you and tell you about a match. Without it you can still check the map and reports yourself.</p>'}`)}
       </section>
       <p class="note rp-privacy">🔒 Photo, description and area are public · your contact stays private until you choose to share it.</p>`;
   }
@@ -2288,8 +2289,7 @@
     if (!F('species').v) return 'species';
     if (!F('city').v && !F('lost').v) return 'where';
     if (!F('time').v) return 'time';
-    if (!F('contact').v) return 'contact';
-    return ['name', 'traits', 'chip'].find(x => !F(x).v && !S.skipped.has(x)) || null;
+    return ['contact', 'name', 'traits', 'chip'].find(x => !F(x).v && !S.skipped.has(x)) || null;
   }
   function renderLostAi() {
     if (!S.lostPhoto) setTimeout(() => loadMobilenet().catch(() => {}), 1500); // warm up the photo model while the user types
@@ -2310,7 +2310,7 @@
       species: '<b>What kind of animal is it?</b> Tap one above — or tell me.',
       where: `<b>Where did you last see ${esc(n)}?</b> A street, park or landmark.`,
       time: '<b>When was that?</b> Tap a time above — or just tell me.',
-      contact: '<b>How can people reach you?</b> Type a phone number or email.',
+      contact: `<b>Want me to keep searching and tell you when someone finds ${esc(n)}?</b> Add a phone or email — optional.`,
       name: `<b>What’s ${S.species ? 'your ' + esc(S.species) + '’s' : 'your pet’s'} name?</b> Optional — skip if you don’t know.`,
       traits: `<b>Anything special about ${esc(n)}?</b> Collar, marks or character — optional.`,
       chip: `<b>Is ${esc(n)} microchipped or wearing a collar?</b> Optional.`,
@@ -2319,7 +2319,7 @@
     if (S.photoAckK && S.photoAckK !== k) S.photoAck = true; // the "nice photo" line goes away after the next step
     const photoSaid = S.lostPhoto && S.photoKind && !S.photoAck ? `Nice photo — I see a ${esc(S.photoKind.toLowerCase())}! ` : '';
     if (photoSaid) S.photoAckK = k;
-    $('#rpTip').innerHTML = k ? `${photoSaid}${ask}${['name', 'traits', 'chip'].includes(k) ? ' <button class="link-btn rp-skip" data-rp-skip>Skip</button>' : ''}` : '';
+    $('#rpTip').innerHTML = k ? `${photoSaid}${ask}${['contact', 'name', 'traits', 'chip'].includes(k) ? ' <button class="link-btn rp-skip" data-rp-skip>Skip</button>' : ''}` : '';
     $('#rpTip').hidden = !k;
     $$('#lost .rp-row').forEach(r => r.classList.toggle('asking', r.dataset.k === k || (k === 'where' && r.dataset.k === 'lost')));
     $('#replyInput').placeholder = $('#replyInput').dataset.ph = { start: 'Tell me — voice or text', contact: 'Phone or email…', where: 'e.g. near the park on Main Street', time: 'e.g. this morning, an hour ago' }[k] || (k ? 'Type or tell me…' : 'Add anything else…');
