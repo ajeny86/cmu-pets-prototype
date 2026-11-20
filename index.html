@@ -852,15 +852,16 @@
   #lost .rp-talk textarea { flex: 1; min-width: 0; height: 46px; min-height: 46px; max-height: 96px; border: 0; border-radius: 23px; background: #f1f4fb; padding: 13px 16px; font-size: 14px; line-height: 20px; color: var(--navy); resize: none; outline: none; }
   #lost .rp-talk textarea::placeholder { color: #767fa3; }
   #lost .rp-talk textarea:focus { background: #fff; box-shadow: inset 0 0 0 1.5px var(--navy); }
-  .rp-mic { width: 46px; height: 46px; flex: none; border-radius: 50%; background: #fff; box-shadow: 0 4px 12px rgba(16,40,139,.14); display: grid; place-items: center; }
+  /* chat-style field: text, mic and a quiet send arrow inside one pill */
+  .rp-box { flex: 1; min-width: 0; display: flex; align-items: center; gap: 2px; height: 50px; border-radius: 25px; background: #f1f4fb; padding: 0 5px 0 4px; }
+  .rp-box:focus-within { background: #fff; box-shadow: inset 0 0 0 1.5px #c9d1ee; }
+  #lost .rp-box textarea { flex: 1; min-width: 0; height: 22px; min-height: 22px; max-height: 66px; border: 0; background: transparent; padding: 0 0 0 12px; font-size: 14.5px; line-height: 21px; color: var(--navy); resize: none; outline: none; box-shadow: none !important; white-space: nowrap; overflow-x: hidden; }
+  #lost .rp-box textarea::placeholder { color: #767fa3; }
+  .rp-mic { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; background: none; }
+  .rp-mic:hover { background: #e6eaf8; }
   .rp-mic.rec { background: #fde8fe; animation: pulse-pink 1.1s infinite; }
-  /* send is navy — the pink is kept for the + in the tab bar */
-  .rp-send { width: 46px; height: 46px; flex: none; border-radius: 23px; background: var(--navy); color: #fff; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 6px 14px rgba(16,40,139,.28); transition: width .2s; }
-  .rp-send-label { display: none; font-size: 15px; font-weight: 700; }
-  /* one main button: "Continue →" when everything needed is in and nothing is typed; a send arrow while you type */
-  .rp-send.go { width: auto; padding: 0 14px 0 16px; }
-  #lost .rp-talk textarea { white-space: nowrap; overflow-x: hidden; }
-  .rp-send.go .rp-send-label { display: inline; }
+  .rp-send { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #dfe4f5; color: #8f99c0; transition: background .15s, color .15s; }
+  .rp-send.on { background: var(--navy); color: #fff; }
 </style>
 </head>
 <body>
@@ -972,13 +973,15 @@
 
   <!-- Clue: pinned above the tab bar — talk or type, and the answer is spread over the fields -->
   <div class="ai-dock rp-dock" id="lostAi">
-    <div class="rp-ready" id="dockReady" hidden><span id="lostAiAsk">✓ All set — I can start searching now</span><button class="rp-go" id="readyGo" hidden>Continue →</button></div>
+    <div class="rp-ready" id="dockReady" hidden><span id="lostAiAsk">✓ All set — I can start searching now</span><button class="rp-go" id="readyGo">Continue →</button></div>
     <p class="rp-tip" id="rpTip"><b>Tell me the details</b> by voice or text, and I’ll fill in the form.</p>
     <div class="rp-talk">
       <img class="rp-clue" src="assets/clue.png" width="52" height="54" alt="Clue">
-      <textarea id="replyInput" rows="1" placeholder="Tell me — voice or text"></textarea>
-      <button class="rp-mic" id="dockMic" aria-label="Speak"><svg viewBox="0 0 24 24" width="22" height="22"><rect x="9" y="3" width="6" height="11" rx="3" fill="url(#icf)" stroke="#10288b" stroke-width="1.8"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none" stroke="#10288b" stroke-width="1.8" stroke-linecap="round"/></svg></button>
-      <button class="rp-send" id="sendBtn" aria-label="Send"><span class="rp-send-label">Continue</span><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      <div class="rp-box">
+        <textarea id="replyInput" rows="1" placeholder="Tell me — voice or text"></textarea>
+        <button class="rp-mic" id="dockMic" aria-label="Speak"><svg viewBox="0 0 24 24" width="20" height="20"><rect x="9" y="3" width="6" height="11" rx="3" fill="url(#icf)" stroke="#10288b" stroke-width="1.8"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none" stroke="#10288b" stroke-width="1.8" stroke-linecap="round"/></svg></button>
+        <button class="rp-send" id="sendBtn" aria-label="Send"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </div>
     </div>
   </div>
 </section>
@@ -2288,9 +2291,8 @@
       <p class="note rp-privacy">🔒 Photo, description and area are public · your contact stays private until you choose to share it.</p>`;
   }
   function rpSendMode() {
-    const go = !requiredLeft().length && !$('#replyInput').value.trim();
-    $('#sendBtn').classList.toggle('go', go);
-    $('#sendBtn').setAttribute('aria-label', go ? 'Continue' : 'Send');
+    // like any AI chat: the send arrow is quiet until there's something to send
+    $('#sendBtn').classList.toggle('on', !!$('#replyInput').value.trim());
   }
   $('#replyInput').addEventListener('input', rpSendMode);
   // what Clue asks next: required first (animal → where → when → contact), then optional ones you can skip
