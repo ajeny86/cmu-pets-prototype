@@ -667,6 +667,9 @@
   .sm-radius { margin-top: 10px; font-size: 13.5px; line-height: 19px; color: var(--sub); }
   .sm-radius b { color: #b02fc0; }
   .sm-list .num.last { background: var(--pink); }
+  .lnum.vet, .nm-row .num.vet { background: #fff; color: #0a7a3e; box-shadow: inset 0 0 0 2px #0a7a3e, 0 1px 4px rgba(16,40,139,.3); }
+  .lg-vet { background: #fff; box-shadow: inset 0 0 0 2px #0a7a3e; }
+  .sm-vet-sub { margin: 4px 0 2px; }
   .sm-list .near.sm-latest { background: #b02fc0; }
   .sm-list .nm-row { cursor: default; }
   .sm-list .nm-row + .nm-row { border-top-color: rgba(16,40,139,.07); }
@@ -885,6 +888,12 @@
   .rp-chip:hover { background: #fff; }
   .rp-chip.on { background: #dfe5fa; box-shadow: inset 0 0 0 1.5px var(--navy); }
   .rp-hint { font-size: 12px; color: var(--muted); margin: 8px 0 6px; }
+  .rp-when { position: relative; display: flex; flex-direction: column; gap: 2px; min-height: 46px; padding: 11px 16px 11px 42px; margin-bottom: 8px; border-radius: 23px; background: #fff; box-shadow: 0 3px 10px rgba(16,40,139,.06); font-size: 15px; line-height: 20px; font-weight: 700; color: var(--navy); }
+  .rp-when.from-ai { box-shadow: 0 3px 10px rgba(16,40,139,.06), inset 0 0 0 1.5px #f37cff; }
+  .rp-when svg { position: absolute; left: 15px; top: 13px; width: 18px; height: 18px; }
+  .rp-when i { font-style: normal; font-size: 11.5px; line-height: 15px; font-weight: 600; color: #b02fc0; }
+  .rp-exact { position: relative; padding-right: 6px; }
+  .rp-exact input { border: 0; background: none; font: inherit; color: inherit; width: 84px; padding: 0; }
   .rp-map { margin-top: 8px; height: 150px !important; border-radius: 18px !important; }
   .rp-row.need .fin, .rp-row.need .rp-chip { box-shadow: inset 0 0 0 1.5px #e0452b; }
   .rp-privacy { margin-top: 18px; }
@@ -1334,6 +1343,7 @@
       <span><i class="lg-seen"></i>Seen</span>
       <span><i class="lg-last"></i>Last seen</span>
       <span><i class="lg-area"></i>Where to search</span>
+      <span><i class="lg-vet"></i>Vets &amp; shelters</span>
     </div>
     <p class="sm-radius"><b>Search within ~<span id="smRadius">600 m</span></b> of the last sighting. The circle grows the longer it’s been — scared dogs usually stay within about 1 km and hide during the day.</p>
     <div class="ns-actions">
@@ -1345,6 +1355,12 @@
   <section class="ns-sec">
     <div class="ns-head"><h3>Where he was seen</h3></div>
     <div class="nm-list sm-list" id="smList"></div>
+  </section>
+
+  <section class="ns-sec">
+    <div class="ns-head"><h3>Vets &amp; shelters nearby</h3></div>
+    <p class="sec-text sm-vet-sub">Someone may have brought <span class="smName">Max</span> in, or will. Call and ask — nearest to where he was last seen:</p>
+    <div class="nm-list ns-vets sm-vets" id="smVets"><p class="sec-text">Looking for vets and shelters nearby…</p></div>
   </section>
 
   <details class="ns-24" open><summary><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="url(#icf)" stroke="#5241c0" stroke-width="1.8"/><path d="M8 12.2l2.8 2.8L16 9.6" fill="none" stroke="#5241c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>How to get a scared dog back</span><i class="ns-fold" aria-hidden="true">⌄</i></summary>
@@ -1735,7 +1751,7 @@
     return '<span></span>';
   }
   // ---- Time / Date: quick chips + date & time picker (no typing) ----
-  const TIME_CHIPS = ['Just now', '1–2 hours ago', 'This morning', 'Yesterday'];
+  const TIME_CHIPS = ['Just now', '1–2 hours ago', 'Today', 'Yesterday'];
   // each quick choice becomes a concrete date + time (or time window)
   const fmtDay = d => d.toLocaleDateString('en-GB', { weekday: 'short', day: 'numeric', month: 'short' });
   const fmtHM = d => d.toLocaleTimeString('en-GB', { hour: '2-digit', minute: '2-digit' });
@@ -1760,7 +1776,60 @@
   const isoDay = d => { const x = new Date(d); x.setMinutes(x.getMinutes() - x.getTimezoneOffset()); return x.toISOString().slice(0, 10); };
   function dayLabel(f) {
     const p = DAY_PARTS.find(x => x[0] === f.part);
-    return `${fmtDay(new Date(f.date + 'T12:00'))} · ${p ? `${p[0].toLowerCase()} (${p[1]})` : 'time of day not sure'}`;
+    const day = f.date === isoDay(new Date()) ? 'Today' : fmtDay(new Date(f.date + 'T12:00'));
+    if (f.exact) return `${day} · ${f.exact}`;
+    return `${day} · ${p ? `${p[0].toLowerCase()} (${p[1]})` : 'time of day not sure'}`;
+  }
+  const partOfHour = h => h >= 6 && h < 12 ? 'Morning' : h >= 12 && h < 18 ? 'Afternoon' : h >= 18 && h < 23 ? 'Evening' : 'Night';
+  // "yesterday evening", "вчера вечером", "on Monday at 5 pm", "20 ноября утром" → a day + part of the day (or an exact time)
+  function parseWhen(text) {
+    const s = ' ' + text.toLowerCase().replace(/ё/g, 'е') + ' ', now = new Date();
+    const day = n => { const d = new Date(now); d.setDate(d.getDate() - n); return isoDay(d); };
+    if (/just now|right now|только что|прямо сейчас/.test(s)) return { chip: 'Just now' };
+    if (/(\b(an?|one|two|1|2|a couple of)\s+hours?\s+ago|\bhour ago|(\d+|a few|few)\s+minutes?\s+ago|(час|пару часов|два часа|1 час|2 часа|полчаса|\d+\s+минут\w*)\s+назад)/.test(s)) return { chip: '1–2 hours ago' };
+    const NUM = { two: 2, three: 3, four: 4, five: 5, six: 6, два: 2, две: 2, три: 3, четыре: 4, пять: 5, шесть: 6 };
+    let date = null, m;
+    if (/day before yesterday|позавчера/.test(s)) date = day(2);
+    else if (/yesterday|вчера|last night/.test(s)) date = day(1);
+    else if ((m = s.match(/(\d+|two|three|four|five|six|два|две|три|четыре|пять|шесть)\s+(days?|дн\w*|дня)\s+(ago|назад)/))) date = day(+m[1] || NUM[m[1]] || 2);
+    if (!date) {
+      const WD = [['sunday', 'воскресень'], ['monday', 'понедельник'], ['tuesday', 'вторник'], ['wednesday', 'сред'], ['thursday', 'четверг'], ['friday', 'пятниц'], ['saturday', 'суббот']];
+      const i = WD.findIndex(([en, ru]) => s.includes(en) || s.includes(ru));
+      if (i >= 0) date = day((now.getDay() - i + 7) % 7 || 7);
+    }
+    if (!date) {
+      const MON = [['jan', 'январ'], ['feb', 'феврал'], ['mar', 'март'], ['apr', 'апрел'], ['may', 'ма[яй]'], ['jun', 'июн'], ['jul', 'июл'], ['aug', 'август'], ['sep', 'сентябр'], ['oct', 'октябр'], ['nov', 'ноябр'], ['dec', 'декабр']];
+      for (let k = 0; k < 12 && !date; k++) {
+        const re = new RegExp(`(\\d{1,2})(?:st|nd|rd|th)?\\s+(?:of\\s+)?(?:${MON[k][0]}\\w*|${MON[k][1]}\\w*)|(?:${MON[k][0]}\\w*)\\s+(\\d{1,2})`);
+        const mm = s.match(re);
+        if (mm) { const d = new Date(now.getFullYear(), k, +(mm[1] || mm[2]), 12); if (d > now) d.setFullYear(d.getFullYear() - 1); date = isoDay(d); }
+      }
+    }
+    // part of the day
+    let part = null;
+    if (/morning|утр|с утра/.test(s)) part = 'Morning';
+    else if (/afternoon|lunch|noon|\bдн[её]м\b|в обед|после обеда/.test(s)) part = 'Afternoon';
+    else if (/evening|tonight|вечер/.test(s)) part = 'Evening';
+    else if (/night|ноч/.test(s)) part = 'Night';
+    // exact time: "at 17:30", "в 5 вечера", "at 5 pm"
+    let exact = null;
+    if ((m = s.match(/(\d{1,2})[:.](\d{2})/))) exact = [+m[1], +m[2]];
+    else if ((m = s.match(/(\d{1,2})\s*(am|pm|a\.m\.|p\.m\.)/))) exact = [(+m[1] % 12) + (/p/.test(m[2]) ? 12 : 0), 0];
+    else if ((m = s.match(/в\s+(\d{1,2})\s*(час\w*)?\s*(утра|дня|вечера|ночи)?/)) && (m[2] || m[3])) exact = [+m[1] + (/дня|вечера/.test(m[3] || '') && +m[1] < 12 ? 12 : 0), 0];
+    else if ((m = s.match(/\b(?:at|around|about|approximately)\s+(\d{1,2})(?![\d:.])(?!\s*(?:hours?|minutes?|days?|km|m\b))/))) exact = [+m[1] + (+m[1] < 12 && /afternoon|evening|tonight|вечер|дн[её]м/.test(s) ? 12 : 0), 0];
+    if (exact && exact[0] < 24) { part = partOfHour(exact[0]); exact = `${String(exact[0]).padStart(2, '0')}:${String(exact[1]).padStart(2, '0')}`; } else exact = null;
+    const weak = !date && !exact && !/today|сегодня/.test(s); // only "morning"/"вечером" — could be part of a description
+    if (!date && (part || exact || /today|сегодня/.test(s))) date = day(0);
+    if (!date) return null;
+    if (/last night/.test(s)) part = 'Night';
+    return { date, part, exact, weak };
+  }
+  function applyWhen(w) {
+    const f = F('time');
+    Object.assign(f, { chip: w.chip || null, date: w.date || null, part: w.part || null, exact: w.exact || null, s: 'check' });
+    f.v = w.chip ? timeFromChip(w.chip) : dayLabel(f);
+    // light up the matching quick choice ("yesterday evening" → Yesterday)
+    if (!w.chip && f.date) { const y = new Date(); y.setDate(y.getDate() - 1); f.chip = f.date === isoDay(new Date()) ? 'Today' : f.date === isoDay(y) ? 'Yesterday' : null; }
   }
   function timeRow(f) {
     const today = isoDay(new Date()), isToday = f.date === today, hour = new Date().getHours();
@@ -1822,15 +1891,15 @@
   document.addEventListener('click', e => {
     const t = e.target.closest('[data-time-pick]');
     if (t) {
-      const f = F('time'), chip = t.dataset.timePick; f.chip = chip; f.part = null;
-      // "Yesterday" is a day, not a time — ask which part of it
-      if (chip === 'Yesterday') { const y = new Date(); y.setDate(y.getDate() - 1); f.date = isoDay(y); return setField('time', dayLabel(f)); }
+      const f = F('time'), chip = t.dataset.timePick; f.chip = chip; f.part = null; f.exact = null;
+      // "Today" / "Yesterday" is a day, not a time — ask which part of it (or the exact time)
+      if (chip === 'Yesterday' || chip === 'Today') { const y = new Date(); if (chip === 'Yesterday') y.setDate(y.getDate() - 1); f.date = isoDay(y); return setField('time', dayLabel(f)); }
       f.date = null; return setField('time', timeFromChip(chip));
     }
     const tc = e.target.closest('[data-time-custom]');
     if (tc) { const i = tc.closest('.fcol, .rp-chips').querySelector('[data-time-date]'); i.hidden = false; try { i.showPicker(); } catch (_) { i.focus(); } return; }
     const tp = e.target.closest('[data-time-part]');
-    if (tp) { const f = F('time'); f.part = tp.dataset.timePart; return setField('time', dayLabel(f)); }
+    if (tp) { const f = F('time'); f.part = tp.dataset.timePart; f.exact = null; return setField('time', dayLabel(f)); }
     const sg = e.target.closest('[data-suggest]'); if (sg) { if (sg.dataset.k === 'lost') S.lostPin = null; return setField(sg.dataset.k || 'lost', sg.dataset.suggest); }
     if (e.target.closest('[data-loc-gps]')) {
       return useCurrentLocation();
@@ -1838,9 +1907,14 @@
     const lm = e.target.closest('[data-loc-map]'); if (lm) { const d = lm.closest('.details, #lostForm'); d.dataset.map = d.dataset.map === '1' ? '' : '1'; if (document.activeElement && document.activeElement.matches('[data-field]')) document.activeElement.blur(); return render(); }
   });
   document.addEventListener('change', e => {
+    if (e.target.matches('[data-time-exact]') && e.target.value) {
+      const f = F('time'); if (!f.date) f.date = isoDay(new Date());
+      f.exact = e.target.value; f.part = partOfHour(+e.target.value.slice(0, 2));
+      return setField('time', dayLabel(f));
+    }
     if (!e.target.matches('[data-time-date]') || !e.target.value) return;
     if (e.target.value > isoDay(new Date())) { toast('That date is in the future'); return; }
-    const f = F('time'); f.chip = null; f.date = e.target.value; f.part = null;
+    const f = F('time'); f.chip = null; f.date = e.target.value; f.part = null; f.exact = null;
     setField('time', dayLabel(f));
   });
 
@@ -2164,6 +2238,9 @@
     const fixes = [];
     text = fixLayout(text, fixes);
     const out = text.replace(/[A-Za-zА-Яа-яЁё']+/g, w => {
+      // an inflected form of a known word ("ошейником", "parks") is not a typo
+      const lw = w.toLowerCase();
+      for (let n = lw.length - 1; n >= Math.max(4, lw.length - 4); n--) if (knownWord(lw.slice(0, n))) return w;
       // a capitalised word in the middle of a sentence is probably a name — leave it alone
       if (/^[A-ZА-ЯЁ]/.test(w) && w.length > 1 && !/^[A-ZА-ЯЁ]+$/.test(w)) {
         const b = bestWord(w); if (!b || osaDistance(w.toLowerCase().replace(/ё/g, 'е'), b.replace(/ё/g, 'е')) > 1) return w;
@@ -2235,7 +2312,9 @@
   function normPlace(p) {
     const NOM = { 'парке': 'парк', 'сквере': 'сквер', 'улице': 'улица', 'лесу': 'лес', 'дворе': 'двор', 'доме': 'дом', 'районе': 'район', 'пляже': 'пляж', 'озере': 'озеро', 'площади': 'площадь', 'набережной': 'набережная', 'станции': 'станция', 'школы': 'школа', 'школе': 'школа', 'магазина': 'магазин', 'остановки': 'остановка', 'метро': 'метро', 'подъезда': 'подъезд', 'парка': 'парк', 'сквера': 'сквер', 'дома': 'дом' };
     // a place never ends with a time ("near the park this morning")
-    p = p.replace(/\s+(this morning|this evening|tonight|today|yesterday\b.*|just now|an? hours? ago|\d+\s*(hours?|minutes?|days?) ago|утром|вечером|сегодня|вчера.*|только что|час назад)\s*$/i, '').trim();
+    // dictated speech has no commas: a place ends where the next clause starts ("…near the station she is small…")
+    p = p.replace(/\s+(?:she|he|it|they|and|but|who|which|wearing|with (?:a|an|her|his)\b|around \d|about \d|at \d|when)\b.*$/i, '').trim();
+    p = p.replace(/\s+(this (morning|afternoon|evening)|tonight|today\b.*|yesterday\b.*|last night|on (mon|tues|wednes|thurs|fri|satur|sun)day\b.*|at \d.*|around \d.*|just now|an? hours? ago|\d+\s*(hours?|minutes?|days?) ago|утром|днём|днем|вечером|ночью|сегодня.*|вчера.*|позавчера.*|в \d.*|только что|час назад)\s*$/i, '').trim();
     const [w, ...rest] = p.split(/\s+/);
     return cap([NOM[w.toLowerCase()] || w, ...rest].join(' '));
   }
@@ -2245,13 +2324,13 @@
     const found = {};
     if (!merge) {
       S.transcript = raw; S.pet = ''; S.species = null; S.place = null; S.saidPlace = null; S.mark = null; S.skipped = new Set(); S.memberAsked = false; S.lostPin = null; S.photoNote = null; S.optionalMode = false; $$('[data-details]').forEach(d => { d.dataset.map = ''; });
-      S.fields.forEach(f => Object.assign(f, { v: '', s: f.req ? 'missing' : 'optional', fromPhoto: false, chip: null, date: null, part: null }));
+      S.fields.forEach(f => Object.assign(f, { v: '', s: f.req ? 'missing' : 'optional', fromPhoto: false, chip: null, date: null, part: null, exact: null }));
       S.lostPhoto = null; S.photoKind = null; S.photoLook = null; S.photoBreed = null; S.photoColour = null;
     } else S.transcript += ' ' + raw;
 
     // species
-    const isCat = /(кошк|кошеч|котик|котён|котен|(^|[^а-яё])кот([^а-яё]|$|а|у|ом|е|ик|ика)|\bcats?\b|kitten|kitty)/i.test(raw);
-    const isDog = /(собак|собач|пёс|(^|[^а-яё])пс[аы]|(^|[^а-яё])пес([^а-яё]|$)|псин|щен|\bdogs?\b|puppy|doggy)/i.test(raw);
+    const isCat = /(кошк|кошеч|котик|котён|котен|(^|[^а-яё])кот([^а-яё]|$|а|у|ом|е|ик|ика)|\bcats?\b|kitten|kitty|siamese|persian|maine coon|ragdoll|bengal|sphynx|british shorthair|\btabby\b)/i.test(raw);
+    const isDog = /(собак|собач|пёс|(^|[^а-яё])пс[аы]|(^|[^а-яё])пес([^а-яё]|$)|псин|щен|\bdogs?\b|puppy|doggy|retriever|labrador|\blab\b|shepherd|husky|poodle|terrier|spaniel|beagle|bulldog|chihuahua|dachshund|collie|\bpug\b|corgi|boxer|rottweiler|doberman|schnauzer|podenco|greyhound|whippet|pointer|setter|mastiff|malinois|shih tzu|cocker)/i.test(raw);
     if (isDog || isCat) S.species = isDog && !(isCat && raw.search(/cat|кош|кот/i) < raw.search(/dog|собак|пёс|пес|щен/i)) ? 'dog' : 'cat';
     else { const o = OTHER_SPECIES.find(([, re]) => re.test(raw)); if (o) S.species = o[0]; }
     if (S.species && F('species').s !== 'ok' && (isDog || isCat || OTHER_SPECIES.some(([, re]) => re.test(raw)))) {
@@ -2288,12 +2367,16 @@
 
     // time
     const tm = raw.match(/((около|примерно|где-то|почти)\s+)?(\d+|пол|полтора|два|две|три|несколько|час|пару)?\s*(минут[уы]?|час[аов]*|дн[яей]+|день)\s+назад|только что|час назад|вчера( утром| днём| днем| вечером| ночью)?|сегодня( утром| днём| днем| вечером| ночью)?|с утра|этой ночью|позавчера|((about|around)\s+)?(an?|\d+|a few)\s+(hours?|minutes?|days?)\s+ago|yesterday( morning| evening)?|this morning|tonight|today|just now/i);
-    if (tm) { const ch = chipFromText(tm[0]); Object.assign(F('time'), { v: ch ? timeFromChip(ch) : cap(tm[0].trim()), s: 'check', chip: ch }); found.time = F('time').v; }
+    const when = parseWhen(raw);
+    if (when && (!when.weak || !F('time').v || !asked || asked === 'time')) { applyWhen(when); found.time = F('time').v; }
+    else if (tm) { const ch = chipFromText(tm[0]); Object.assign(F('time'), { v: ch ? timeFromChip(ch) : cap(tm[0].trim()), s: 'check', chip: ch, date: null, part: null, exact: null }); found.time = F('time').v; }
 
     // place
     let pm = raw.match(/(?:возле|около|рядом с|недалеко от|у|в|на|во)\s+((?:парк|сквер|улиц|ул\.|проспект|пр\.|бульвар|двор|дом|подъезд|метро|станци|площад|набережн|лес|роще|школ|магазин|тц|торгов|остановк|пляж|озер|реки|район)[^.,!?\n]*)/i)
       || raw.match(/(?:возле|около|рядом с|недалеко от)\s+([^.,!?\n]+)/i)
-      || raw.match(/\b(?:near|at|in|around|by|next to)\s+((?:the\s+)?[A-Z][^.,!?\n]*)/);
+      || raw.match(/\b(?:near|next to|behind|outside|close to|opposite|from)\s+(?!\d)((?:the\s+|a\s+|our\s+|my\s+)?[^.,!?\n\d]*?\b(?:park|street|st|road|rd|avenue|ave|square|station|school|shop|store|supermarket|market|beach|river|garden|gardens|playground|bridge|church|mall|cafe|café|house|home|building|parking|car park|lake|forest|woods|bus stop|stop|metro|corner|rua|avenida|praça|largo|jardim|parque)\b[^.,!?\n]*)/i)
+      || raw.match(/\b(?:at|in|around|by)\s+(?!\d)((?:the\s+|a\s+|our\s+|my\s+)?[^.,!?\n\d]*?\b(?:park|street|st|road|rd|avenue|ave|square|station|school|shop|store|supermarket|market|beach|river|garden|gardens|playground|bridge|church|mall|cafe|café|house|home|building|parking|car park|lake|forest|woods|bus stop|stop|metro|corner|rua|avenida|praça|largo|jardim|parque)\b[^.,!?\n]*)/i)
+      || raw.match(/\b(?:near|at|around|by|next to)\s+((?:the\s+)?[A-Z][^.,!?\n]*)/);
     // city / area — from a list of known cities (any grammatical case: "в Москве", "in Lisbon")
     const city = findCity(raw);
     if (city && F('city').s !== 'ok') { Object.assign(F('city'), { v: city, s: 'check' }); found.city = city; }
@@ -2301,18 +2384,26 @@
     if (pm) { S.saidPlace = normPlace(pm[1].trim()); Object.assign(F('lost'), { v: S.saidPlace, s: 'check' }); found.place = S.saidPlace; }
 
     // collar / chip
-    const chipS = sentences(raw).find(s => /(ошейник|чип|жетон|адресник|collar|chip|tag)/i.test(s));
-    if (chipS) { Object.assign(F('chip'), { v: chipS.replace(/[.!]$/, ''), s: 'check' }); found.chip = true; }
+    const chipS = sentences(raw).flatMap(s => s.split(/,\s+|;\s+/)).find(s => /(ошейник|чип|жетон|адресник|collar|chip|tag)/i.test(s));
+    if (chipS) {
+      // just the collar / chip part: "with a red collar" → "Red collar"
+      const part = (chipS.match(/(?<![\p{L}])(?:with|has|wearing|wears|с|в)\s+((?:an?\s+)?[^,.;]*?(?:ошейник|чип|жетон|адресник|collar|chip|tag)[\p{L}]*[^,.;]*)/iu) || [, chipS])[1];
+      const clean = part.replace(/\s+(?:my|our)\s+(?:number|phone|mobile|email|contact)\b.*$|\s+(?:call|text|email|message)\s+me\b.*$|\s+(?:she|he|it)\s+(?:is|was|ran|went)\b.*$|\s+\+?\d[\d\s()-]{6,}.*$/i, '');
+      Object.assign(F('chip'), { v: cap(clean.replace(/^an?\s+/i, '').replace(/[.!]$/, '').trim()), s: 'check' }); found.chip = true;
+    }
 
     // characteristics
     const TRAIT_RE = /(рыж|черн|чёрн|бел[аоыя]|коричнев|сер[аоыя]|сер[ыо]й|пятн|полосат|трёхцвет|трехцвет|золотист|бежев|рыжев|маленьк|средн|больш|крупн|пушист|гладкошерст|длинношерст|хвост|уш|шрам|хромает|порода|метис|лабрадор|овчарк|такс|хаски|спаниел|терьер|пудель|brown|black|white|grey|gray|golden|spotted|small|medium|large|big|fluffy|scar|breed)/i;
-    const traits = sentences(raw).filter(s => TRAIT_RE.test(s.replace(/(red|black|white|brown|красн|черн|чёрн|бел)\w*\s+(collar|ошейник)\w*/gi, '')));
+    // only the parts of the message that describe the animal — not "I lost…", the place or the time
+    const LOSS_RE = /(lost|missing|ran away|run away|escaped|went missing|пропал|потерял|убежал|сбежал|ищу)/i;
+    const clauses = sentences(raw).flatMap(s => s.split(/,\s+|;\s+|\s+(?=(?:she|he|it|он|она)\s+(?:is|has|was|'s|looks|wears|has got|—|-)?\b)/i));
+    const traits = clauses.filter(s => TRAIT_RE.test(s.replace(/(red|black|white|brown|красн|черн|чёрн|бел)\w*\s+(collar|ошейник)\w*/gi, '')) && !LOSS_RE.test(s) && !(pm && s.includes(pm[1].trim())) && !(parseWhen(s) && !/(рыж|черн|чёрн|бел|коричнев|сер|black|white|brown|grey|gray|big|small|large)/i.test(s)));
     if (traits.length) {
-      const t = traits.map(s => s.replace(/^.*?(?=(он|она|he|she|it)\s)/i, '')).join(' ');
+      const t = traits.map(s => s.replace(/^.*?(?<![\p{L}])(?=(он|она|оно|he|she|it)\s)/iu, '').replace(/[.!]+$/, '')).join(', ');
       const t2 = t.replace(/\b(her|his|its|the|my)?\s*(cat'?s|dog'?s|pet'?s)?\s*name[ds]?\s*(is\s+)?[A-ZА-ЯЁ][a-zа-яё]+[,.]?\s*/gi, '').replace(/(my\s+)?(number|phone|email)[^.]*\.?/gi, '').replace(/\s+/g, ' ').replace(/^[,.\s]+|[,\s]+$/g, '').replace(/^./, c => c.toUpperCase());
       F('traits').v = merge && F('traits').v ? F('traits').v + ' ' + t2 : t2;
       F('traits').s = 'check'; found.traits = true;
-    } else if (merge && raw && !asked && !found.name && !found.time && !found.place && !found.chip) {
+    } else if (merge && raw && !asked && !found.name && !found.time && !found.place && !found.chip && !found.species && !found.city) {
       F('traits').v = (F('traits').v ? F('traits').v + ' ' : '') + raw; F('traits').s = 'check';
     }
     return found;
@@ -2467,9 +2558,8 @@
         ${rpRow(Object.assign({}, whereF, { label: 'Where?', req: false, k: 'lost' }), 'pin', `<div class="rp-field ac"><input class="fin ${whereF.s}${aiCls(whereF)}" data-field="lost" data-ac="places" value="${esc(where)}" placeholder="Add place (street, area or landmark)" autocomplete="off"><button type="button" class="rp-in-btn" data-loc-map aria-label="Mark on map">${ico('map')}</button><div class="suggest" hidden></div></div>
           <div class="rp-chips under"><button type="button" class="rp-chip sm" data-loc-gps>${ico('gps')}My location</button>${mapOpen ? '' : `<button type="button" class="rp-chip sm" data-loc-map>${ico('map')}Mark on map</button>`}</div>
           <div class="map-canvas mini-map real rp-map" data-loc-canvas ${mapOpen ? '' : 'hidden'}><span class="map-hint">Tap where ${esc(P())} was last seen</span></div>`)}
-        ${rpRow(Object.assign({}, tf, { label: 'When?' }), 'clock', `<div class="rp-chips">${TIME_CHIPS.map(t => `<button type="button" class="rp-chip sm${tf.chip === t ? ' on' + aiCls(tf) : ''}" data-time-pick="${t}">${t}</button>`).join('')}<button type="button" class="rp-chip sm${tf.date && !tf.chip ? ' on' : ''}" data-time-custom>${ico('cal')}${tf.date && !tf.chip ? esc(fmtDay(new Date(tf.date + 'T12:00'))) : 'Pick a date'}</button><input type="date" class="fin" data-time-date max="${today}" value="${tf.date || ''}" hidden></div>
-          ${parts.length ? `<p class="rp-hint">What part of the day?</p><div class="rp-chips">${parts.map(p => `<button type="button" class="rp-chip sm${tf.part === p[0] ? ' on' : ''}" data-time-part="${p[0]}">${p[0]}</button>`).join('')}<button type="button" class="rp-chip sm${tf.date && tf.part === '' ? ' on' : ''}" data-time-part="">Not sure</button></div>` : ''}
-          ${tf.v && !tf.chip && !tf.date ? `<p class="rp-hint">✧ ${esc(tf.v)}</p>` : ''}`)}
+        ${rpRow(Object.assign({}, tf, { label: 'When?' }), 'clock', `${tf.v ? `<div class="rp-when${aiCls(tf)}">${ico('cal')}<span>${esc(tf.v)}</span>${tf.s === 'check' ? '<i>✧ from what you said</i>' : ''}</div>` : ''}<div class="rp-chips">${TIME_CHIPS.map(t => `<button type="button" class="rp-chip sm${tf.chip === t ? ' on' + aiCls(tf) : ''}" data-time-pick="${t}">${t}</button>`).join('')}<button type="button" class="rp-chip sm${tf.date && !tf.chip ? ' on' : ''}" data-time-custom>${ico('cal')}${tf.date && !tf.chip ? esc(fmtDay(new Date(tf.date + 'T12:00'))) : 'Pick a date'}</button><input type="date" class="fin" data-time-date max="${today}" value="${tf.date || ''}" hidden></div>
+          ${parts.length ? `<p class="rp-hint">What part of the day? Or the exact time, if you know it.</p><div class="rp-chips">${parts.map(p => `<button type="button" class="rp-chip sm${tf.part === p[0] && !tf.exact ? ' on' : ''}" data-time-part="${p[0]}">${p[0]}</button>`).join('')}<button type="button" class="rp-chip sm${tf.date && tf.part === '' ? ' on' : ''}" data-time-part="">Not sure</button><label class="rp-chip sm rp-exact${tf.exact ? ' on' : ''}">${ico('clock')}<input type="time" data-time-exact value="${tf.exact || ''}" aria-label="Exact time"></label></div>` : ''}`)}
       </section>
       <section class="rp-sec"><h3>Identification</h3>
         ${rpRow(F('chip'), 'chip', `<div class="rp-field">${fin(F('chip'), 'Number, collar or none')}${tick(F('chip'))}</div>`)}
@@ -2514,7 +2604,7 @@
       start: '<b>Start with a photo</b> — or just tell me what happened, and I’ll fill in the form.',
       species: '<b>What kind of animal is it?</b> Tap one above — or tell me.',
       where: `<b>Where did you last see ${esc(n)}?</b> A street, park or area — optional, but it helps a lot.`,
-      time: '<b>When was that?</b> Tap a time above — or just tell me.',
+      time: '<b>When was that?</b> Tap a day above — or just tell me, e.g. “yesterday evening”.',
       contact: `<b>Want me to keep searching and tell you when someone finds ${esc(n)}?</b> Add a phone or email — optional.`,
       name: `<b>What’s ${S.species ? 'your ' + esc(S.species) + '’s' : 'your pet’s'} name?</b> Type it or say it${S.lostPhoto ? '' : ' — and add a photo if you have one'}.`,
       traits: `<b>Anything special about ${esc(n)}?</b> Collar, marks or character — optional.`,
@@ -2527,7 +2617,7 @@
     $('#rpTip').innerHTML = k ? `${photoSaid}${ask}${['where', 'contact', 'traits', 'chip'].includes(k) ? ' <button class="link-btn rp-skip" data-rp-skip>Skip</button>' : ''}` : '';
     $('#rpTip').hidden = !k;
     $$('#lost .rp-row').forEach(r => r.classList.toggle('asking', r.dataset.k === k || (k === 'where' && r.dataset.k === 'lost')));
-    $('#replyInput').placeholder = $('#replyInput').dataset.ph = { start: 'Tell me — voice or text', contact: 'Phone or email', where: 'Street, park…', time: 'e.g. this morning' }[k] || (k ? 'Type or tell me' : 'Add anything else');
+    $('#replyInput').placeholder = $('#replyInput').dataset.ph = { start: 'Tell me — voice or text', contact: 'Phone or email', where: 'Street, park…', time: 'e.g. yesterday evening' }[k] || (k ? 'Type or tell me everything' : 'Add anything else');
     renderOwner();
   }
 
@@ -2565,10 +2655,10 @@
       return toast(`Tell me, or fill in: ${left.map(f => f.label.toLowerCase()).join(', ')}`);
     }
     const before = Object.fromEntries(S.fields.map(f => [f.k, f.v]));
-    const asked = S.asking && S.asking !== 'start' ? S.asking : null;
+    let asked = S.asking && S.asking !== 'start' ? S.asking : null;
     // names and places are kept as typed; everything else gets typo-corrected
     const v = ['name', 'where', 'contact'].includes(asked) ? typed : autocorrect(typed);
-    parseStory(v, { merge: true, asked });
+    const got = parseStory(v, { merge: true, asked });
     // contact: an email or a phone number anywhere in the message
     const em = typed.match(/[^\s@,;]+@[^\s@,;]+\.[a-z]{2,}/i), ph = typed.match(/\+?\d[\d\s()-]{6,}\d/);
     const c = (em && em[0]) || (ph && ph[0].trim());
@@ -2578,8 +2668,17 @@
     // a short answer with no question pending is most likely the pet's name
     if (!asked && !F('name').v && /^[\p{L}-]+( [\p{L}-]+)?$/u.test(plain) && plain.length < 25 && F('traits').v.endsWith(plain)) { F('traits').v = F('traits').v.slice(0, -plain.length).trim(); if (!F('traits').v) F('traits').s = emptyStatus('traits'); setPet(cap(plain)); Object.assign(F('name'), { v: cap(plain), s: 'check' }); }
     if (asked === 'species' && !F('species').v) Object.assign(F('species'), { v: cap(plain.replace(/^(it'?s|it is|a|an|my|это)\s+/i, '')), s: 'check' });
+    // an answer that is clearly about something else (a time when asked "where", a place when asked "when") goes to its own field
+    const other = asked === 'where' ? got.time && !got.place : asked === 'time' ? got.place || got.city : got.time || got.place || got.city || (asked !== 'species' && got.species);
+    if (other) asked = null;
+    if (asked === 'contact' && !c) asked = null; // a contact is a phone or an email — anything else is a description
+    // "When?" answered with something that isn't a time (e.g. just the name) — don't put it in When
+    if (asked === 'time' && !got.time && !/\d|ago|назад|утр|вечер|ноч|дн[её]м|morning|evening|night|afternoon|today|yesterday|сегодня|вчера/i.test(plain)) {
+      if (!F('name').v && /^[\p{L}-]+$/u.test(plain)) asked = 'name';
+      else { toast('I didn’t catch the time — tap a day above or say e.g. “yesterday evening”'); asked = null; }
+    }
     if (asked === 'where' && !F('lost').v && !F('city').v) { const city = findCity(plain); if (city) Object.assign(F('city'), { v: city, s: 'check' }); else { S.saidPlace = normPlace(plain.replace(/^(near|at|in|by|возле|около|у|в|на)\s+/i, '')); Object.assign(F('lost'), { v: S.saidPlace, s: 'check' }); } }
-    if (asked === 'time' && !F('time').v) { const ch = chipFromText(plain); Object.assign(F('time'), { v: ch ? timeFromChip(ch) : cap(plain), s: 'check', chip: ch }); }
+    if (asked === 'time' && !F('time').v) { const ch = chipFromText(plain); Object.assign(F('time'), { v: ch ? timeFromChip(ch) : cap(plain), s: 'check', chip: ch, date: null, part: null, exact: null }); }
     if (asked === 'contact' && !F('contact').v) { Object.assign(F('contact'), { v: plain, s: 'check' }); noteContact(plain); }
     if (asked === 'name' && !F('name').v) { const nm = cap(plain.split(/[\s,.]+/).filter(w => !/^(her|his|its|name|is|named|called|зовут|кличка|имя|его|её|ее)$/i.test(w))[0] || plain); setPet(nm); Object.assign(F('name'), { v: nm, s: 'check' }); }
     if (asked === 'traits' && !F('traits').v) Object.assign(F('traits'), { v: cap(plain), s: 'check' });
@@ -3274,8 +3373,28 @@
       L.marker(last, { icon: pinIcon('big', `Last seen · ${d.mins} min ago`), zIndexOffset: 1000 }).addTo(m);
       m.options.zoomSnap = .25;
       m.fitBounds(L.latLng(last).toBounds(d.radius * 2.1).extend(d.base), { padding: [14, 14] });
+      seenVets(m, last, d);
     });
   }
+  // vets & shelters nearest to the last sighting — lettered A, B, C so they don't mix with the numbered sightings
+  let smVetMarkers = [];
+  async function seenVets(m, last, d) {
+    const places = (await fetchVets(last)).slice(0, 4);
+    if (staticMaps.smMap !== m) return;
+    const L8 = 'ABCD', label = p => `${p.km < 1 ? Math.round(p.km * 100) * 10 + ' m' : p.km.toFixed(1) + ' km'} · ${p.shelter ? 'Shelter' : 'Vet'}${p.hours ? ' · ' + p.hours : ''}`;
+    $('#smVets').innerHTML = places.map((p, i) => `<div class="nm-row" data-smvet="${i}"><span class="num vet">${L8[i]}</span><div><b>${esc(p.name)}${i === 0 ? '<i class="near">Nearest</i>' : ''}</b><span>${esc(label(p))}</span></div>` +
+      (p.phone ? `<a class="pill" href="tel:${esc(p.phone.replace(/[^\d+]/g, ''))}">Call</a>` : `<button class="pill" data-toast="No phone listed — tap the row to see it on the map">Call</button>`) + `</div>`).join('') || '<p class="sec-text">No vets or shelters found nearby.</p>';
+    smVetMarkers = places.map((p, i) => L.marker(p.ll, { icon: L.divIcon({ className: 'lpin-wrap', html: `<div class="lnum vet">${L8[i]}</div>`, iconSize: [28, 28], iconAnchor: [14, 14] }) })
+      .addTo(m).bindTooltip(p.name, { direction: 'top', offset: [0, -12] }));
+    m.invalidateSize();
+    m.fitBounds(L.latLng(last).toBounds(d.radius * 2.1).extend(d.base).extend(places.slice(0, 3).map(p => p.ll)), { padding: [16, 16] });
+    S.smVets = places;
+  }
+  document.addEventListener('click', e => {
+    const row = e.target.closest('[data-smvet]'); if (!row || e.target.closest('.pill') || !staticMaps.smMap) return;
+    const i = +row.dataset.smvet; staticMaps.smMap.setView(S.smVets[i].ll, 16); smVetMarkers[i].openTooltip();
+    $('#smMap').scrollIntoView({ behavior: 'smooth', block: 'center' });
+  });
 
   // found pet · "I only saw it": vets & shelters nearest to the last-seen point, on the same map as the route
   let foundVetMarkers = [];
