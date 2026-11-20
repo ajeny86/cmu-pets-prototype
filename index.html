@@ -973,7 +973,7 @@
 
   <!-- Clue: pinned above the tab bar — talk or type, and the answer is spread over the fields -->
   <div class="ai-dock rp-dock" id="lostAi">
-    <div class="rp-ready" id="dockReady" hidden><span id="lostAiAsk">✓ All set — I can start searching now</span><button class="rp-go" id="readyGo">Continue →</button></div>
+    <div class="rp-ready" id="dockReady" hidden><span id="lostAiAsk">✓ All set — search now, or add more details</span><button class="rp-go" id="readyGo">Continue →</button></div>
     <p class="rp-tip" id="rpTip"><b>Tell me the details</b> by voice or text, and I’ll fill in the form.</p>
     <div class="rp-talk">
       <img class="rp-clue" src="assets/clue.png" width="52" height="54" alt="Clue">
@@ -1401,11 +1401,11 @@
       member: false, pet: '', transcript: '', place: null, saidPlace: null, mark: null, mode: null,
       foundPhoto: null, now: null, history: [], skipped: new Set(), asking: null, species: null, memberAsked: false,
       fields: [
-        // required (mid-fi): animal, where, when, your contact · everything else optional
+        // required: animal, name (the owner knows it), when · everything else optional
         { k: 'species', label: 'Animal',        v: '', s: 'missing',  req: true },
-        { k: 'name',   label: 'Name',           v: '', s: 'optional' },
+        { k: 'name',   label: 'Name',           v: '', s: 'missing',  req: true },
         { k: 'traits', label: 'Special features', v: '', s: 'optional' },
-        { k: 'city',   label: 'Where',          v: '', s: 'missing',  req: true },
+        { k: 'city',   label: 'Where',          v: '', s: 'optional' },
         { k: 'lost',   label: 'Exact place',    v: '', s: 'optional' },
         { k: 'time',   label: 'When',           v: '', s: 'missing',  req: true },
         { k: 'chip',   label: 'Microchip / collar', v: '', s: 'optional' },
@@ -2270,11 +2270,11 @@
     box.innerHTML = `
       <section class="rp-sec"><h3>Pet details</h3>
         ${rpRow(F('species'), 'paw', `<div class="rp-chips">${spChip('cat', 'cat', 'Cat')}${spChip('dog', 'dog', 'Dog')}<button type="button" class="rp-chip${isOther ? ' on' : ''}" data-species="Other">${ico('more')}${isOther ? esc(cap(sp)) : 'Other'}</button></div>`)}
-        ${rpRow(F('name'), 'tag', `<div class="rp-field">${fin(F('name'), 'Enter name (if known)')}${tick(F('name'))}</div>`)}
+        ${rpRow(F('name'), 'tag', `<div class="rp-field">${fin(F('name'), 'Your pet’s name')}${tick(F('name'))}</div>`)}
         ${rpRow(F('traits'), 'spark', `<div class="rp-field">${fin(F('traits'), 'e.g. collar, pattern, size…')}${tick(F('traits'))}</div>`)}
       </section>
       <section class="rp-sec"><h3>Last seen</h3>
-        ${rpRow(Object.assign({}, whereF, { label: 'Where?', req: true, k: 'lost' }), 'pin', `<div class="rp-field ac"><input class="fin ${whereF.s}${aiCls(whereF)}" data-field="lost" data-ac="places" value="${esc(where)}" placeholder="Add place (street, area or landmark)" autocomplete="off"><button type="button" class="rp-in-btn" data-loc-map aria-label="Mark on map">${ico('map')}</button><div class="suggest" hidden></div></div>
+        ${rpRow(Object.assign({}, whereF, { label: 'Where?', req: false, k: 'lost' }), 'pin', `<div class="rp-field ac"><input class="fin ${whereF.s}${aiCls(whereF)}" data-field="lost" data-ac="places" value="${esc(where)}" placeholder="Add place (street, area or landmark)" autocomplete="off"><button type="button" class="rp-in-btn" data-loc-map aria-label="Mark on map">${ico('map')}</button><div class="suggest" hidden></div></div>
           <div class="rp-chips under"><button type="button" class="rp-chip sm" data-loc-gps>${ico('gps')}My location</button>${mapOpen ? '' : `<button type="button" class="rp-chip sm" data-loc-map>${ico('map')}Mark on map</button>`}</div>
           <div class="map-canvas mini-map real rp-map" data-loc-canvas ${mapOpen ? '' : 'hidden'}><span class="map-hint">Tap where ${esc(P())} was last seen</span></div>`)}
         ${rpRow(Object.assign({}, tf, { label: 'When?' }), 'clock', `<div class="rp-chips">${TIME_CHIPS.map(t => `<button type="button" class="rp-chip sm${tf.chip === t ? ' on' + aiCls(tf) : ''}" data-time-pick="${t}">${t}</button>`).join('')}<button type="button" class="rp-chip sm${tf.date && !tf.chip ? ' on' : ''}" data-time-custom>${ico('cal')}${tf.date && !tf.chip ? esc(fmtDay(new Date(tf.date + 'T12:00'))) : 'Pick a date'}</button><input type="date" class="fin" data-time-date max="${today}" value="${tf.date || ''}" hidden></div>
@@ -2298,11 +2298,12 @@
   // what Clue asks next: required first (animal → where → when → contact), then optional ones you can skip
   function rpNext() {
     const filled = S.fields.some(f => f.v && !['species', 'city'].includes(f.k));
-    if (!S.lostPhoto && !filled && !S.skipped.has('start')) return 'start';
+    if (!S.lostPhoto && !filled && !F('species').v && !S.skipped.has('start')) return 'start';
     if (!F('species').v) return 'species';
-    if (!F('city').v && !F('lost').v) return 'where';
+    if (!F('name').v) return 'name';
     if (!F('time').v) return 'time';
-    return ['contact', 'name', 'traits', 'chip'].find(x => !F(x).v && !S.skipped.has(x)) || null;
+    // the rest is optional — Clue offers it, you can skip
+    return ['where', 'contact', 'traits', 'chip'].find(x => (x === 'where' ? !F('city').v && !F('lost').v : !F(x).v) && !S.skipped.has(x)) || null;
   }
   function renderLostAi() {
     if (!S.lostPhoto) setTimeout(() => loadMobilenet().catch(() => {}), 1500); // warm up the photo model while the user types
@@ -2322,10 +2323,10 @@
     const ask = {
       start: '<b>Start with a photo</b> — or just tell me what happened, and I’ll fill in the form.',
       species: '<b>What kind of animal is it?</b> Tap one above — or tell me.',
-      where: `<b>Where did you last see ${esc(n)}?</b> A street, park or landmark.`,
+      where: `<b>Where did you last see ${esc(n)}?</b> A street, park or area — optional, but it helps a lot.`,
       time: '<b>When was that?</b> Tap a time above — or just tell me.',
       contact: `<b>Want me to keep searching and tell you when someone finds ${esc(n)}?</b> Add a phone or email — optional.`,
-      name: `<b>What’s ${S.species ? 'your ' + esc(S.species) + '’s' : 'your pet’s'} name?</b> Optional — skip if you don’t know.`,
+      name: `<b>What’s ${S.species ? 'your ' + esc(S.species) + '’s' : 'your pet’s'} name?</b> Type it or say it${S.lostPhoto ? '' : ' — and add a photo if you have one'}.`,
       traits: `<b>Anything special about ${esc(n)}?</b> Collar, marks or character — optional.`,
       chip: `<b>Is ${esc(n)} microchipped or wearing a collar?</b> Optional.`,
     }[k];
@@ -2333,7 +2334,7 @@
     if (S.photoAckK && S.photoAckK !== k) S.photoAck = true; // the "nice photo" line goes away after the next step
     const photoSaid = S.lostPhoto && S.photoKind && !S.photoAck ? `Nice photo — I see a ${esc(S.photoKind.toLowerCase())}! ` : '';
     if (photoSaid) S.photoAckK = k;
-    $('#rpTip').innerHTML = k ? `${photoSaid}${ask}${['contact', 'name', 'traits', 'chip'].includes(k) ? ' <button class="link-btn rp-skip" data-rp-skip>Skip</button>' : ''}` : '';
+    $('#rpTip').innerHTML = k ? `${photoSaid}${ask}${['where', 'contact', 'traits', 'chip'].includes(k) ? ' <button class="link-btn rp-skip" data-rp-skip>Skip</button>' : ''}` : '';
     $('#rpTip').hidden = !k;
     $$('#lost .rp-row').forEach(r => r.classList.toggle('asking', r.dataset.k === k || (k === 'where' && r.dataset.k === 'lost')));
     $('#replyInput').placeholder = $('#replyInput').dataset.ph = { start: 'Tell me — voice or text', contact: 'Phone or email', where: 'Street, park…', time: 'e.g. this morning' }[k] || (k ? 'Type or tell me' : 'Add anything else');
@@ -2384,6 +2385,8 @@
     if (c && !F('contact').v) { Object.assign(F('contact'), { v: c, s: 'check' }); noteContact(c); }
     // the answer belongs to the question Clue just asked, even if it didn't match a pattern
     const plain = typed.replace(/[.!]+$/, '').trim();
+    // a short answer with no question pending is most likely the pet's name
+    if (!asked && !F('name').v && /^[\p{L}-]+( [\p{L}-]+)?$/u.test(plain) && plain.length < 25 && F('traits').v.endsWith(plain)) { F('traits').v = F('traits').v.slice(0, -plain.length).trim(); if (!F('traits').v) F('traits').s = emptyStatus('traits'); setPet(cap(plain)); Object.assign(F('name'), { v: cap(plain), s: 'check' }); }
     if (asked === 'species' && !F('species').v) Object.assign(F('species'), { v: cap(plain.replace(/^(it'?s|it is|a|an|my|это)\s+/i, '')), s: 'check' });
     if (asked === 'where' && !F('lost').v && !F('city').v) { const city = findCity(plain); if (city) Object.assign(F('city'), { v: city, s: 'check' }); else { S.saidPlace = normPlace(plain.replace(/^(near|at|in|by|возле|около|у|в|на)\s+/i, '')); Object.assign(F('lost'), { v: S.saidPlace, s: 'check' }); } }
     if (asked === 'time' && !F('time').v) { const ch = chipFromText(plain); Object.assign(F('time'), { v: ch ? timeFromChip(ch) : cap(plain), s: 'check', chip: ch }); }
