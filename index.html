@@ -634,6 +634,44 @@
   .sr-btns .pill { padding: 8px 14px; font-size: 13px; }
   .sr-btns .pill:disabled { opacity: .45; }
   #foundMap { height: 240px; }
+  /* owner · seen, not caught */
+  .sm-alert { display: flex; align-items: center; gap: 12px; width: 100%; margin: 4px 0 18px; padding: 12px 14px; border-radius: 22px; background: #fff; box-shadow: 0 8px 22px rgba(176,47,192,.16); text-align: left; }
+  .sm-bell { flex: none; width: 40px; height: 40px; border-radius: 50%; background: #b02fc0; display: grid; place-items: center; box-shadow: 0 4px 10px rgba(176,47,192,.3); }
+  .sm-alert-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+  .sm-alert-txt b { font-size: 14px; color: #b02fc0; font-weight: 800; }
+  .sm-alert-txt > span { font-size: 13px; line-height: 17px; color: var(--navy); }
+  #seen-match .title h1, #seen-map .title h1 { font-size: 30px; line-height: 33px; }
+  .sm-report { margin-top: 0; }
+  .sm-what { font-size: 22px; line-height: 26px; }
+  .sm-photos { display: flex; gap: 10px; margin-top: 14px; }
+  .sm-ph { flex: 1; display: flex; flex-direction: column; gap: 4px; }
+  .sm-ph-img { height: 72px; border-radius: 16px; background: linear-gradient(160deg, #e9e3d6, #d8cdb8); display: grid; place-items: center; font-size: 30px; box-shadow: 0 4px 12px rgba(16,40,139,.08); }
+  .sm-ph small { font-size: 11.5px; color: var(--sub); text-align: center; }
+  .sm-why { display: flex; flex-direction: column; gap: 5px; margin-top: 16px; font-size: 13.5px; line-height: 18px; color: var(--navy); }
+  .sm-why b { font-size: 15px; font-weight: 800; margin-bottom: 2px; }
+  .sm-why .q { color: var(--sub); }
+  .sm-btns { display: flex; flex-direction: column; gap: 10px; margin-top: 22px; }
+  .sm-btns .ns-edit { align-self: stretch; justify-content: center; margin-top: 0; }
+  .sm-btns .ns-btn { height: 52px; border-radius: 26px; }
+  .sm-note { margin-top: 10px; }
+  .sm-map { height: 330px; border-radius: 22px; }
+  a.ns-btn { text-decoration: none; }
+  .lpin.big { width: 24px; height: 24px; margin: -3px; box-shadow: 0 0 0 6px rgba(243,124,255,.3), 0 1px 5px rgba(16,40,139,.45); }
+  .sm-legend { display: flex; flex-wrap: wrap; gap: 6px 14px; margin-top: 10px; font-size: 12px; font-weight: 600; color: var(--sub); }
+  .sm-legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .sm-legend i { width: 11px; height: 11px; border-radius: 50%; flex: none; }
+  .lg-lost { background: var(--navy); }
+  .lg-seen { background: var(--navy); box-shadow: inset 0 0 0 2px #fff, 0 0 0 1px var(--navy); }
+  .lg-last { background: var(--pink); }
+  .lg-area { background: rgba(243,124,255,.25); border: 1.5px dashed #b02fc0; box-sizing: border-box; }
+  .sm-radius { margin-top: 10px; font-size: 13.5px; line-height: 19px; color: var(--sub); }
+  .sm-radius b { color: #b02fc0; }
+  .sm-list .num.last { background: var(--pink); }
+  .sm-list .near.sm-latest { background: #b02fc0; }
+  .sm-list .nm-row { cursor: default; }
+  .sm-list .nm-row + .nm-row { border-top-color: rgba(16,40,139,.07); }
+  .sm-tips { margin: 8px 0 0; padding-left: 18px; display: flex; flex-direction: column; gap: 8px; font-size: 13.5px; line-height: 19px; color: var(--sub); }
+  .sm-tips b { color: var(--navy); }
   .fh-vets { display: flex; flex-direction: column; gap: 6px; }
   .fh-vets[hidden] { display: none; }
   .fh-vets h3 { margin: 4px 0 0; font-size: 19px; font-weight: 800; color: var(--navy); letter-spacing: -.3px; }
@@ -1246,6 +1284,81 @@
   </div>
 </section>
 
+<!-- =============== OWNER · SIGHTING MATCH (seen, nobody could catch it) =============== -->
+<section class="screen flow" id="seen-match">
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
+  <button class="back" data-go="nextsteps">‹  My report</button>
+  <button class="sm-alert" data-go="seen-map">
+    <span class="sm-bell" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22"><path fill="#fff" stroke="#fff" stroke-width="1.6" stroke-linejoin="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg></span>
+    <span class="sm-alert-txt"><b>New sighting · <span class="smAgo">25 min ago</span></b><span>Someone saw a dog like <span class="smName">Max</span> <span class="smPlace">near the last sighting</span></span></span>
+  </button>
+  <div class="title"><h1>Is this <span class="smName">Max</span>?</h1><p><span class="smCount">3</span> people saw a dog like <span class="smName">Max</span> today. Nobody could take him in — he ran off when they came closer.</p></div>
+
+  <section class="ns-sec">
+    <div class="ns-report sm-report">
+      <span class="ns-pic" id="smPic"></span>
+      <span class="ns-info">
+        <span class="ns-tag sm-tag">Seen · not caught</span>
+        <b class="ns-name sm-what">Large brown dog</b>
+        <span class="ns-line"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" fill="url(#icf)" stroke="#10288b" stroke-width="1.8"/><path d="M12 7.5V12l3 2" fill="none" stroke="#10288b" stroke-width="1.8" stroke-linecap="round"/></svg><span><span class="smTime"></span> · <span class="smAgo">25 min ago</span></span></span>
+        <span class="ns-line"><svg viewBox="0 0 24 24"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z" fill="url(#icf)" stroke="#10288b" stroke-width="1.8"/><circle cx="12" cy="10" r="2.3" fill="#fff" stroke="#10288b" stroke-width="1.6"/></svg><span class="smPlace">near the last sighting</span></span>
+      </span>
+    </div>
+    <div class="sm-photos" id="smPhotos"></div>
+    <div class="sm-why">
+      <b>Why we think it’s <span class="smName">Max</span></b>
+      <span>✓ Same colour and size as in your photo</span>
+      <span>✓ Seen <span id="smDist">1.4 km</span> from where <span class="smName">Max</span> went missing</span>
+      <span>✓ All sightings are after he went missing</span>
+      <span class="q">? Collar seen, tag not readable from a distance</span>
+    </div>
+  </section>
+
+  <div class="sm-btns">
+    <button class="ns-edit sm-yes" data-go="seen-map"><span>Yes, it’s <span class="smName">Max</span> — show where</span></button>
+    <button class="ns-btn sm-no" data-go="nextsteps">No, not my dog</button>
+  </div>
+  <p class="note sm-note">People who saw him can’t see your phone number. You can message them from the next screen.</p>
+</section>
+
+<!-- =============== OWNER · LAST SEEN HERE + SEARCH RADIUS =============== -->
+<section class="screen flow" id="seen-map">
+  <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
+  <button class="back" data-go="seen-match">‹  Sighting</button>
+  <div class="title"><h1><span class="smName">Max</span> was last seen here</h1><p><span class="smAgo">25 min ago</span> · <span class="smPlace">near the last sighting</span>. Nobody took him in, so he’s most likely still close by.</p></div>
+
+  <section class="ns-sec">
+    <div class="map-canvas real sm-map" id="smMap"></div>
+    <div class="sm-legend">
+      <span><i class="lg-lost"></i>Lost</span>
+      <span><i class="lg-seen"></i>Seen</span>
+      <span><i class="lg-last"></i>Last seen</span>
+      <span><i class="lg-area"></i>Where to search</span>
+    </div>
+    <p class="sm-radius"><b>Search within ~<span id="smRadius">600 m</span></b> of the last sighting. The circle grows the longer it’s been — scared dogs usually stay within about 1 km and hide during the day.</p>
+    <div class="ns-actions">
+      <a class="ns-btn" id="smGo" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M12 21s-6.5-5.6-6.5-11a6.5 6.5 0 0 1 13 0C18.5 15.4 12 21 12 21z" fill="url(#icf)" stroke="currentColor" stroke-width="1.9"/><circle cx="12" cy="10" r="2.3" fill="#fff" stroke="currentColor" stroke-width="1.7"/></svg>Directions</a>
+      <button class="ns-btn" data-toast="Chat opened with the 3 people who saw him"><svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true"><path d="M4.5 6.5A2.5 2.5 0 0 1 7 4h10a2.5 2.5 0 0 1 2.5 2.5v7A2.5 2.5 0 0 1 17 16h-6l-4.5 3.5V16H7a2.5 2.5 0 0 1-2.5-2.5z" fill="url(#icf)" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/></svg>Message them</button>
+    </div>
+  </section>
+
+  <section class="ns-sec">
+    <div class="ns-head"><h3>Where he was seen</h3></div>
+    <div class="nm-list sm-list" id="smList"></div>
+  </section>
+
+  <details class="ns-24" open><summary><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><rect x="4" y="4" width="16" height="16" rx="4" fill="url(#icf)" stroke="#5241c0" stroke-width="1.8"/><path d="M8 12.2l2.8 2.8L16 9.6" fill="none" stroke="#5241c0" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg><span>How to get a scared dog back</span><i class="ns-fold" aria-hidden="true">⌄</i></summary>
+    <ul class="sm-tips">
+      <li><b>Don’t chase or call loudly.</b> A frightened dog runs even from its owner.</li>
+      <li><b>Go to the last spot and sit down sideways.</b> Talk softly, don’t look straight at him.</li>
+      <li><b>Bring something that smells of home</b> — his blanket, your T-shirt, his favourite treats.</li>
+      <li><b>Leave water and food there</b> if he doesn’t come. Dogs often return to the same place at dawn and dusk.</li>
+      <li><b>Ask people who see him to keep their distance</b> and send a new sighting instead.</li>
+    </ul>
+  </details>
+  <button class="ns-edit" data-toast="We’ll notify you about every new sighting">I’m going there</button>
+</section>
+
 <!-- =============== FOUND · SUBMIT PICTURE =============== -->
 <section class="screen flow" id="found-photo">
   <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
@@ -1504,7 +1617,7 @@
   const FLOW = [
     ['Start', [['home', '1 · Homepage'], ['route', 'Unclear message → where to?'], ['hub', 'Lost & Found · choose'], ['chat', 'Chatbot']]],
     ['Other sections', [['adoption', '01 · Adoption'], ['services', '03 · Services & Care'], ['shop', '04 · Shop']]],
-    ['Lost pet', [['member', 'Already a member?'],['lost', '02 · Initial information'], ['quick', 'Member · Lost button'], ['location', '03 · Location clarification'], ['checking', '5 · AI checking'], ['match', 'Found a match?'], ['reunite', '6 Match → reunite + map'], ['nextsteps', '6 No match → next steps + map']]],
+    ['Lost pet', [['member', 'Already a member?'],['lost', '02 · Initial information'], ['quick', 'Member · Lost button'], ['location', '03 · Location clarification'], ['checking', '5 · AI checking'], ['match', 'Found a match?'], ['reunite', '6 Match → reunite + map'], ['seen-match', 'Seen, not caught · is this your dog?'], ['seen-map', 'Last seen here + search radius'], ['nextsteps', '6 No match → next steps + map']]],
     ['Found pet', [['found-photo', 'Submit picture'], ['found-analyse', 'AI analyses picture'], ['found-edit', 'Edit info'], ['found-created', 'Report created · help more?'], ['found-help', 'Yes → share + repository'], ['found-thanks', 'No → Good job, thanks']]],
   ];
   const ids = $$('.screen').map(s => s.id);
@@ -3121,6 +3234,49 @@
     vetMap.fitBounds([c, ...places.slice(0, 4).map(p => p.ll)], { padding: [24, 24], maxZoom: 16 });
     S.vets = places;
   }
+  // owner · a dog like theirs was SEEN (not caught): sightings trail, last-seen point and a search radius that grows with time
+  const seenName = () => (!F('species').v || /dog/i.test(F('species').v)) && F('name').v ? F('name').v : 'Max';
+  const hhmm = d => d.toTimeString().slice(0, 5);
+  async function seenData() {
+    const base = S.lostPin || await cityOrDefault();
+    const now = Date.now(), ago = [130, 70, 25];
+    const pts = [near(base, .0045, .003), near(base, .0075, .0075), near(base, .0095, .0115)];
+    const mins = ago[2], radius = Math.min(1000, 300 + mins * 12);
+    return { base, pts, times: ago.map(a => new Date(now - a * 60000)), mins, radius };
+  }
+  async function renderSeen() {
+    const d = await seenData(), n = seenName();
+    $$('.smName').forEach(s => s.textContent = n);
+    $$('.smAgo').forEach(s => s.textContent = `${d.mins} min ago`);
+    $$('.smTime').forEach(s => s.textContent = hhmm(d.times[2]));
+    $$('.smCount').forEach(s => s.textContent = d.pts.length);
+    const km = kmBetween(d.base, d.pts[2]); $('#smDist').textContent = km < 1 ? Math.round(km * 100) * 10 + ' m' : km.toFixed(1) + ' km';
+    $('#smRadius').textContent = d.radius + ' m';
+    const pic = $('#smPic'), own = n !== 'Max' && S.lostPhoto;
+    pic.className = 'ns-pic' + (own ? '' : ' none'); pic.style.backgroundImage = own ? `url(${S.lostPhoto})` : ''; pic.textContent = own ? '' : '🐕';
+    $('#smPhotos').innerHTML = d.times.map((t, i) => `<span class="sm-ph"><span class="sm-ph-img">🐕</span><small>${hhmm(t)}${i === 2 ? ' · latest' : ''}</small></span>`).join('');
+    $('#smGo').href = `https://www.google.com/maps/dir/?api=1&destination=${d.pts[2][0].toFixed(5)},${d.pts[2][1].toFixed(5)}`;
+    const names = await Promise.all(d.pts.map(p => placeName(p)));
+    const place = names[2] ? 'near ' + names[2] : 'near the last sighting';
+    $$('.smPlace').forEach(s => s.textContent = place);
+    const notes = ['Photo · walking along the street, looked lost', 'Photo · ran off when someone called him', 'Photo · resting by a fence, ran when approached'];
+    $('#smList').innerHTML = d.pts.map((p, i) => i).reverse().map(i => `<div class="nm-row"><span class="num${i === 2 ? ' last' : ''}">${i + 1}</span><div><b>${hhmm(d.times[i])} · ${esc(names[i] || 'Sighting ' + (i + 1))}${i === 2 ? '<i class="near sm-latest">Last seen</i>' : ''}</b><span>${notes[i]}</span></div></div>`).join('');
+    return d;
+  }
+  function drawSeenOwner(d) {
+    drawStaticMap('smMap', m => {
+      m.invalidateSize();
+      const last = d.pts[2];
+      L.circle(last, { radius: d.radius, color: '#b02fc0', weight: 1.5, dashArray: '6 6', fillColor: '#f37cff', fillOpacity: .14 }).addTo(m);
+      L.polyline([d.base, ...d.pts], { color: '#10288b', weight: 2.5, dashArray: '5 7' }).addTo(m);
+      L.marker(d.base, { icon: pinIcon('ink small', 'Lost') }).addTo(m);
+      d.pts.slice(0, 2).forEach((p, i) => L.marker(p, { icon: L.divIcon({ className: 'lpin-wrap', html: `<div class="lnum">${i + 1}</div>`, iconSize: [28, 28], iconAnchor: [14, 14] }) }).addTo(m));
+      L.marker(last, { icon: pinIcon('big', `Last seen · ${d.mins} min ago`), zIndexOffset: 1000 }).addTo(m);
+      m.options.zoomSnap = .25;
+      m.fitBounds(L.latLng(last).toBounds(d.radius * 2.1).extend(d.base), { padding: [14, 14] });
+    });
+  }
+
   // found pet · "I only saw it": vets & shelters nearest to the last-seen point, on the same map as the route
   let foundVetMarkers = [];
   async function drawFoundVets(m, last, start) {
@@ -3153,6 +3309,8 @@
     reunite: () => drawReunite(),
     'found-help': () => { foundTexts(); drawFoundHere(); },
     'found-created': () => foundTexts(),
+    'seen-match': () => { renderSeen(); },
+    'seen-map': () => { renderSeen().then(drawSeenOwner); },
     tell: () => { $('#tellStatus').hidden = true; },
     location: () => {
       const said = S.saidPlace, name = P();
