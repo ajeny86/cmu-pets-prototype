@@ -738,6 +738,13 @@
   .topic small { display: block; font-size: 11px; line-height: 14px; color: var(--sub); margin-top: 2px; }
   .topic.c-navy { background: #d6def8; } .topic.c-pink { background: #f5d8fa; } .topic.c-green { background: #cdeadb; } .topic.c-lilac { background: #dfd9fc; }
 
+  /* wide screens: the "phone" card runs to the bottom of the window, so the tab bar sits inside it, not floating below */
+  @media (min-width: 500px) {
+    body { padding: 32px 0 0; }
+    .screen { min-height: calc(100vh - 32px); border-radius: 32px 32px 0 0; }
+    .tabbar { box-shadow: none; }
+  }
+
   /* ---------- bottom tab bar: on every page ---------- */
   .tabbar { display: block; position: fixed; left: 50%; bottom: 0; transform: translateX(-50%); width: 100%; max-width: 393px; height: calc(92px + env(safe-area-inset-bottom)); z-index: 12; }
   .screen.active { padding-bottom: calc(120px + env(safe-area-inset-bottom)); }
