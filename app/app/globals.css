@@ -1,0 +1,200 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "shadcn/tailwind.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+    --color-navy: var(--navy);
+    --color-green: var(--green);
+    --color-green-dark: var(--green-dark);
+    --color-pink: var(--pink);
+    --color-pink-ink: var(--pink-ink);
+    --color-teal: var(--teal);
+    --color-periwinkle: var(--periwinkle);
+    --color-periwinkle-2: var(--periwinkle-2);
+    --color-mint: var(--mint);
+    --color-cream: var(--cream);
+    --color-sage: var(--sage);
+    --color-sub: var(--sub);
+    --color-tab-ink: var(--tab-ink);
+    --color-line: var(--line);
+    --color-card-line: var(--card-line);
+    --color-tint: var(--tint);
+    --color-tint-2: var(--tint-2);
+    --color-navy-dark: var(--navy-dark);
+    --color-navy-muted: var(--navy-muted);
+    --color-magenta: var(--magenta);
+    --color-teal-soft: var(--teal-soft);
+    --color-topic-navy: var(--topic-navy);
+    --color-topic-pink: var(--topic-pink);
+    --color-topic-green: var(--topic-green);
+    --color-topic-lilac: var(--topic-lilac);
+    --color-primary-hover: var(--primary-hover);
+    --color-pink-hint: var(--pink-hint);
+    --color-match-soft: var(--match-soft);
+    --color-tab-active: var(--tab-active);
+    --color-frost: var(--frost);
+    --shadow-btn: var(--btn-shadow);
+    --shadow-soft: var(--soft-shadow);
+    --shadow-lift: var(--lift-shadow);
+    --radius-card: 22px;
+    --font-heading: var(--font-sans);
+    --font-sans: var(--font-sans);
+    --color-sidebar-ring: var(--sidebar-ring);
+    --color-sidebar-border: var(--sidebar-border);
+    --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+    --color-sidebar-accent: var(--sidebar-accent);
+    --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+    --color-sidebar-primary: var(--sidebar-primary);
+    --color-sidebar-foreground: var(--sidebar-foreground);
+    --color-sidebar: var(--sidebar);
+    --color-chart-5: var(--chart-5);
+    --color-chart-4: var(--chart-4);
+    --color-chart-3: var(--chart-3);
+    --color-chart-2: var(--chart-2);
+    --color-chart-1: var(--chart-1);
+    --color-ring: var(--ring);
+    --color-input: var(--input);
+    --color-border: var(--border);
+    --color-destructive: var(--destructive);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-accent: var(--accent);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-muted: var(--muted);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-secondary: var(--secondary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-primary: var(--primary);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-popover: var(--popover);
+    --color-card-foreground: var(--card-foreground);
+    --color-card: var(--card);
+    --color-foreground: var(--foreground);
+    --color-background: var(--background);
+    --radius-sm: calc(var(--radius) * 0.6);
+    --radius-md: calc(var(--radius) * 0.8);
+    --radius-lg: var(--radius);
+    --radius-xl: calc(var(--radius) * 1.4);
+    --radius-2xl: calc(var(--radius) * 1.8);
+    --radius-3xl: calc(var(--radius) * 2.2);
+    --radius-4xl: calc(var(--radius) * 2.6);
+}
+
+/* buddy design system — Figma "CMU Pets" · 2 · Colours, type, components (479:561).
+   Values come from the live prototype's CSS (../index.html). Light only: the design has no dark mode. */
+:root {
+    /* brand */
+    --navy: #10288b;
+    --green: #05a544;
+    --green-dark: #00594d;
+    --pink: #f37cff;
+    --pink-ink: #c23ad1;
+    --teal: #175a54;
+    --periwinkle: #9ea8cc;
+    --periwinkle-2: #8090cb;
+    --mint: #f5f7fd;
+    --cream: #fffdf8;
+    --sage: #a9d4c4;
+    --sub: #4a5683;
+    --tab-ink: #7c86ad;
+    --line: #dfe3f0;
+    --card-line: #d4d4d4;
+    --tint: #eef0fa;
+    --tint-2: #e6eaf8;
+    --navy-dark: #0c1f70;
+    --navy-muted: #5a6696;
+    --magenta: #b02fc0;
+    --teal-soft: #e3ebea;
+    --white: #ffffff;
+    --topic-navy: #d6def8;
+    --topic-pink: #f5d8fa;
+    --topic-green: #cdeadb;
+    --topic-lilac: #dfd9fc;
+    --frost: rgb(255 255 255 / 0.72);
+    --page-grad: linear-gradient(180deg, #f5f6fc 0%, #eff1fa 55%, #eaedf8 100%);
+    --btn-shadow: 0 6px 14px rgb(16 40 139 / 0.3);
+    --soft-shadow: 0 8px 22px rgb(16 40 139 / 0.07);
+    --lift-shadow: 0 10px 28px rgb(16 40 139 / 0.1);
+
+    /* shadcn semantic tokens */
+    --background: var(--mint);
+    --foreground: var(--navy);
+    --card: var(--white);
+    --card-foreground: var(--navy);
+    --popover: var(--white);
+    --popover-foreground: var(--navy);
+    --primary: var(--navy);
+    --primary-foreground: var(--white);
+    --primary-hover: var(--navy-dark);
+    --secondary: var(--tint);
+    --secondary-foreground: var(--navy);
+    --muted: var(--tint);
+    --muted-foreground: var(--navy-muted);
+    --accent: var(--tint);
+    --accent-foreground: var(--navy);
+    --destructive: var(--magenta);
+    --border: var(--line);
+    --input: var(--periwinkle);
+    --ring: var(--navy);
+
+    /* buddy semantic tokens (same names as the Figma "Tokens" collection's code syntax) */
+    --pink-hint: var(--magenta); /* "✧ from what you said" */
+    --match-soft: var(--teal-soft); /* match % tag background */
+    --tab-active: var(--tint-2); /* active tab icon pill */
+    --chart-1: var(--navy);
+    --chart-2: var(--green);
+    --chart-3: var(--pink);
+    --chart-4: var(--teal);
+    --chart-5: var(--periwinkle);
+    --radius: 1rem;
+    --sidebar: #ffffff;
+    --sidebar-foreground: var(--navy);
+    --sidebar-primary: var(--navy);
+    --sidebar-primary-foreground: #ffffff;
+    --sidebar-accent: var(--tint);
+    --sidebar-accent-foreground: var(--navy);
+    --sidebar-border: var(--line);
+    --sidebar-ring: var(--navy);
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    }
+  body {
+    @apply bg-background text-foreground antialiased;
+    }
+  html {
+    @apply font-sans;
+    }
+}
+
+/* Type scale (Figma sheet: H1 32/35 · 800 · −1, Section 20/24 · 800, Body 14/19 · 500, Meta 11–12 · muted) */
+@utility text-h1 {
+  font-size: 32px;
+  line-height: 35px;
+  font-weight: 800;
+  letter-spacing: -1px;
+}
+@utility text-display {
+  font-size: 34px;
+  line-height: 37px;
+  font-weight: 800;
+  letter-spacing: -1.1px;
+}
+@utility text-section {
+  font-size: 20px;
+  line-height: 24px;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+@utility text-body {
+  font-size: 14px;
+  line-height: 19px;
+  font-weight: 500;
+}
+@utility text-meta {
+  font-size: 12px;
+  line-height: 16px;
+}
