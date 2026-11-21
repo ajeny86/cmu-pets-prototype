@@ -5,6 +5,7 @@ Work from the class build labs. Each lab lives in its own folder.
 | Lab | Folder | Project | Author | Status |
 |---|---|---|---|---|
 | 01 · Ideate on a rule | [`lab-01-ideate-on-a-rule-sara-molarinho/`](lab-01-ideate-on-a-rule-sara-molarinho/) | Lost & Found Pets | Sara Molarinho | Done: stricter match rule kept, 7/7 expectations hold |
+| 01 · Ideate on a rule | [`lab-01-ideate-on-a-rule-rita-fortunato/`](lab-01-ideate-on-a-rule-rita-fortunato/) | Lost & Found Pets | Rita Fortunato | In progress: cats-wander-further try, 5/6 expectations hold, keep or drop undecided |
 | 02 | _to be added_ | | | |
 | 03 | _to be added_ | | | |
 
