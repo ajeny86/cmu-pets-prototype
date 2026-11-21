@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lost &amp; Found Pets · no match yet</title>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css">
+<link rel="stylesheet" href="style.css">
+</head>
+<body>
+<main>
+  <div class="brand">Lost &amp; Found Pets</div>
+  <h1>No match yet for Bobby</h1>
+  <p class="lead">Black dog, medium size · last seen in Arroios, Lisbon, an hour ago.</p>
+
+  <section class="card">
+    <strong>Where Bobby was last seen</strong>
+    <div id="map" class="map"></div>
+    <div class="filters" id="filters">
+      <label><input type="checkbox" id="show-lost" checked><span class="swatch" style="background:#e0533d"></span>Lost pets</label>
+      <label><input type="checkbox" id="show-found" checked><span class="swatch" style="background:#1f9d74"></span>Found pets</label>
+      <label><input type="checkbox" id="show-vets" checked><span class="swatch" style="background:#6a4cc2"></span>Vets</label>
+    </div>
+    <!-- What the marker colours mean. -->
+    <div class="legend" id="map-legend">
+      <span class="legend-title">Map key</span>
+      <span class="legend-item"><span class="swatch" style="background:#e0533d"></span>Lost pet</span>
+      <span class="legend-item"><span class="swatch" style="background:#1f9d74"></span>Found pet</span>
+      <span class="legend-item"><span class="swatch" style="background:#6a4cc2"></span>Vet clinic</span>
+      <span class="legend-item"><span class="swatch swatch-home"></span>Bobby's last-seen spot</span>
+    </div>
+    <div class="status is-loading" id="map-note">
+      <strong>Loading the map<span class="dots"></span></strong>
+      Last seen: Arroios, Lisbon. This usually takes a second or two.
+    </div>
+  </section>
+
+  <section class="card">
+    <strong>Search lost &amp; found reports</strong>
+    <div class="demo-badge">Demo data</div>
+    <div class="muted">Example reports, written to show how matching could look. They are <strong>not real</strong> pets or real people.</div>
+
+    <!-- The search panel: animal, status, dates, place. -->
+    <div class="search">
+      <div class="search-row">
+        <span class="search-label">Animal</span>
+        <div class="chips" id="animal-chips">
+          <button type="button" class="chip" data-animal="all" aria-pressed="true">All</button>
+          <button type="button" class="chip" data-animal="dog" aria-pressed="false">Dog</button>
+          <button type="button" class="chip" data-animal="cat" aria-pressed="false">Cat</button>
+          <button type="button" class="chip" data-animal="other" aria-pressed="false">Other</button>
+        </div>
+      </div>
+
+      <div class="search-row">
+        <span class="search-label">Status</span>
+        <div class="chips" id="status-chips">
+          <button type="button" class="chip" data-status="all" aria-pressed="true">All</button>
+          <button type="button" class="chip" data-status="lost" aria-pressed="false">Lost</button>
+          <button type="button" class="chip" data-status="found" aria-pressed="false">Found</button>
+        </div>
+      </div>
+
+      <div class="search-row">
+        <span class="search-label">Dates</span>
+        <input type="date" id="date-from" aria-label="From date">
+        <span class="muted" style="font-size:13px">to</span>
+        <input type="date" id="date-to" aria-label="To date">
+      </div>
+
+      <div class="search-row">
+        <span class="search-label">Place</span>
+        <input type="text" id="place-input" placeholder="Street, neighbourhood or city" aria-label="Place to search">
+        <button type="button" class="go" id="place-go">Search</button>
+      </div>
+
+      <div class="place-note" id="place-note"></div>
+
+      <div class="search-foot">
+        <span class="search-count" id="search-count"></span>
+        <button type="button" class="clear" id="clear-filters">Clear filters</button>
+      </div>
+    </div>
+
+    <div class="status is-loading" id="reports-note">
+      <strong>Gathering the reports<span class="dots"></span></strong>
+      These are demo reports, so they appear straight away.
+    </div>
+    <ul class="reports" id="reports-list"></ul>
+  </section>
+
+  <section class="card">
+    <strong>Vets and shelters nearby</strong>
+    <div class="status is-loading" id="vets-note">
+      <strong>Looking for real vets near the last-seen spot<span class="dots"></span></strong>
+      We only show clinics listed in OpenStreetMap — nothing made up.
+    </div>
+    <ul class="vets" id="vets-list"></ul>
+  </section>
+
+  <section class="card">
+    <strong>What to do now</strong>
+    <ol class="muted" id="todo-list">
+      <li>Walk the streets around the last-seen spot and call his name.</li>
+      <li id="todo-vet">Call the nearest vets: someone may bring him in.</li>
+      <li>We'll message you the moment a found pet looks like Bobby.</li>
+    </ol>
+  </section>
+</main>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="app.js"></script>
+</body>
+</html>

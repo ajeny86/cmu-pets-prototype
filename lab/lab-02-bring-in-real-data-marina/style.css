@@ -1,0 +1,93 @@
+:root { --ink: #222326; --muted: #6b6d75; --line: #e4e4ea; --brand: #6a4cc2; --soft: #f6f5fa; }
+* { box-sizing: border-box; }
+body { margin: 0; font: 16px/1.5 system-ui, -apple-system, sans-serif; color: var(--ink); background: var(--soft); }
+main { max-width: 420px; margin: 0 auto; padding: 24px 16px; }
+.brand { font-weight: 700; color: var(--brand); letter-spacing: -0.3px; }
+h1 { font-size: 22px; margin: 6px 0 4px; }
+.lead { color: var(--muted); margin: 0 0 16px; }
+.card { background: #fff; border: 1px solid var(--line); border-radius: 14px; padding: 16px; margin-bottom: 12px; }
+.muted { color: var(--muted); font-size: 14px; }
+.map { height: 260px; border-radius: 12px; margin-top: 10px; background: #eee; }
+ol { margin: 8px 0 0; padding-left: 20px; }
+
+/* Vets list */
+ul.vets { list-style: none; margin: 10px 0 0; padding: 0; }
+ul.vets li { border-top: 1px solid var(--line); padding: 10px 0; cursor: pointer; }
+ul.vets li:first-child { border-top: 0; }
+ul.vets li:hover, ul.vets li.is-active { background: #faf9fd; }
+.vet-name { font-weight: 600; }
+.vet-meta { color: var(--muted); font-size: 13px; }
+.vet-contact { font-size: 13px; margin-top: 4px; }
+.vet-contact a { color: var(--brand); }
+.vet-contact .missing { color: #9a8f7a; font-style: italic; }
+.vet-hours { font-size: 13px; margin-top: 2px; }
+.vet-hours .missing { color: #9a8f7a; font-style: italic; }
+.dist { float: right; font-size: 13px; color: var(--brand); font-weight: 600; }
+
+/* Calm status boxes: loading, empty and "couldn't reach it" states. */
+.status { font-size: 14px; border-radius: 12px; padding: 12px 14px; margin-top: 10px; }
+.status.is-loading { background: #f6f5fa; color: var(--muted); }
+.status.is-empty { background: #fbfafd; border: 1.5px dashed #cfcbe0; color: var(--muted); }
+.status.is-error { background: #fdf7f2; border: 1px solid #f0dfcd; color: #7a5c3e; }
+.status strong { display: block; color: var(--ink); margin-bottom: 2px; }
+.status.is-error strong { color: #7a5c3e; }
+.status button { margin-top: 8px; font: inherit; font-size: 13px; padding: 6px 12px; border-radius: 999px; border: 1px solid #d9d3ea; background: #fff; color: var(--brand); cursor: pointer; }
+.status button:hover { background: #f6f5fa; }
+.dots::after { content: ""; animation: dots 1.4s steps(4, end) infinite; }
+@keyframes dots { 0% { content: ""; } 25% { content: "."; } 50% { content: ".."; } 75% { content: "..."; } }
+
+/* Filters: little switches for what shows on the map. */
+.filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.filters label { font-size: 13px; border: 1px solid var(--line); border-radius: 999px; padding: 5px 11px; cursor: pointer; background: #fff; user-select: none; }
+.filters label:hover { background: #faf9fd; }
+.filters input { margin-right: 5px; accent-color: var(--brand); }
+.filters .swatch { display: inline-block; width: 9px; height: 9px; border-radius: 50%; margin-right: 5px; vertical-align: middle; }
+
+/* Map key: what each marker colour means. */
+.legend { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 12px; margin-top: 8px; font-size: 12px; color: var(--muted); }
+.legend-title { font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; font-size: 11px; }
+.legend-item { display: inline-flex; align-items: center; gap: 5px; }
+.legend .swatch { display: inline-block; width: 10px; height: 10px; border-radius: 50%; border: 1.5px solid #fff; box-shadow: 0 0 0 1px var(--line); }
+.legend .swatch-home { background: #fff; border: 2px solid var(--brand); }
+
+/* The demo-data label: always visible, never hidden. */
+.demo-badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.4px; text-transform: uppercase; background: #fdf0d8; color: #8a5a12; border: 1px solid #f0dcb4; border-radius: 999px; padding: 2px 8px; margin-bottom: 6px; }
+
+/* The search panel: compact, one row per question. */
+.search { margin-top: 12px; border: 1px solid var(--line); border-radius: 12px; padding: 8px 12px; background: #fdfdff; }
+.search-row { display: flex; align-items: center; gap: 8px; padding: 6px 0; }
+.search-row + .search-row { border-top: 1px dashed #eeeef4; }
+.search-label { font-size: 11px; font-weight: 700; color: var(--muted); width: 56px; flex: 0 0 auto; text-transform: uppercase; letter-spacing: 0.4px; }
+.chips { display: flex; flex-wrap: wrap; gap: 5px; }
+.chip { font: inherit; font-size: 13px; padding: 4px 10px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); cursor: pointer; }
+.chip:hover { background: #faf9fd; }
+.chip[aria-pressed="true"] { background: var(--brand); border-color: var(--brand); color: #fff; }
+.search input[type="date"], .search input[type="text"] { font: inherit; font-size: 13px; padding: 5px 8px; border: 1px solid var(--line); border-radius: 8px; background: #fff; color: var(--ink); min-width: 0; }
+.search input[type="date"] { flex: 1 1 0; }
+.search input[type="text"] { flex: 1 1 auto; }
+.search .go { font: inherit; font-size: 13px; padding: 5px 12px; border-radius: 999px; border: 1px solid var(--brand); background: var(--brand); color: #fff; cursor: pointer; flex: 0 0 auto; }
+.search .go:hover { background: #5b3fb0; }
+.search .go:disabled { opacity: 0.6; cursor: default; }
+.search-foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: 8px; }
+.search-count { font-size: 13px; color: var(--muted); }
+.clear { font: inherit; font-size: 13px; padding: 4px 11px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--brand); cursor: pointer; }
+.clear:hover { background: #f6f5fa; }
+.place-note { font-size: 13px; margin-top: 6px; }
+.place-note.is-error { color: #7a5c3e; }
+.place-note.is-ok { color: var(--muted); }
+
+/* Report cards in the list. */
+ul.reports { list-style: none; margin: 10px 0 0; padding: 0; }
+ul.reports li { display: flex; gap: 10px; border-top: 1px solid var(--line); padding: 10px 0; cursor: pointer; }
+ul.reports li:first-child { border-top: 0; }
+ul.reports li:hover, ul.reports li.is-active { background: #faf9fd; }
+.thumb { width: 54px; height: 54px; border-radius: 10px; object-fit: cover; background: #eee; flex: 0 0 auto; }
+.thumb.placeholder { display: flex; align-items: center; justify-content: center; font-size: 22px; background: #f2f0f8; }
+.report-kind { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; }
+.report-kind.lost { color: #b8452f; }
+.report-kind.found { color: #1f7a5a; }
+.report-title { font-weight: 600; font-size: 15px; }
+.report-meta { color: var(--muted); font-size: 13px; }
+.report-link { font-size: 13px; }
+.report-link a { color: var(--brand); }
+.report-link .missing { color: #9a8f7a; font-style: italic; }
