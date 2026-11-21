@@ -772,6 +772,8 @@
   .screen.home .welcome p { max-width: 220px; }
   .screen.home .guide { background: none; box-shadow: none; padding: 0; margin-top: 26px; display: flex; flex-direction: column; gap: 14px; }
   .clue-row { display: flex; align-items: center; gap: 6px; }
+  /* Clue state illustrations (Loading, No results, Success) at the top of a flow screen */
+  .state-clue { width: 140px; height: auto; align-self: flex-start; margin: -6px 0 -8px -10px; filter: drop-shadow(0 10px 12px rgba(91,75,196,.16)); }
   .clue-row .clue { width: 128px; height: auto; flex: none; margin-left: -8px; filter: drop-shadow(0 10px 12px rgba(91,75,196,.18)); }
   .say { position: relative; flex: 1; background: var(--frost); border-radius: 22px 22px 22px 8px; padding: 12px 14px 13px; box-shadow: var(--soft-shadow); }
   .say::before { content: ''; position: absolute; left: -6px; top: 30px; width: 14px; height: 14px; background: var(--frost); transform: rotate(45deg); border-radius: 3px; }
@@ -936,6 +938,15 @@
   .rp-mic.rec { background: #fde8fe; animation: pulse-pink 1.1s infinite; }
   .rp-send { width: 38px; height: 38px; flex: none; border-radius: 50%; display: grid; place-items: center; background: #dfe4f5; color: #8f99c0; transition: background .15s, color .15s; }
   .rp-send.on { background: var(--navy); color: #fff; }
+  /* Clue stands in its own column, as tall as the tip + the input together */
+  #lost .rp-dock { display: grid; grid-template-columns: auto minmax(0, 1fr); column-gap: 8px; row-gap: 0; align-items: end; }
+  #lost .rp-dock > * { grid-column: 1 / -1; }
+  #lost .rp-dock .rp-talk { display: contents; }
+  #lost .rp-ready { grid-row: 1; margin-bottom: 8px; }
+  #lost .rp-tip { grid-column: 2; grid-row: 2; align-self: start; padding: 2px 6px 8px 2px; }
+  #lost .rp-box { grid-column: 2; grid-row: 3; }
+  #lost .rp-clue { grid-column: 1; grid-row: 2 / 4; align-self: start; width: 112px; margin: 0 -2px 0 -4px; }
+  #lost .rp-tip[hidden] + .rp-talk .rp-clue { width: 60px; }
 
   /* ================= No match yet (mid-fi structure, start-screen look, no cards) ================= */
   #nextsteps.screen { gap: 0; padding-left: 16px; padding-right: 16px; }
@@ -1007,7 +1018,7 @@
   <!-- Clue, the AI guide: stands on the page, his words in a bubble -->
   <div class="guide">
     <div class="clue-row">
-      <img class="clue" src="assets/clue.png" width="128" height="134" alt="Clue">
+      <img class="clue" src="assets/clue/clue-hello.png" width="128" height="111" alt="Clue">
       <div class="say"><h2>Hi! I’m <em>Clue</em></h2><p>Adoption, care, lost &amp; found, shop — just ask, I’ll take you there.</p></div>
     </div>
     <label class="ask-pill" for="guideInput">
@@ -1102,7 +1113,7 @@
     <div class="rp-ready" id="dockReady" hidden><span id="lostAiAsk">✓ All set — search now, or add more details</span><button class="rp-go" id="readyGo">Continue →</button></div>
     <p class="rp-tip" id="rpTip"><b>Tell me the details</b> by voice or text, and I’ll fill in the form.</p>
     <div class="rp-talk">
-      <img class="rp-clue" src="assets/clue.png" width="52" height="54" alt="Clue">
+      <img class="rp-clue" src="assets/clue/clue-laptop.png" width="52" height="43" alt="Clue">
       <div class="rp-box">
         <textarea id="replyInput" rows="1" placeholder="Tell me — voice or text"></textarea>
         <button class="rp-mic" id="dockMic" aria-label="Speak"><svg viewBox="0 0 24 24" width="20" height="20"><rect x="9" y="3" width="6" height="11" rx="3" fill="url(#icf)" stroke="#10288b" stroke-width="1.8"/><path d="M5 11a7 7 0 0 0 14 0M12 18v3" fill="none" stroke="#10288b" stroke-width="1.8" stroke-linecap="round"/></svg></button>
@@ -1188,7 +1199,7 @@
 <!-- =============== 5. AI CHECKING · MATCH =============== -->
 <section class="screen flow" id="checking">
   <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
-  <div class="badge">✓</div>
+  <img class="state-clue" src="assets/clue/clue-loading.png" width="140" height="124" alt="Clue is searching">
   <div class="title"><h1>Report submitted</h1><p id="checkSub"></p></div>
   <div class="status" id="searchStatus" data-title="Searching for your post" data-steps="Read your report"></div>
   <p class="note">Immediate closest matches from lost &amp; found reports nearby.</p>
@@ -1226,7 +1237,7 @@
 <!-- =============== 6. MATCH → REUNITE + 7. MAP / TIMELINE =============== -->
 <section class="screen flow" id="reunite">
   <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
-  <div class="badge">♥</div>
+  <img class="state-clue" src="assets/clue/clue-love.png" width="140" height="126" alt="Clue is happy">
   <div class="title"><h1><span class="petName">your pet</span> is marked as found</h1><p>Great news. Here’s how to reunite safely.</p></div>
   <ol class="steps-ol">
     <li>Message the finder in the private chat — no phone number needed.</li>
@@ -1405,6 +1416,7 @@
 <!-- =============== FOUND · AI ANALYSES PICTURE =============== -->
 <section class="screen flow" id="found-analyse">
   <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
+  <img class="state-clue" src="assets/clue/clue-loading.png" width="140" height="124" alt="Clue is working">
   <div class="title"><h1>Creating the report</h1><p>AI analyses the picture.</p></div>
   <div class="status" id="analyseStatus" data-title="Working on it" data-steps="Read your photo|Detected: dog · medium size|Added spot location and time|Searched 9 lost-pet reports nearby"></div>
 </section>
@@ -1435,7 +1447,7 @@
 <!-- =============== FOUND · REPORT CREATED + HELP MORE? =============== -->
 <section class="screen flow" id="found-created">
   <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
-  <div class="badge">✓</div>
+  <img class="state-clue" src="assets/clue/clue-love.png" width="140" height="126" alt="Clue is happy">
   <div class="title"><h1>Report created</h1><p id="foundSub">Owners nearby can now see it.</p></div>
   <div class="status" data-static><div class="st-title"><img src="assets/sparkle.svg" alt="">Status</div><div class="st done" id="foundSt1">Found report published</div><div class="st done">Compared with 9 lost reports · no match yet</div></div>
   <div class="question">
@@ -1473,7 +1485,7 @@
 <!-- =============== FOUND · GOOD JOB =============== -->
 <section class="screen flow" id="found-thanks">
   <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
-  <div class="badge">♥</div>
+  <img class="state-clue" src="assets/clue/clue-love.png" width="140" height="126" alt="Clue is happy">
   <div class="title"><h1>Good job, thank you!</h1><p>You may have just helped a pet get home. We’ll let you know if the owner is found.</p></div>
   <button class="pill primary" data-go="home" style="align-self:flex-start">Back home</button>
 </section>
@@ -1526,7 +1538,7 @@
 <section class="screen flow" id="chat">
   <div class="flow-header"><img class="logo" src="assets/buddy-wordmark-green.svg" width="101" height="32" alt="buddy" data-go="home"><div class="hdr-icons"><span class="who">Guest</span><button class="icon-btn" data-toast="No new notifications" aria-label="Notifications"><svg class="i-bell" viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="url(#icf)" stroke="#10288b" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" d="M12 3.6c-3.3 0-5.5 2.6-5.5 6v3.1l-1.9 2.9c-.4.6 0 1.4.7 1.4h13.4c.7 0 1.1-.8.7-1.4l-1.9-2.9V9.6c0-3.4-2.2-6-5.5-6z"/><path d="M9.9 19.6a2.1 2.1 0 0 0 4.2 0" fill="none" stroke="#10288b" stroke-width="2" stroke-linecap="round"/><path d="M18.6 2.4l-.9 1.6M21 5.2l-1.7.7" stroke="#ffcf3f" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="icon-btn" data-account aria-label="Profile"><span class="avatar" aria-hidden="true"></span></button></div></div>
   <button class="back" data-go="home">‹  Home</button>
-  <div class="guide-head"><img class="chat-clue" src="assets/clue.png" width="34" height="36" alt="">Clue · Chat</div>
+  <div class="guide-head"><img class="chat-clue" src="assets/clue/clue-laptop.png" width="34" height="28" alt="">Clue · Chat</div>
   <div class="chat" id="chatLog"><div class="bubble ai">Hi! I can help with lost &amp; found pets, care and more. What do you need?</div></div>
   <div class="row-pills">
     <button class="pill" data-go="member">I lost a pet</button>
