@@ -1,0 +1,285 @@
+<title>Pet Match Playground</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,750&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@500&display=swap">
+<style>
+/* Layout: knobs rail on the left (sticky on desktop), reports and a "try your own" bench on the right; stacks on phones. */
+:root {
+  --bg: #f3f6f5;
+  --surface: #ffffff;
+  --ink: #15201e;
+  --muted: #5b6b68;
+  --line: #d6e0de;
+  --accent: #0f766e;
+  --accent-soft: #d5efec;
+  --match: #15803d; --match-bg: #dcf3e3;
+  --maybe: #a16207; --maybe-bg: #fbf0d3;
+  --no: #64748b; --no-bg: #e8edf2;
+  --bad: #b42318; --bad-bg: #fde4e1;
+  --font-display: "Bricolage Grotesque", "Inter", system-ui, sans-serif;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) {
+  --bg: #0f1615; --surface: #172120; --ink: #e6efed; --muted: #94a7a3; --line: #2a3835;
+  --accent: #4fd1c1; --accent-soft: #163a36;
+  --match: #6ee79a; --match-bg: #143323; --maybe: #f5c867; --maybe-bg: #3a2e12;
+  --no: #a5b4c4; --no-bg: #222c36; --bad: #ff8a7a; --bad-bg: #3d1a16; color-scheme: dark; } }
+:root[data-theme="dark"] {
+  --bg: #0f1615; --surface: #172120; --ink: #e6efed; --muted: #94a7a3; --line: #2a3835;
+  --accent: #4fd1c1; --accent-soft: #163a36;
+  --match: #6ee79a; --match-bg: #143323; --maybe: #f5c867; --maybe-bg: #3a2e12;
+  --no: #a5b4c4; --no-bg: #222c36; --bad: #ff8a7a; --bad-bg: #3d1a16; color-scheme: dark; }
+
+* { box-sizing: border-box; }
+body { background: var(--bg); color: var(--ink); font-family: var(--font-body); font-size: 15px; line-height: 1.5; }
+.wrap { max-width: 1180px; margin: 0 auto; padding-block: 28px 56px;
+  padding-left: max(16px, env(safe-area-inset-left, 0px)); padding-right: max(16px, env(safe-area-inset-right, 0px)); }
+header { display: grid; gap: 6px; margin-bottom: 22px; }
+.eyebrow { font: 600 12px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); }
+h1 { font: 750 clamp(28px, 4vw, 40px)/1.05 var(--font-display); margin: 0; text-wrap: balance; }
+h2 { font: 600 20px/1.2 var(--font-display); margin: 0; }
+.lede { color: var(--muted); max-width: 64ch; margin: 0; }
+
+.grid { display: grid; grid-template-columns: 320px minmax(0, 1fr); gap: 24px; align-items: start; }
+@media (max-width: 860px) { .grid { grid-template-columns: minmax(0, 1fr); } }
+
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px; }
+.knobs { position: sticky; top: calc(env(safe-area-inset-top, 0px) + 16px); display: grid; gap: 16px; }
+@media (max-width: 860px) { .knobs { position: static; } }
+.knob-group { display: grid; gap: 12px; }
+.knob-group h3 { font: 600 11px/1 var(--font-body); letter-spacing: .08em; text-transform: uppercase; color: var(--muted); margin: 0; }
+.knob { display: grid; gap: 4px; }
+.knob-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.knob label { font-weight: 500; font-size: 14px; }
+.val { font: 500 14px var(--font-mono); font-variant-numeric: tabular-nums; color: var(--ink); white-space: nowrap; }
+.val .was { color: var(--muted); font-size: 12px; margin-left: 6px; }
+.knob.changed .val { color: var(--accent); }
+input[type=range] { width: 100%; accent-color: var(--accent); }
+.knob-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+button { font: 500 13px var(--font-body); border-radius: 8px; padding: 8px 12px; cursor: pointer;
+  border: 1px solid var(--line); background: var(--surface); color: var(--ink); }
+button.primary { background: var(--accent); border-color: var(--accent); color: var(--bg); }
+button:focus-visible, select:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.copy-out { font: 12px/1.5 var(--font-mono); background: var(--bg); border: 1px solid var(--line); border-radius: 8px;
+  padding: 10px; white-space: pre; overflow-x: auto; margin: 0; }
+.hint { font-size: 12px; color: var(--muted); margin: 0; }
+
+.main { display: grid; gap: 24px; min-width: 0; }
+.score { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 20px; }
+.score-big { font: 750 34px/1 var(--font-display); font-variant-numeric: tabular-nums; }
+.score-big.off { color: var(--bad); }
+.score-text { color: var(--muted); font-size: 14px; max-width: 52ch; }
+.scale { display: flex; gap: 6px; flex-wrap: wrap; font: 500 12px var(--font-mono); }
+.scale span { padding: 4px 8px; border-radius: 999px; }
+
+.reports { display: grid; gap: 12px; }
+.report { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px 16px; padding: 14px 16px;
+  background: var(--surface); border: 1px solid var(--line); border-radius: 12px; }
+.report.broken { border-color: var(--bad); box-shadow: inset 4px 0 0 var(--bad); }
+.report-title { font-weight: 600; }
+.pair { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 13px; color: var(--muted); }
+.pair b { color: var(--ink); font-weight: 500; }
+.why { grid-column: 1 / -1; font: 13px/1.5 var(--font-mono); color: var(--muted); overflow-wrap: anywhere; }
+.verdict { display: grid; justify-items: end; gap: 4px; align-content: start; }
+.pill { font: 600 12px/1 var(--font-body); letter-spacing: .05em; text-transform: uppercase; padding: 6px 10px; border-radius: 999px; white-space: nowrap; }
+.pill.match { background: var(--match-bg); color: var(--match); }
+.pill.maybe { background: var(--maybe-bg); color: var(--maybe); }
+.pill.no { background: var(--no-bg); color: var(--no); }
+.expect { font-size: 12px; color: var(--muted); white-space: nowrap; }
+.expect.bad { color: var(--bad); font-weight: 600; }
+.flip { font-size: 12px; color: var(--accent); white-space: nowrap; }
+
+.bench { display: grid; gap: 14px; }
+.sides { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
+@media (max-width: 560px) { .sides { grid-template-columns: minmax(0, 1fr); } }
+fieldset { border: 1px solid var(--line); border-radius: 10px; padding: 12px; margin: 0; display: grid; gap: 8px; min-width: 0; }
+legend { font-weight: 600; padding: 0 4px; }
+.field { display: grid; grid-template-columns: 70px minmax(0, 1fr); align-items: center; gap: 8px; font-size: 13px; }
+select, input[type=number] { font: 14px var(--font-body); padding: 6px 8px; border: 1px solid var(--line); border-radius: 6px;
+  background: var(--bg); color: var(--ink); width: 100%; min-width: 0; }
+.bench-result { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; }
+@media (prefers-reduced-motion: no-preference) { .pill, .report { transition: background-color .2s, border-color .2s, box-shadow .2s; } }
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Lab · Exercise 1 · Lost &amp; Found Pets</span>
+    <h1>Pet Match Playground</h1>
+    <p class="lede">Move a knob and watch what each owner would see: <b>match</b> (go and look now), <b>maybe</b> (worth a look) or <b>no</b>. A wrong match gives false hope; a missed match keeps a pet from home.</p>
+  </header>
+
+  <div class="grid">
+    <aside class="panel knobs" aria-label="Knobs">
+      <div class="knob-group" id="knobs-points"><h3>Points per clue</h3></div>
+      <div class="knob-group" id="knobs-limits"><h3>Thresholds and limits</h3></div>
+      <div class="knob-actions">
+        <button id="reset" type="button">Reset to lab file</button>
+        <button id="copy" class="primary" type="button">Copy knobs for Python</button>
+      </div>
+      <pre class="copy-out" id="copy-out" hidden></pre>
+      <p class="hint">Like a setting? Copy the knobs and paste them to Claude to put them in <code>lost_found_match.py</code>.</p>
+    </aside>
+
+    <main class="main">
+      <section class="panel score" aria-live="polite">
+        <div class="score-big" id="held">7/7</div>
+        <div class="score-text" id="held-text"></div>
+        <div class="scale" id="scale"></div>
+      </section>
+
+      <section class="reports" aria-label="Reports" id="reports"></section>
+
+      <section class="panel bench" aria-label="Try your own report">
+        <h2>Try your own report</h2>
+        <div class="sides">
+          <fieldset id="lost"><legend>Lost</legend></fieldset>
+          <fieldset id="found"><legend>Found</legend></fieldset>
+        </div>
+        <div class="bench-result">
+          <span class="pill" id="bench-pill">—</span>
+          <span class="why" id="bench-why" style="grid-column:auto"></span>
+        </div>
+      </section>
+    </main>
+  </div>
+</div>
+
+<script>
+// Same rule as lost_found_match.py, with the lab file's current knob values.
+const LAB = { COLOUR_POINTS: 2, LOOKALIKE_POINTS: 1, NEAR_KM: 2.0, NEAR_POINTS: 2, SIZE_POINTS: 1, MATCH_AT: 5, MAYBE_AT: 2, MAX_DAYS_APART: 14 };
+const LOOKALIKE = [["white", "cream"], ["black", "dark grey"], ["brown", "ginger"]];
+const KNOBS = [
+  ["knobs-points", "COLOUR_POINTS", "Same colour", 0, 5, 1, ""],
+  ["knobs-points", "LOOKALIKE_POINTS", "Look-alike colour", 0, 5, 1, ""],
+  ["knobs-points", "NEAR_POINTS", "Nearby", 0, 5, 1, ""],
+  ["knobs-points", "SIZE_POINTS", "Same size", 0, 5, 1, ""],
+  ["knobs-limits", "NEAR_KM", "Nearby means within", 0, 15, 0.5, " km"],
+  ["knobs-limits", "MATCH_AT", "Match from", 1, 12, 1, " pts"],
+  ["knobs-limits", "MAYBE_AT", "Maybe from", 0, 12, 1, " pts"],
+  ["knobs-limits", "MAX_DAYS_APART", "Too late after", 1, 60, 1, " days"],
+];
+let K = { ...LAB };
+
+const pet = (species, colour, size, km, day) => ({ species, colour, size, km, day });
+const SCENARIOS = [
+  [pet("dog", "black", "medium", 2.0, 1), pet("dog", "black", "medium", 2.4, 2), "match", "Same dog, nearby, the next day"],
+  [pet("dog", "black", "medium", 2.0, 1), pet("cat", "black", "small", 2.1, 1), "no", "A different animal"],
+  [pet("cat", "grey", "small", 3.0, 1), pet("cat", "grey", "small", 9.0, 2), "maybe", "Cats wander, so don't rule it out"],
+  [pet("dog", "white", "medium", 4.0, 3), pet("dog", "cream", "small", 4.3, 3), "maybe", "Looks alike in a photo, worth a look"],
+  [pet("dog", "brown", "large", 1.0, 1), pet("dog", "brown", "large", 1.2, 40), "no", "Found weeks later: too late"],
+  [pet("cat", "black", "small", 2.0, 5), pet("cat", "black", "small", 2.2, 3), "no", "Found before it was lost"],
+  [pet("dog", "black", "large", 5.0, 2), pet("dog", "black", "medium", 5.5, 3), "maybe", "Right colour and place, but the size looks off"],
+];
+
+const lookalike = (a, b) => LOOKALIKE.some(([x, y]) => (a === x && b === y) || (a === y && b === x));
+function clues(l, f, k) {
+  const p = [];
+  if (l.colour === f.colour) p.push(["same colour", k.COLOUR_POINTS]);
+  else if (lookalike(l.colour, f.colour)) p.push(["look-alike colour", k.LOOKALIKE_POINTS]);
+  if (Math.abs(l.km - f.km) <= k.NEAR_KM + 1e-9) p.push(["nearby", k.NEAR_POINTS]);
+  if (l.size === f.size) p.push(["same size", k.SIZE_POINTS]);
+  return p;
+}
+function match(l, f, k) {
+  if (l.species !== f.species) return "no";
+  if (f.day < l.day || f.day - l.day > k.MAX_DAYS_APART) return "no";
+  const s = clues(l, f, k).reduce((a, [, p]) => a + p, 0);
+  return s >= k.MATCH_AT ? "match" : s >= k.MAYBE_AT ? "maybe" : "no";
+}
+function why(l, f, k) {
+  if (l.species !== f.species) return `A ${f.species} was found, but you lost a ${l.species}.`;
+  if (f.day < l.day) return "It was found before yours went missing.";
+  if (f.day - l.day > k.MAX_DAYS_APART) return `Found ${f.day - l.day} days later, more than ${k.MAX_DAYS_APART} days apart.`;
+  const p = clues(l, f, k), s = p.reduce((a, [, v]) => a + v, 0);
+  const parts = p.map(([n, v]) => `${n} ${v}`).join(" + ") || "no clues";
+  return `${parts} = ${s} points (match from ${k.MATCH_AT}, maybe from ${k.MAYBE_AT}).`;
+}
+
+const $ = (id) => document.getElementById(id);
+const fmt = (key, v) => key === "NEAR_KM" ? v.toFixed(1) : String(v);
+const describe = (p) => `<b>${p.colour} ${p.size} ${p.species}</b> · ${p.km.toFixed(1)} km · day ${p.day}`;
+
+function buildKnobs() {
+  for (const [group, key, label, min, max, step, unit] of KNOBS) {
+    const row = document.createElement("div");
+    row.className = "knob"; row.id = "row-" + key;
+    row.innerHTML = `<div class="knob-top"><label for="k-${key}">${label}</label><span class="val" id="v-${key}"></span></div>
+      <input type="range" id="k-${key}" min="${min}" max="${max}" step="${step}" value="${LAB[key]}">`;
+    $(group).appendChild(row);
+    row.querySelector("input").addEventListener("input", (e) => { K[key] = parseFloat(e.target.value); render(); });
+    row.dataset.unit = unit;
+  }
+}
+
+function render() {
+  for (const [, key] of KNOBS) {
+    const row = $("row-" + key), changed = K[key] !== LAB[key];
+    row.classList.toggle("changed", changed);
+    $("v-" + key).innerHTML = fmt(key, K[key]) + row.dataset.unit + (changed ? `<span class="was">lab ${fmt(key, LAB[key])}</span>` : "");
+    $("k-" + key).value = K[key];
+  }
+  $("scale").innerHTML = `<span class="pill no">no &lt; ${K.MAYBE_AT}</span><span class="pill maybe">maybe ${K.MAYBE_AT}+</span><span class="pill match">match ${K.MATCH_AT}+</span>`;
+
+  let held = 0;
+  const html = SCENARIOS.map(([l, f, exp, label]) => {
+    const a = match(l, f, K), labA = match(l, f, LAB), ok = a === exp;
+    held += ok;
+    return `<article class="report${ok ? "" : " broken"}">
+      <div><div class="report-title">${label}</div>
+        <div class="pair"><span>Lost: ${describe(l)}</span><span>Found: ${describe(f)}</span></div></div>
+      <div class="verdict"><span class="pill ${a}">${a}</span>
+        <span class="expect${ok ? "" : " bad"}">${ok ? "✓" : "✗"} team expects ${exp}</span>
+        ${a !== labA ? `<span class="flip">was ${labA} in lab file</span>` : ""}</div>
+      <div class="why">${why(l, f, K)}</div></article>`;
+  }).join("");
+  $("reports").innerHTML = html;
+
+  const n = SCENARIOS.length;
+  $("held").textContent = `${held}/${n}`;
+  $("held").classList.toggle("off", held < n);
+  $("held-text").textContent = held === n
+    ? "expectations hold. Move a knob and see which owners would get a different answer."
+    : "expectations hold. Is the rule wrong, or the expectation? Look at the red reports.";
+
+  renderBench();
+}
+
+const OPTS = { species: ["dog", "cat"], colour: ["black", "dark grey", "grey", "white", "cream", "brown", "ginger"], size: ["small", "medium", "large"] };
+const BENCH = { lost: pet("dog", "black", "large", 5.0, 2), found: pet("dog", "dark grey", "large", 6.0, 6) };
+function buildBench() {
+  for (const side of ["lost", "found"]) {
+    const fs = $(side);
+    for (const f of ["species", "colour", "size"]) {
+      const opts = OPTS[f].map((o) => `<option${o === BENCH[side][f] ? " selected" : ""}>${o}</option>`).join("");
+      fs.insertAdjacentHTML("beforeend", `<div class="field"><label for="${side}-${f}">${f}</label><select id="${side}-${f}">${opts}</select></div>`);
+    }
+    fs.insertAdjacentHTML("beforeend", `<div class="field"><label for="${side}-km">km</label><input type="number" id="${side}-km" min="0" max="50" step="0.1" value="${BENCH[side].km}"></div>
+      <div class="field"><label for="${side}-day">day</label><input type="number" id="${side}-day" min="1" max="120" step="1" value="${BENCH[side].day}"></div>`);
+    fs.addEventListener("input", (e) => {
+      const f = e.target.id.split("-")[1];
+      BENCH[side][f] = (f === "km" || f === "day") ? (parseFloat(e.target.value) || 0) : e.target.value;
+      renderBench();
+    });
+  }
+}
+function renderBench() {
+  const a = match(BENCH.lost, BENCH.found, K);
+  const pill = $("bench-pill"); pill.className = "pill " + a; pill.textContent = a;
+  $("bench-why").textContent = why(BENCH.lost, BENCH.found, K);
+}
+
+$("reset").addEventListener("click", () => { K = { ...LAB }; $("copy-out").hidden = true; render(); });
+$("copy").addEventListener("click", () => {
+  const text = KNOBS.map(([, key]) => `${key} = ${fmt(key, K[key])}`).join("\n");
+  const out = $("copy-out"); out.textContent = text; out.hidden = false;
+  const btn = $("copy");
+  const done = (msg) => { btn.textContent = msg; setTimeout(() => (btn.textContent = "Copy knobs for Python"), 1600); };
+  try {
+    navigator.clipboard.writeText(text).then(() => done("Copied"), () => { selectOut(out); done("Select and copy below"); });
+  } catch { selectOut(out); done("Select and copy below"); }
+});
+function selectOut(el) { const r = document.createRange(); r.selectNodeContents(el); const s = getSelection(); s.removeAllRanges(); s.addRange(r); }
+
+buildKnobs(); buildBench(); render();
+</script>
