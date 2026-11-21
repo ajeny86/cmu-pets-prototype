@@ -451,6 +451,25 @@
   .nm-row .pill { height: 36px; padding: 0 16px; }
   a.pill { text-decoration: none; display: inline-flex; align-items: center; }
   .vet-map { height: 230px; }
+  /* match by points (Lab 01 rule) */
+  .conf.maybe { background: #fff4d6; color: #7a5300; border-color: #c99a2e; }
+  .why-row { display: flex; align-items: center; gap: 8px; font-size: 12.5px; line-height: 16px; color: var(--navy); }
+  .why-row i { flex: none; min-width: 26px; height: 20px; border-radius: 10px; font-style: normal; font-size: 11px; font-weight: 700; display: grid; place-items: center; background: #d9f1e3; color: #00594d; }
+  .why-row.no { color: var(--muted); }
+  .why-row.no i { background: #eceff7; color: var(--muted); }
+  .why-sum { margin-top: 4px; font-size: 12px; color: var(--muted); }
+  .why-sum b { color: var(--navy); }
+  /* No-match map layers (Lab 02) */
+  .map-filters { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+  .mf { display: inline-flex; align-items: center; gap: 6px; height: 32px; padding: 0 12px; border-radius: 16px; background: #fff; box-shadow: 0 3px 10px rgba(16,40,139,.06); font-size: 12.5px; font-weight: 600; color: var(--navy); }
+  .mf i { width: 10px; height: 10px; border-radius: 50%; }
+  .mf[aria-pressed="false"] { background: rgba(255,255,255,.45); color: #8f99c0; box-shadow: none; }
+  .mf[aria-pressed="false"] i { opacity: .35; }
+  .map-status { margin-top: 8px; font-size: 12.5px; line-height: 17px; color: var(--sub); }
+  .map-status button { margin-left: 6px; font-weight: 700; color: var(--navy); text-decoration: underline; }
+  .rdot { width: 14px; height: 14px; border-radius: 50%; border: 2.5px solid #fff; box-shadow: 0 1px 4px rgba(16,40,139,.4); box-sizing: border-box; }
+  .rdot.found { background: #0a7a3e; }
+  .rdot.lost { background: #b02fc0; }
   .nm-row { cursor: pointer; }
   .nm-row.sel b { color: var(--green-dark); }
   .nm-row .near { display: inline-block; margin-left: 6px; font-size: 10px; font-weight: 700; color: var(--white); background: var(--green); border-radius: 999px; padding: 1px 7px; vertical-align: 2px; }
@@ -1203,17 +1222,14 @@
     <div class="match-top">
       <div class="ph"></div>
       <div style="display:flex;flex-direction:column;gap:6px">
-        <span class="conf">88% match confidence</span>
+        <span class="conf" id="matchConf">Match · 6 points</span>
         <b style="font-size:14px" id="matchTitle">Found pet report</b>
-        <span class="note">Reported recently by a neighbour · in their care</span>
+        <span class="note" id="matchNote">Reported recently by a neighbour · in their care</span>
       </div>
     </div>
-    <div class="why">
+    <!-- the Lab 01 match rule: every clue and its points, so the owner sees why -->
+    <div class="why" id="matchWhy">
       <span><b>Why this match</b></span>
-      <span id="matchLooks">✓ Looks like your description</span>
-      <span>✓ Found ~300 m from <span class="lostPlace">the lost location</span></span>
-      <span>✓ Found after the time <span class="petName">your pet</span> went missing</span>
-      <span>? No collar visible — chip not checked yet</span>
     </div>
   </div>
   <div class="row-pills">
@@ -1269,6 +1285,13 @@
   <!-- 2 · vets & shelters on the map, nearest first -->
   <section class="ns-sec">
     <div class="map-canvas real vet-map" id="vetMap"></div>
+    <!-- Lab 02 · Bring in real data: what's on the map, switchable; doubles as the map key -->
+    <div class="map-filters" id="mapFilters">
+      <button type="button" class="mf" data-layer="lost" aria-pressed="true"><i style="background:#b02fc0"></i>Lost pets</button>
+      <button type="button" class="mf" data-layer="found" aria-pressed="true"><i style="background:#0a7a3e"></i>Found pets</button>
+      <button type="button" class="mf" data-layer="vets" aria-pressed="true"><i style="background:#10288b"></i>Vets &amp; shelters</button>
+    </div>
+    <p class="map-status" id="mapStatus">Loading the map…</p>
     <div class="ns-head ns-head-2"><h3>Vets &amp; shelters nearby</h3><button class="link-btn ns-all" id="nsVetAll">See all →</button></div>
     <p class="sec-text" id="vetSub" hidden></p>
     <div class="nm-list ns-vets" id="vetList"><p class="sec-text">Looking for vets and shelters nearby…</p></div>
@@ -2948,17 +2971,60 @@
   $('#chatSend').addEventListener('click', () => { const v = $('#chatInput').value.trim(); if (v) { chatSay(autocorrect(v)); $('#chatInput').value = ''; } });
   $('#chatInput').addEventListener('keydown', e => { if (e.key === 'Enter') $('#chatSend').click(); });
 
-  // ---------- search: mock base of found-pet reports (prototype) ----------
-  // a match needs the same kind of animal AND a colour that appears in the description (or was read from the photo)
-  const FOUND_DB = [
-    { sp: 'cat',  colours: /(ginger|orange|рыж)/i,              desc: 'ginger cat' },
-    { sp: 'dog',  colours: /(brown|chocolate|коричнев|шоколад)/i, desc: 'brown dog' },
-    { sp: 'dog',  colours: /(black|черн|чёрн)/i,               desc: 'black dog' },
-    { sp: 'bird', colours: /(green|зел[её]н)/i,                desc: 'green parrot' },
+  // ---------- search: does a found pet match the lost report? (the rule from Lab 01 · Ideate on a rule) ----------
+  // Knobs — same numbers as lab/lab-01-ideate-on-a-rule-marina/lost_found_match.py
+  const RULE = { COLOUR: 2, LOOKALIKE: 1, NEAR_KM: 2, NEAR: 2, SIZE: 1, FRESH_DAYS: 7, FRESH: 1, OLD_DAYS: 30, OLD: -2, MATCH_AT: 5, MAYBE_AT: 2 };
+  const LOOKALIKE = [['white', 'cream'], ['black', 'dark grey'], ['brown', 'ginger']];
+  // demo found-pet reports around the last-seen spot (made up; km and bearing from the spot, days ago)
+  const FOUND_REPORTS = [
+    { sp: 'dog', colour: 'black', size: 'medium', km: 0.4, bearing: 40, daysAgo: 0, where: 'Praça do Chile', desc: 'black dog, medium size' },
+    { sp: 'dog', colour: 'brown', size: 'small', km: 1.1, bearing: 200, daysAgo: 1, where: 'Jardim do Torel', desc: 'small brown dog' },
+    { sp: 'dog', colour: 'cream', size: 'large', km: 2.6, bearing: 320, daysAgo: 3, where: 'Campo de Ourique', desc: 'large cream dog' },
+    { sp: 'cat', colour: 'ginger', size: 'small', km: 0.7, bearing: 120, daysAgo: 0, where: 'Rua Pascoal de Melo', desc: 'small ginger cat' },
+    { sp: 'cat', colour: 'grey', size: 'small', km: 6, bearing: 80, daysAgo: 1, where: 'Parque das Nações', desc: 'small grey cat' },
+    { sp: 'bird', colour: 'green', size: 'small', km: 1.5, bearing: 250, daysAgo: 2, where: 'Jardim da Estrela', desc: 'green parrot' },
   ];
+  // other people's lost pets nearby (demo) — shown on the No-match map
+  const LOST_REPORTS = [
+    { sp: 'dog', desc: 'Lost · small tan dog · Pip', km: 0.6, bearing: 300, daysAgo: 2 },
+    { sp: 'cat', desc: 'Lost · grey tabby · Migas', km: 1.0, bearing: 150, daysAgo: 5 },
+  ];
+  const atBearing = (c, km, deg) => { const r = deg * Math.PI / 180; return [c[0] + km / 111 * Math.cos(r), c[1] + km / (111 * Math.cos(c[0] * Math.PI / 180)) * Math.sin(r)]; };
+  // what the owner told us, in the rule's words
+  function lostForRule() {
+    const look = [F('traits').v, S.photoColour, S.photoLook].filter(Boolean).join(' ').toLowerCase();
+    const COL = [['dark grey', /dark gr[ae]y|charcoal/], ['black', /black|черн|чёрн/], ['white', /white|бел[аоы]/], ['cream', /cream|beige/], ['grey', /gr[ae]y|silver|tabby|сер[аоы]/],
+      ['brown', /brown|chocolate|\btan\b|reddish|коричнев/], ['ginger', /ginger|orange|golden|рыж/], ['green', /green|зел[её]н/]];
+    const hit = COL.map(([c, re]) => { const m = look.match(re); return m ? [c, m.index] : null; }).filter(Boolean).sort((a, b) => a[1] - b[1])[0];
+    const size = /\b(small|little|tiny|kitten|puppy)\b|маленьк/.test(look) ? 'small' : /\b(medium|mid-size)\b|средн/.test(look) ? 'medium' : /\b(large|big|huge)\b|больш|крупн/.test(look) ? 'large' : null;
+    const t = F('time'), y = new Date(); y.setDate(y.getDate() - 1);
+    const lostDay = t.date ? new Date(t.date + 'T12:00') : t.chip === 'Yesterday' ? y : new Date();
+    return { sp: (S.species || '').toLowerCase(), colour: hit ? hit[0] : null, size, lostDay };
+  }
+  // the points each clue gives, as [clue, points] — same order and wording as the lab
+  function ruleClues(lost, f) {
+    const p = [];
+    if (lost.colour && lost.colour === f.colour) p.push(['Same colour', RULE.COLOUR]);
+    else if (lost.colour && LOOKALIKE.some(([a, b]) => (a === lost.colour && b === f.colour) || (b === lost.colour && a === f.colour))) p.push(['Colour looks alike in photos', RULE.LOOKALIKE]);
+    if (f.km <= RULE.NEAR_KM) p.push([`Found ${f.km < 1 ? Math.round(f.km * 1000) + ' m' : f.km + ' km'} from where it went missing`, RULE.NEAR]);
+    if (lost.size && lost.size === f.size) p.push(['Same size', RULE.SIZE]);
+    const days = Math.round((Date.now() - f.daysAgo * 864e5 - lost.lostDay) / 864e5);
+    if (days <= RULE.FRESH_DAYS) p.push([days <= 0 ? 'Found the same day' : `Found ${days} day${days > 1 ? 's' : ''} later — a fresh lead`, RULE.FRESH]);
+    else if (days > RULE.OLD_DAYS) p.push([`Found ${days} days later`, RULE.OLD]);
+    return p;
+  }
+  function ruleVerdict(lost, f) {
+    if (lost.sp !== f.sp) return { verdict: 'no', clues: [], score: 0 };
+    if (Date.now() - f.daysAgo * 864e5 < lost.lostDay - 864e5 / 2) return { verdict: 'no', clues: [], score: 0 }; // found before it went missing
+    const clues = ruleClues(lost, f), score = clues.reduce((a, [, p]) => a + p, 0);
+    return { verdict: score >= RULE.MATCH_AT ? 'match' : score >= RULE.MAYBE_AT ? 'maybe' : 'no', clues, score };
+  }
+  // the best found report for this lost pet (most points; on a tie the colour clue, then the nearest)
   function searchFound() {
-    const sp = (S.species || '').toLowerCase(), look = F('traits').v || '';
-    return FOUND_DB.find(r => r.sp === sp && r.colours.test(look)) || null;
+    const lost = lostForRule();
+    const ranked = FOUND_REPORTS.map(f => Object.assign({ f, lost }, ruleVerdict(lost, f))).filter(r => r.verdict !== 'no')
+      .sort((a, b) => b.score - a.score || (b.clues.some(c => /colour/i.test(c[0])) - a.clues.some(c => /colour/i.test(c[0]))) || a.f.km - b.f.km);
+    return ranked[0] ? Object.assign(ranked[0], { desc: ranked[0].f.desc }) : null;
   }
 
   // ---------- no match yet ----------
@@ -3299,9 +3365,26 @@
   const kmBetween = (a, b) => { const R = 6371, r = Math.PI / 180, dLat = (b[0] - a[0]) * r, dLng = (b[1] - a[1]) * r;
     const h = Math.sin(dLat / 2) ** 2 + Math.cos(a[0] * r) * Math.cos(b[0] * r) * Math.sin(dLng / 2) ** 2; return 2 * R * Math.asin(Math.sqrt(h)); };
   const vetCache = {};
+  // Lab 02: Photon (fast search built on OpenStreetMap, no key) for vets and shelters near the spot
+  async function photonVets(c) {
+    const get = (tag, q) => Promise.race([
+      fetch(`https://photon.komoot.io/api/?q=${encodeURIComponent(q)}&osm_tag=amenity:${tag}&lat=${c[0]}&lon=${c[1]}&limit=15`).then(r => r.ok ? r.json() : null).catch(() => null),
+      new Promise(r => setTimeout(() => r(null), 8000))]);
+    const [vets, shelters] = await Promise.all([get('veterinary', 'vet'), get('animal_shelter', 'animal shelter')]);
+    const seen = new Set(), out = [];
+    [[vets, false], [shelters, true]].forEach(([j, shelter]) => ((j && j.features) || []).forEach(ft => {
+      const ll = [ft.geometry.coordinates[1], ft.geometry.coordinates[0]], p = ft.properties || {}, km = kmBetween(c, ll);
+      const k = (p.name || '') + ll.map(x => x.toFixed(4)); if (seen.has(k) || km > (shelter ? 15 : 3)) return; seen.add(k);
+      out.push({ ll, shelter, km, name: p.name || (shelter ? 'Animal shelter' : 'Vet clinic'), street: [p.street, p.housenumber].filter(Boolean).join(' '), phone: '', hours: '' });
+    }));
+    out.sort((a, b) => a.km - b.km);
+    return [...out.filter(p => !p.shelter).slice(0, 4), ...out.filter(p => p.shelter).slice(0, 2)].sort((a, b) => a.km - b.km);
+  }
   async function fetchVets(c) {
     const key = c.map(x => x.toFixed(3)).join(',');
     if (vetCache[key]) return vetCache[key];
+    const ph = await photonVets(c);
+    if (ph.some(p => !p.shelter)) return (vetCache[key] = ph);
     // OpenStreetMap search around the spot; vets are tagged in the local language too ("veterinário", "ветеринар"…)
     const box = d => [c[1] - d, c[0] + d, c[1] + d, c[0] - d].join(',');
     const search = (q, d) => osm(`search?limit=20&bounded=1&extratags=1&viewbox=${box(d)}&q=${encodeURIComponent(q)}`).then(j => j || []);
@@ -3332,17 +3415,58 @@
     if (!vetMap) vetMap = makeMap($('#vetMap'), c, 14);
     setTimeout(() => vetMap.invalidateSize(), 0);
     vetMarkers.forEach(m => m.remove()); vetMarkers = [];
-    vetMarkers.push(L.marker(c, { icon: pinIcon('', 'Last seen') }).addTo(vetMap));
+    Object.values(mapLayers).forEach(g => g && g.remove());
+    vetMarkers.push(L.marker(c, { icon: pinIcon('', 'Last seen'), zIndexOffset: 1000 }).addTo(vetMap));
+    watchTiles(vetMap);
+    // Lab 02: other lost pets and found pets nearby (demo reports), each group on its own switchable layer
+    const dot = (cls, ll, label) => L.marker(ll, { icon: L.divIcon({ className: 'lpin-wrap', html: `<div class="rdot ${cls}"></div>`, iconSize: [14, 14], iconAnchor: [7, 7] }) }).bindTooltip(label, { direction: 'top', offset: [0, -8] });
+    const when = d => d ? d === 1 ? 'yesterday' : `${d} days ago` : 'today';
+    mapLayers.found = L.layerGroup(FOUND_REPORTS.filter(f => f.km <= 3).map(f => dot('found', atBearing(c, f.km, f.bearing), `Found · ${f.desc} · ${when(f.daysAgo)}`))).addTo(vetMap);
+    mapLayers.lost = L.layerGroup(LOST_REPORTS.map(f => dot('lost', atBearing(c, f.km, f.bearing), `${f.desc} · ${when(f.daysAgo)}`))).addTo(vetMap);
     $('#vetList').innerHTML = '<p class="sec-text">Looking for vets and shelters nearby…</p>';
-    const places = await fetchVets(c);
-    const label = p => `${p.km < 1 ? Math.round(p.km * 1000 / 10) * 10 + ' m' : p.km.toFixed(1) + ' km'} · ${p.shelter ? 'Shelter' : 'Vet'}${p.hours ? ' · ' + p.hours : ''}`;
-    $('#vetList').innerHTML = places.map((p, i) => `<div class="nm-row" data-vet="${i}"><span class="num${p.shelter ? ' shelter' : ''}">${i + 1}</span><div><b>${esc(p.name)}${i === 0 ? '<i class="near">Nearest</i>' : ''}</b><span>${esc(label(p))}</span></div>` +
-      (p.phone ? `<a class="pill" href="tel:${esc(p.phone.replace(/[^\d+]/g, ''))}">Call</a>` : `<button class="pill" data-toast="No phone listed — tap the row to see it on the map">Call</button>`) + `</div>`).join('');
+    let places;
+    try { places = await fetchVets(c); }
+    catch (e) { places = []; }
+    if (!places.length) {
+      $('#vetList').innerHTML = '<p class="sec-text">Couldn’t reach the map service right now. <button class="link-btn" id="vetRetry">Try again</button></p>';
+      return;
+    }
+    const label = p => `${p.km < 1 ? Math.round(p.km * 1000 / 10) * 10 + ' m' : p.km.toFixed(1) + ' km'} · ${p.shelter ? 'Shelter' : 'Vet'}${p.street ? ' · ' + p.street : ''}${p.hours ? ' · ' + p.hours : ''}`;
+    // no phone listed (common in OpenStreetMap) → directions instead of a dead Call button
+    const action = p => p.phone ? `<a class="pill" href="tel:${esc(p.phone.replace(/[^\d+]/g, ''))}">Call</a>`
+      : `<a class="pill" target="_blank" rel="noopener" href="https://www.openstreetmap.org/directions?route=${c[0]}%2C${c[1]}%3B${p.ll[0]}%2C${p.ll[1]}">Route</a>`;
+    $('#vetList').innerHTML = places.map((p, i) => `<div class="nm-row" data-vet="${i}"><span class="num${p.shelter ? ' shelter' : ''}">${i + 1}</span><div><b>${esc(p.name)}${i === 0 ? '<i class="near">Nearest</i>' : ''}</b><span>${esc(label(p))}</span></div>` + action(p) + `</div>`).join('');
     $('#vetSub').textContent = places[0] && places[0].demo ? 'Found pets are often brought here first. (Demo places — the map service didn’t answer.)' : `Found pets are often brought here first. Nearest to where ${P()} was last seen:`;
-    places.forEach((p, i) => vetMarkers.push(L.marker(p.ll, { icon: L.divIcon({ className: 'lpin-wrap', html: `<div class="lnum${p.shelter ? ' shelter' : ''}">${i + 1}</div>`, iconSize: [28, 28], iconAnchor: [14, 14] }) })
-      .addTo(vetMap).bindTooltip(p.name, { direction: 'top', offset: [0, -12] })));
+    const vetPins = places.map((p, i) => L.marker(p.ll, { icon: L.divIcon({ className: 'lpin-wrap', html: `<div class="lnum${p.shelter ? ' shelter' : ''}">${i + 1}</div>`, iconSize: [28, 28], iconAnchor: [14, 14] }) })
+      .bindTooltip(p.name, { direction: 'top', offset: [0, -12] }));
+    vetPins.forEach(m => vetMarkers.push(m));
+    mapLayers.vets = L.layerGroup(vetPins).addTo(vetMap);
+    applyMapFilters();
     vetMap.fitBounds([c, ...places.slice(0, 4).map(p => p.ll)], { padding: [24, 24], maxZoom: 16 });
     S.vets = places;
+  }
+  // map switches: lost pets · found pets · vets & shelters (they double as the map key)
+  const mapLayers = { lost: null, found: null, vets: null };
+  function applyMapFilters() {
+    $$('#mapFilters .mf').forEach(b => { const g = mapLayers[b.dataset.layer]; if (!g || !vetMap) return; b.getAttribute('aria-pressed') === 'true' ? g.addTo(vetMap) : g.remove(); });
+  }
+  document.addEventListener('click', e => {
+    const b = e.target.closest('#mapFilters .mf');
+    if (b) { b.setAttribute('aria-pressed', b.getAttribute('aria-pressed') === 'true' ? 'false' : 'true'); return applyMapFilters(); }
+    if (e.target.closest('#vetRetry')) { delete vetCache[Object.keys(vetCache).pop()]; drawVets(); }
+    if (e.target.closest('#mapRetry') && vetMap) { vetMap.eachLayer(l => l.redraw && l.redraw()); $('#mapStatus').textContent = 'Loading the map…'; }
+  });
+  // calm map status: loading → ready, or slow / failed with a retry — the list below keeps working either way
+  function watchTiles(m) {
+    const st = $('#mapStatus'); if (!st) return;
+    const ready = () => { st.textContent = `Last seen: ${F('lost').v || F('city').v || 'your area'} · lost and found pets are demo reports; vets are real, from OpenStreetMap.`; };
+    let ok = !!$('#vetMap .leaflet-tile-loaded'), bad = 0;
+    if (ok) return ready();
+    st.textContent = 'Loading the map…';
+    m.eachLayer(l => { if (!l.getTileUrl || l._watched) return; l._watched = true;
+      l.on('tileload', () => { ok = true; ready(); });
+      l.on('tileerror', () => { bad++; if (!ok && bad > 2) st.innerHTML = 'The map pictures aren’t loading right now — the vets list below still works. <button id="mapRetry">Try again</button>'; }); });
+    setTimeout(() => { if (!ok) st.innerHTML = 'The map is slow to load — the vets list below still works. <button id="mapRetry">Try again</button>'; }, 8000);
   }
   // owner · a dog like theirs was SEEN (not caught): sightings trail, last-seen point and a search radius that grows with time
   const seenName = () => (!F('species').v || /dog/i.test(F('species').v)) && F('name').v ? F('name').v : 'Max';
@@ -3472,8 +3596,8 @@
       $('#checkSub').textContent = `${cap(P())} · ${where ? where + ', ' : ''}${city}${F('time').v ? ' · ' + F('time').v : ''}`;
       const hit = searchFound();
       S.matchHit = hit; S.noMatchReason = hit ? null : 'none';
-      $('#searchStatus').dataset.steps = ['Read your report', `Compared with ${FOUND_DB.length * 4 + 2} found-pet reports in ${city}`,
-        where ? `Searched around ${where}` : `Searched neighbourhoods in ${city}`, hit ? 'Found 1 possible match' : 'No close match yet'].join('|');
+      $('#searchStatus').dataset.steps = ['Read your report', `Compared with ${FOUND_REPORTS.length} found-pet reports near ${where || city}`,
+        'Scored each one: colour, distance, size, timing', hit ? `${hit.verdict === 'match' ? 'Match' : 'Possible match'}: ${hit.score} points` : 'No close match yet'].join('|');
       runStatus($('#searchStatus'), () => setTimeout(() => current === 'checking' && go(hit ? 'match' : 'nextsteps', { replace: true }), 600));
     },
     services: () => renderServices(),
@@ -3481,9 +3605,24 @@
     shop: () => renderShop(),
     route: () => { $('#routeQuote').textContent = S.pending ? `You wrote: “${S.pending}”` : ''; },
     match: () => {
-      $('#matchTitle').textContent = S.matchHit ? `Found ${S.matchHit.desc}` : `Found ${S.species || 'pet'} report`;
-      const t = F('traits').v;
-      $('#matchLooks').textContent = t ? `✓ Looks like your description: “${t.length > 70 ? t.slice(0, 70) + '…' : t}”` : '? You didn’t describe appearance — compare the photo yourself';
+      const h = S.matchHit || searchFound();
+      if (!h) { $('#matchTitle').textContent = `Found ${S.species || 'pet'} report`; return; }
+      const f = h.f, isMatch = h.verdict === 'match';
+      $('#matchConf').textContent = `${isMatch ? 'Match' : 'Maybe'} · ${h.score} points`;
+      $('#matchConf').classList.toggle('maybe', !isMatch);
+      $('#matchTitle').textContent = `Found ${f.desc}`;
+      $('#matchNote').textContent = `${f.where} · ${f.daysAgo ? f.daysAgo === 1 ? 'yesterday' : f.daysAgo + ' days ago' : 'today'} · in the finder’s care`;
+      // every clue with its points, then what's missing, then the sum — the same sentence as the lab
+      const missing = [];
+      if (!h.lost.colour) missing.push('Colour not in your report — compare the photo yourself');
+      else if (!h.clues.some(c => /colour/i.test(c[0]))) missing.push(`Different colour (${f.colour})`);
+      if (!h.lost.size) missing.push('Size not in your report');
+      else if (h.lost.size !== f.size) missing.push(`Different size (${f.size})`);
+      if (f.km > RULE.NEAR_KM) missing.push(`Found ${f.km} km away — further than ${RULE.NEAR_KM} km`);
+      $('#matchWhy').innerHTML = `<span><b>Why this ${isMatch ? 'match' : 'might be your pet'}</b></span>` +
+        h.clues.map(([c, p]) => `<span class="why-row ok"><i>${p > 0 ? '+' : ''}${p}</i>${esc(c)}</span>`).join('') +
+        missing.map(c => `<span class="why-row no"><i>0</i>${esc(c)}</span>`).join('') +
+        `<span class="why-sum">${h.clues.map(c => c[1]).join(' + ')} = <b>${h.score} points</b> · match from ${RULE.MATCH_AT}, maybe from ${RULE.MAYBE_AT}</span>`;
     },
     nextsteps: () => { renderNoMatch(); drawVets(); },
     'found-photo': () => { const ph = $('#foundPh'); ph.classList.remove('photo'); ph.style.backgroundImage = ''; },
