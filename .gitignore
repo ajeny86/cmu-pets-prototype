@@ -1,9 +1,15 @@
 .DS_Store
 _test*
 mockups/
+screens/
 
 # Local environment files may contain secrets
 .env
 .env.*
 !.env.example
 !**/.env.example
+
+# Obsidian notes stay on this Mac (the repo is public)
+notes/
+.obsidian/
+.trash/
