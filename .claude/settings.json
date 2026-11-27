@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "deny": [
+      "Read(./.env)",
+      "Read(./.env.*)",
+      "Read(./**/.env)",
+      "Read(./**/.env.*)",
+      "Bash(rm -rf:*)"
+    ]
+  },
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "f=$(jq -r '.tool_input.file_path // empty'); case \"$f\" in \"$CLAUDE_PROJECT_DIR\"/app/*.ts|\"$CLAUDE_PROJECT_DIR\"/app/*.tsx|\"$CLAUDE_PROJECT_DIR\"/app/*.js|\"$CLAUDE_PROJECT_DIR\"/app/*.mjs) cd \"$CLAUDE_PROJECT_DIR/app\" && npm run lint --silent 1>&2 || exit 2;; esac; exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}
