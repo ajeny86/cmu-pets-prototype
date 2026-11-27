@@ -47,3 +47,11 @@ cmu-pets-prototype/
 - Write file and folder names in lowercase with hyphens, except for files a lab or tool names for you.
 - Write in English.
 - **Claude:** confirm before deleting, overwriting or moving anything, and before pushing or merging.
+
+## Guardrails (`.claude/settings.json`)
+
+Shared by every teammate and every Claude Code session in this repo:
+
+- Reading `.env` files and running `rm -rf` are blocked.
+- After an edit to code in `app/`, a hook runs `npm run lint` and shows the errors to the agent.
+- In `app/`, `npm run check` runs lint, typecheck and build: run it and show the output before saying done.
