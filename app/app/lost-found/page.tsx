@@ -1,4 +1,5 @@
 import type { Metadata } from "next"
+import Link from "next/link"
 
 import { ChoiceCard } from "@/components/buddy/cards"
 import { BackLink, PageTitle } from "@/components/buddy/page-title"
@@ -35,6 +36,9 @@ export default function LostFoundPage() {
             description="Ask the AI Guide anything."
           />
         </div>
+        <Link href="/lost-found/reports" className="self-start text-sm font-semibold text-navy underline-offset-4 hover:underline">
+          See all lost & found reports ›
+        </Link>
       </div>
     </Screen>
   )
