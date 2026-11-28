@@ -12,6 +12,8 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // The Parakeet sidecar's Python packages (some ship their own .js files)
+    "stt-server/**",
   ]),
 ]);
 

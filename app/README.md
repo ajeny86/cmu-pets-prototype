@@ -19,9 +19,25 @@ npm run dev
 - The buttons under each reply (Open the report, Shop…) still come from the app's own intent detection, so they always go to the right screen.
 - Code: `lib/ai/ollama.ts` (server, prompt), `app/api/clue/route.ts` (streams the reply), `lib/ai/clue-chat.ts` and `app/chat/chat.tsx` (browser).
 
-## Voice input (Whisper, runs locally)
+## Voice input (runs locally)
 
-The mic buttons turn speech into text with [whisper.cpp](https://github.com/ggml-org/whisper.cpp) on your computer. It handles Russian, English and Portuguese and detects the language itself.
+The mic buttons turn speech into text on your computer, using the best engine that's running:
+
+1. **Parakeet (realtime).** NVIDIA Parakeet TDT 0.6B v3 on MLX (Apple Silicon). The words appear in the box *while you speak*. It covers 25 European languages, including Russian, Ukrainian, Portuguese and English, and detects the language itself.
+2. **Whisper.** whisper.cpp with large-v3-turbo. It records the phrase, then gives the text about 3 seconds after you stop.
+3. **The browser's own speech recognition** (Chrome, Edge, Safari).
+
+### Parakeet: a small local server next to the app
+
+Needs [uv](https://docs.astral.sh/uv/) (`brew install uv`). The first start downloads Python packages and the model (about 2.5 GB, into `~/.cache/huggingface`):
+
+```bash
+npm run stt
+```
+
+Keep it running beside `npm run dev`. It listens on `ws://127.0.0.1:8765/stream`, and `GET /health` reports its status. Change the port with `STT_PORT`, and point the app at it with `STT_URL` (for the server) and `NEXT_PUBLIC_STT_WS` (for the browser).
+
+### Whisper (fallback)
 
 ```bash
 brew install whisper-cpp
@@ -31,10 +47,13 @@ brew install whisper-cpp
 mkdir -p ~/.cache/whisper && curl -L -o ~/.cache/whisper/ggml-large-v3-turbo-q5_0.bin https://huggingface.co/ggerganov/whisper.cpp/resolve/main/ggml-large-v3-turbo-q5_0.bin
 ```
 
-- Tap the mic and talk. It waits through pauses and stops when you tap again, or 2.5 seconds after you finish speaking. The text then goes into the box.
-- To use another model or binary, set `WHISPER_MODEL` (path to a `.bin`) or `WHISPER_BIN`.
-- Without whisper.cpp, the mic uses the browser's own speech recognition (Chrome, Edge, Safari).
-- Code: `lib/ai/whisper.ts` and `app/api/transcribe/route.ts` (server), `lib/ai/speech.ts` (recording in the browser).
+To use another model or binary, set `WHISPER_MODEL` (path to a `.bin`) or `WHISPER_BIN`.
+
+### How it behaves
+
+- Tap the mic and talk. It waits through pauses and stops when you tap again, or 2.5 seconds after you finish speaking.
+- If Parakeet stops answering, the next tap uses Whisper, and then the browser.
+- Code: `stt-server/server.py` (Parakeet), `lib/ai/whisper.ts` and `app/api/transcribe/route.ts` (Whisper and the status check), `lib/ai/speech.ts` (the mic in the browser).
 
 ## Adding components
 
