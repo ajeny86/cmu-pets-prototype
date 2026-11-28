@@ -3,6 +3,7 @@ import { Geist_Mono, Google_Sans_Flex } from "next/font/google"
 
 import "./globals.css"
 import { IconDefs } from "@/components/buddy/icons"
+import { Toaster } from "@/components/buddy/kit"
 import { ThemeProvider } from "@/components/theme-provider"
 import { cn } from "@/lib/utils"
 
@@ -20,7 +21,7 @@ const fontMono = Geist_Mono({
 })
 
 export const metadata: Metadata = {
-  title: "buddy",
+  title: { default: "buddy", template: "%s · buddy" },
   description: "Everything for you and your pet, in one place.",
 }
 
@@ -48,6 +49,7 @@ export default function RootLayout({
         <IconDefs />
         {/* buddy has no dark mode yet */}
         <ThemeProvider forcedTheme="light">{children}</ThemeProvider>
+        <Toaster />
       </body>
     </html>
   )

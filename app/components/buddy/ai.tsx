@@ -1,9 +1,16 @@
+"use client"
+
 import Image from "next/image"
+import { useRouter } from "next/navigation"
+import { useState } from "react"
 
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/ui/button"
 import { Clue } from "@/components/buddy/clue"
 import { ArrowRightIcon } from "@/components/buddy/icons"
+import { MicButton } from "@/components/buddy/kit"
+import { routeMessage } from "@/lib/guide"
+import { toast } from "@/lib/toast"
 
 /* AI components. Pink is reserved for Clue, the AI guide (Figma sheet: "a pink for AI"). */
 
@@ -32,24 +39,35 @@ export function ClueGreeting({
   )
 }
 
-function MicButton({ className, ...props }: React.ComponentProps<typeof Button>) {
-  return (
-    <Button type="button" variant="ghost" size="icon-sm" aria-label="Speak" className={cn("hover:bg-mint", className)} {...props}>
-      <Image src="/assets/mic.svg" alt="" width={22} height={22} />
-    </Button>
-  )
-}
-
-/** "Ask me anything…" pill on Home: free text, mic, navy send. */
+/** "Ask me anything…" pill on Home: free text or voice → Clue routes it (lib/guide.ts). */
 export function AskPill({
   placeholder = "Ask me anything…",
   className,
+  onSend,
 }: {
   placeholder?: string
   className?: string
+  /** Default: read the message and go to the right screen. */
+  onSend?: (text: string) => void
 }) {
+  const router = useRouter()
+  const [v, setV] = useState("")
+  const send = (t = v) => {
+    const text = t.trim()
+    if (!text) {
+      toast("Tell Clue what happened — or what you’re looking for")
+      return
+    }
+    setV("")
+    if (onSend) onSend(text)
+    else router.push(routeMessage(text))
+  }
   return (
-    <label
+    <form
+      onSubmit={(e) => {
+        e.preventDefault()
+        send()
+      }}
       className={cn(
         "flex min-h-14 cursor-text items-center gap-1 rounded-[28px] bg-white py-[7px] pr-[7px] pl-5 shadow-lift focus-within:shadow-[0_10px_28px_rgb(16_40_139/0.16),inset_0_0_0_1.5px_#c9d1ee]",
         className
@@ -57,14 +75,23 @@ export function AskPill({
     >
       <textarea
         rows={1}
+        value={v}
+        aria-label="Ask Clue"
+        onChange={(e) => setV(e.target.value)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter" && !e.shiftKey) {
+            e.preventDefault()
+            send()
+          }
+        }}
         placeholder={placeholder}
-        className="h-[22px] max-h-[88px] min-h-[22px] flex-1 resize-none bg-transparent p-0 text-base leading-[21px] text-navy outline-none placeholder:text-[#767fa3]"
+        className="field-sizing-content h-auto max-h-[88px] min-h-[22px] flex-1 resize-none bg-transparent p-0 text-base leading-[21px] text-navy outline-none placeholder:text-[#767fa3]"
       />
-      <MicButton />
-      <Button type="button" size="icon-sm" aria-label="Ask Clue" className="size-[42px]">
+      <MicButton onText={setV} onDone={send} />
+      <Button type="submit" size="icon-sm" aria-label="Send to Clue" className="size-[42px]">
         <ArrowRightIcon />
       </Button>
-    </label>
+    </form>
   )
 }
 
