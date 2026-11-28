@@ -22,6 +22,7 @@ import {
   type LostDraft,
 } from "@/lib/ai/story"
 import { readPhoto, shrinkPhoto } from "@/lib/ai/photo"
+import { signInDemo } from "@/lib/guide"
 import { update, useBuddy } from "@/lib/store"
 import { toast } from "@/lib/toast"
 import { DEFAULT_CENTER } from "@/lib/demo-data"
@@ -369,12 +370,19 @@ export function LostReportForm() {
             </>
           ) : (
             <>
-              Reporting as a <b>guest</b> — no account needed.
+              <b>Already registered?</b> Sign in and your pet’s details fill in from your profile. Or carry on as a guest — no account needed.
             </>
           )}
         </p>
         {!member && (
-          <Button variant="ghost" className="h-8 px-3 text-xs" onClick={() => router.push("/lost-found/lost")}>
+          <Button
+            variant="ghost"
+            className="h-8 shrink-0 px-3 text-xs"
+            onClick={() => {
+              signInDemo()
+              toast("Signed in · what was missing is added from your profile")
+            }}
+          >
             Sign in
           </Button>
         )}

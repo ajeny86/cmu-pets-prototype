@@ -1,9 +1,10 @@
 "use client"
 
 import Link from "next/link"
+import { useRouter } from "next/navigation"
 import { useEffect, useRef, useState } from "react"
 
-import { chatReply, startLostReport } from "@/lib/guide"
+import { chatReply, isQuestion, REPORT_PATH, startLostReport } from "@/lib/guide"
 import { clueStatus, streamClue, type ClueStatus } from "@/lib/ai/clue-chat"
 import { CHAT_HELLO, getState, update, useBuddy } from "@/lib/store"
 import { Clue } from "@/components/buddy/clue"
@@ -13,6 +14,7 @@ import { cn } from "@/lib/utils"
 
 export function Chat() {
   const s = useBuddy()
+  const router = useRouter()
   const [typing, setTyping] = useState(false)
   const [status, setStatus] = useState<ClueStatus | null | undefined>(undefined)
   const end = useRef<HTMLDivElement>(null)
@@ -38,10 +40,22 @@ export function Chat() {
 
     // links and intent stay rule-based, so the buttons always go to the right screen
     const r = chatReply(text)
-    if (r.intent === "lost") startLostReport(text)
     update((st) => {
       st.chat.push({ from: "me", text })
     })
+
+    // "I lost my dog Rex yesterday": fill the form from the message and open it, like Home does
+    if (r.intent === "lost" && !isQuestion(text)) {
+      setTyping(false)
+      startLostReport(text)
+      update((st) => {
+        st.chat.push({ from: "ai", text: "I’m sorry. I’ve started the report from what you told me — opening it so you can add what’s missing.", links: [{ href: REPORT_PATH, label: "Open the report" }] })
+      })
+      router.push(REPORT_PATH)
+      return
+    }
+    // buttons only when the message is clearly about one part of the app; the AI's answer stands on its own otherwise
+    const links = r.intent === "lost" ? [{ href: REPORT_PATH, label: "Report a lost pet" }] : r.intent ? r.links : undefined
     const history = getState().chat
     setTyping(true)
 
@@ -56,7 +70,7 @@ export function Chat() {
       pending = ""
       update((st) => {
         if (at < 0 || !st.chat[at]) {
-          st.chat.push({ from: "ai", text: "", links: r.links })
+          st.chat.push({ from: "ai", text: "", links })
           at = st.chat.length - 1
         }
         st.chat[at].text += t
@@ -80,7 +94,8 @@ export function Chat() {
       if (ctl.signal.aborted) return
       flush()
       // local model off or failed: today's rule-based reply
-      if (at < 0) update((st) => void st.chat.push({ from: "ai", text: r.text, links: r.links }))
+      const fallback = r.intent === "lost" ? { text: "Search the area where you last saw your pet, ask neighbours and call nearby vets and shelters. A lost report lets me search nearby for you.", links } : { text: r.text, links: r.links }
+      if (at < 0) update((st) => void st.chat.push({ from: "ai", ...fallback }))
       setStatus((st) => (st ? { ...st, ok: false } : st))
     } finally {
       if (live.current === ctl) {
