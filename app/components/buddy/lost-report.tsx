@@ -331,11 +331,11 @@ export function ClueDock({ d, onReady }: { d: LostDraft; onReady: () => void }) 
             Are you registered with buddy? If you are, sign in and I’ll add your pet’s details from your profile. If not, we’ll carry on.
           </p>
         </div>
-        <div className="flex gap-2">
-          <Button className="flex-1" onClick={signIn}>
+        <div className="flex flex-col gap-2">
+          <Button className="w-full" onClick={signIn}>
             Yes, sign in
           </Button>
-          <Button variant="outline" className="flex-1" onClick={asGuest}>
+          <Button variant="outline" className="w-full" onClick={asGuest}>
             No, continue as guest
           </Button>
         </div>
