@@ -4,6 +4,7 @@ import Link from "next/link"
 import { usePathname } from "next/navigation"
 
 import { cn } from "@/lib/utils"
+import { isMember, useBuddy } from "@/lib/store"
 import {
   HomeIcon,
   PawIcon,
@@ -20,15 +21,17 @@ const tabs = [
 ] as const
 
 type TabBarProps = React.ComponentProps<"nav"> & {
-  /** Signed-in members get four flat tabs: no "Create account" FAB. */
+  /** Signed-in members get four flat tabs: no "Create account" FAB. Defaults to the saved sign-in. */
   member?: boolean
   /** Render in place (design-system page) instead of pinned to the viewport bottom. */
   inline?: boolean
 }
 
 /** Tab bar (Figma: "5 tabs + pink FAB"). White bar with a notch for the raised pink button. */
-export function TabBar({ member = false, inline = false, className, ...props }: TabBarProps) {
+export function TabBar({ member: memberProp, inline = false, className, ...props }: TabBarProps) {
   const pathname = usePathname()
+  const s = useBuddy()
+  const member = memberProp ?? isMember(s)
   const items = member ? tabs : [tabs[0], tabs[1], null, tabs[2], tabs[3]]
 
   return (
@@ -86,7 +89,7 @@ export function TabBar({ member = false, inline = false, className, ...props }: 
             <Link
               key={tab.href}
               href={tab.href}
-              aria-current={pathname === tab.href ? "page" : undefined}
+              aria-current={(tab.href === "/" ? pathname === "/" : pathname.startsWith(tab.href)) ? "page" : undefined}
               className="group flex flex-col items-center gap-1 text-[11px] font-semibold text-tab-ink aria-[current=page]:text-navy"
             >
               <span className="grid h-[30px] w-[52px] place-items-center rounded-[15px] opacity-80 group-aria-[current=page]:bg-tab-active group-aria-[current=page]:opacity-100">
