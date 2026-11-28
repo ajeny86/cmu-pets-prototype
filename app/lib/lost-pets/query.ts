@@ -87,15 +87,25 @@ export function toDaysAgo(v?: string | number | null): number | null {
 export const STATUS_LABEL: Record<Status, string> = { found: "Found", sighted: "Sighted", lost: "Lost", reunited: "Reunited" }
 export const areaName = (r: PetReport) => `${AREAS[r.area].name}, ${AREAS[r.area].city}`
 export const reportDate = (r: PetReport) => {
-  const d = new Date(Date.now() - r.daysAgo * DAY)
+  const now = Date.now()
+  const d = new Date(now - r.daysAgo * DAY)
   d.setHours(r.hour, 0, 0, 0)
+  // a "today" report can't be later than now: move it to the last full hour
+  if (d.getTime() > now) {
+    d.setTime(now - 3600e3)
+    d.setMinutes(0, 0, 0)
+  }
   return d
 }
-export const whenText = (r: PetReport) =>
-  r.daysAgo === 0 ? `today around ${r.hour}:00` : r.daysAgo === 1 ? `yesterday around ${r.hour}:00` : `${r.daysAgo} days ago`
+export const whenText = (r: PetReport) => {
+  const h = reportDate(r).getHours()
+  return r.daysAgo === 0 ? `today around ${h}:00` : r.daysAgo === 1 ? `yesterday around ${h}:00` : `${r.daysAgo} days ago`
+}
 export const reportTitle = (r: PetReport) =>
   `${STATUS_LABEL[r.status]}: ${[r.size, r.coat, r.breed ?? r.species].filter(Boolean).join(" ")}${r.name ? ` “${r.name}”` : ""} · ${AREAS[r.area].name}`
 export const reportPath = (r: PetReport) => `/lost-found/reports/${r.id}`
+/** A PNG for every report: its photo if it has one, else a labelled illustration (species + coat colour). */
+export const imagePath = (r: PetReport) => r.photo ?? `/api/pets/${r.id}/image.png`
 
 /** Everything about one report as plain text (what an AI reads). */
 export function reportText(r: PetReport) {
@@ -141,6 +151,18 @@ export function reportJson(r: PetReport, origin: string) {
     now: r.now,
     description: r.description,
     url: origin + reportPath(r),
+    image_url: origin + imagePath(r),
+    image_type: r.photo ? "photo" : "illustration",
+    location: {
+      place: r.place,
+      area: AREAS[r.area].name,
+      city: AREAS[r.area].city,
+      country: "Portugal",
+      // the neighbourhood's centre, not the exact spot
+      lat: Math.round(AREAS[r.area].ll[0] * 1000) / 1000,
+      lng: Math.round(AREAS[r.area].ll[1] * 1000) / 1000,
+      precision: "neighbourhood",
+    },
   }
 }
 
