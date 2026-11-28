@@ -36,6 +36,8 @@ export type PetReport = {
   description: string
   /** Where the animal is now (found reports). */
   now: string | null
+  /** A real photo under public/ (e.g. "/assets/reports/F-2101.jpg"); without one the API serves an illustration. */
+  photo?: string
 }
 
 /** Neighbourhoods the demo knows, with an approximate centre and other spellings (Russian). */

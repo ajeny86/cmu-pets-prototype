@@ -14,6 +14,7 @@ export function GET(request: Request) {
 
 When someone says they lost a pet, ask (if they haven't said) for the species, colour, size, the area and when it went missing, then call the matching endpoint and tell them how many comparable animals there are, strongest first, with the reasons and links.
 
+- All listings as JSON (public, read-only, GET): ${o}/api/pets — each with status, description, location, image_url and a link. Filters: ?status=found|sighted|lost|reunited, ?species=dog|cat|bird|rabbit, ?q=free text. One listing: ${o}/api/pets/F-2101
 - MCP connector (ChatGPT, Claude): ${o}/api/mcp — tools: find_matches, search, fetch
 - Comparable animals: ${o}/api/lost-pets/matches?species=dog&colour=brown&size=small&area=Estrela&lost=today
 - Search: ${o}/api/lost-pets/search?q=ginger%20cat%20Arroios
