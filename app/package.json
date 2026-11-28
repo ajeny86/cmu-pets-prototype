@@ -5,6 +5,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "stt": "cd stt-server && uv run server.py",
     "build": "next build",
     "start": "next start",
     "lint": "eslint",

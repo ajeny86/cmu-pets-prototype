@@ -185,16 +185,21 @@ export function MicButton({
   onDone?: (t: string) => void
   className?: string
 }) {
-  const { listening, toggle } = useDictation({ onText, onDone })
+  const { listening, busy, toggle } = useDictation({ onText, onDone })
   return (
     <Button
       type="button"
       variant="ghost"
       size="icon-sm"
-      aria-label={listening ? "Stop listening" : "Speak"}
+      aria-label={busy ? "Turning your voice into text…" : listening ? "Stop listening" : "Speak"}
+      title={busy ? "Turning your voice into text…" : listening ? "Listening — tap to stop" : "Speak"}
       aria-pressed={listening}
+      aria-busy={busy}
       onClick={toggle}
-      className={cn("shrink-0 hover:bg-mint aria-pressed:animate-pulse aria-pressed:bg-topic-pink", className)}
+      className={cn(
+        "shrink-0 hover:bg-mint aria-pressed:animate-pulse aria-pressed:bg-topic-pink aria-busy:animate-spin aria-busy:bg-mint",
+        className
+      )}
     >
       <Image src="/assets/mic.svg" alt="" width={22} height={22} />
     </Button>

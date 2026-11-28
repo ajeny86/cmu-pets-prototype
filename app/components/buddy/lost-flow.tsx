@@ -6,10 +6,11 @@ import { useEffect, useMemo, useState } from "react"
 
 import { cn } from "@/lib/utils"
 import { atBearing, CITY_LL, FOUND_REPORTS, LOST_REPORTS, TIPS, type LatLng } from "@/lib/ai/engine"
-import { applyProfile, cap, counts, field, petLabel, setField, type LostDraft } from "@/lib/ai/story"
+import { cap, counts, field, petLabel, setField, type LostDraft } from "@/lib/ai/story"
 import { DEFAULT_CENTER, fmtKm, kmBetween, nearestPlaces } from "@/lib/demo-data"
 import { findMatch, foundLL, sightings } from "@/lib/match"
-import { currentReport, signUp, uid, update, useBuddy, useHydrated } from "@/lib/store"
+import { signInDemo } from "@/lib/guide"
+import { currentReport, uid, update, useBuddy, useHydrated } from "@/lib/store"
 import { toast } from "@/lib/toast"
 import { Clue } from "@/components/buddy/clue"
 import { AiNote, LinkCard, PetPhoto, SectionTitle, speciesEmoji, StatusSteps } from "@/components/buddy/kit"
@@ -51,10 +52,7 @@ export function MemberChoice() {
   const s = useBuddy()
   const router = useRouter()
   const signIn = () => {
-    if (!s.profile) signUp({ name: "Demo member", email: "member@example.com", phone: "+351 900 000 000", city: "Lisbon" })
-    update((st) => {
-      if (st.pets[0]) st.draft = applyProfile(st.draft, st.pets[0], st.profile?.phone ?? "").draft
-    })
+    signInDemo()
     toast("Signed in · your pet’s details are added from your profile")
     router.push("/lost-found/lost/quick")
   }

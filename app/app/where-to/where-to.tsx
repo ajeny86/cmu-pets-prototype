@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 
-import { startLostReport } from "@/lib/guide"
+import { REPORT_PATH, startLostReport } from "@/lib/guide"
 import { update, useBuddy } from "@/lib/store"
 import { Clue } from "@/components/buddy/clue"
 import { AiNote, LinkCard } from "@/components/buddy/kit"
@@ -23,7 +23,7 @@ export function WhereTo() {
     const msg = s.pending
     if (to === "lost") {
       startLostReport(msg || "")
-      return router.push(s.profile ? "/lost-found/lost/report" : "/lost-found/lost")
+      return router.push(REPORT_PATH)
     }
     update((st) => {
       st.pending = null
