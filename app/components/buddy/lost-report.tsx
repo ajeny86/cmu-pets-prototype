@@ -22,7 +22,7 @@ import {
   type LostDraft,
 } from "@/lib/ai/story"
 import { readPhoto, shrinkPhoto } from "@/lib/ai/photo"
-import { signInDemo } from "@/lib/guide"
+import { saysNo, saysYes, signInDemo, signOutDemo } from "@/lib/guide"
 import { update, useBuddy } from "@/lib/store"
 import { toast } from "@/lib/toast"
 import { DEFAULT_CENTER } from "@/lib/demo-data"
@@ -292,9 +292,22 @@ export function Progress({ d }: { d: LostDraft }) {
 
 /* ---------- Clue's dock: one question at a time, the answer is spread over the fields ---------- */
 export function ClueDock({ d, onReady }: { d: LostDraft; onReady: () => void }) {
+  const s = useBuddy()
+  // first thing Clue asks a guest: are you registered? (members' details fill in from the profile)
+  const askMember = !s.profile && !d.memberAsked
   const ask = nextAsk(d)
   const ready = counts(d).missing === 0
-  const send = (text: string) =>
+  const signIn = () => {
+    signInDemo()
+    toast("Signed in to the demo account · its phone and home area are added")
+  }
+  const asGuest = () => setDraft((x) => ({ ...x, memberAsked: true }))
+  const send = (text: string) => {
+    if (askMember && saysYes(text)) return signIn()
+    if (askMember && saysNo(text)) return asGuest()
+    sendDetails(text)
+  }
+  const sendDetails = (text: string) =>
     setDraft((cur) => {
       const asked = ask && ask !== "photo" ? ask : null
       const { draft: next, found } = parseInto(cur, text, { merge: true, asked })
@@ -309,6 +322,26 @@ export function ClueDock({ d, onReady }: { d: LostDraft; onReady: () => void }) 
       }
       return next
     })
+  if (askMember)
+    return (
+      <div className="sticky bottom-[104px] z-10 flex flex-col gap-2 rounded-[24px] bg-white/95 px-3.5 pt-3 pb-3 shadow-[0_10px_30px_rgb(16_40_139/0.14)] backdrop-blur-sm md:top-24 md:bottom-auto md:gap-3 md:p-5">
+        <div className="flex items-center gap-2">
+          <Clue state="hello" width={40} alt="" />
+          <p className="flex-1 text-sm leading-[19px] font-semibold text-navy">
+            Are you registered with buddy? If you are, sign in and I’ll add your pet’s details from your profile. If not, we’ll carry on.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button className="flex-1" onClick={signIn}>
+            Yes, sign in
+          </Button>
+          <Button variant="outline" className="flex-1" onClick={asGuest}>
+            No, continue as guest
+          </Button>
+        </div>
+        <AskBar placeholder="Or type yes / no" onSend={send} className="shadow-none ring-1 ring-line" />
+      </div>
+    )
   return (
     <div className="sticky bottom-[104px] z-10 flex flex-col gap-2 rounded-[24px] bg-white/95 px-3.5 pt-3 pb-3 shadow-[0_10px_30px_rgb(16_40_139/0.14)] backdrop-blur-sm md:top-24 md:bottom-auto md:gap-3 md:p-5">
       <div className="flex items-center gap-2">
@@ -370,17 +403,28 @@ export function LostReportForm() {
             </>
           ) : (
             <>
-              <b>Already registered?</b> Sign in and your pet’s details fill in from your profile. Or carry on as a guest — no account needed.
+              Reporting as a <b>guest</b> — no account needed.
             </>
           )}
         </p>
-        {!member && (
+        {member ? (
+          <Button
+            variant="ghost"
+            className="h-8 shrink-0 px-3 text-xs"
+            onClick={() => {
+              signOutDemo()
+              toast("Signed out · the profile’s phone and home are removed from this report")
+            }}
+          >
+            Sign out
+          </Button>
+        ) : (
           <Button
             variant="ghost"
             className="h-8 shrink-0 px-3 text-xs"
             onClick={() => {
               signInDemo()
-              toast("Signed in · what was missing is added from your profile")
+              toast("Signed in to the demo account · its phone and home area are added")
             }}
           >
             Sign in

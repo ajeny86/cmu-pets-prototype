@@ -23,8 +23,30 @@ export function signInDemo() {
   if (!getState().profile) signUp({ name: "Demo member", email: "member@example.com", phone: "+351 900 000 000", city: "Lisbon" })
   update((s) => {
     if (s.pets[0]) s.draft = applyProfile(s.draft, s.pets[0], s.profile?.phone || s.profile?.email || "").draft
+    s.draft.memberAsked = true
   })
 }
+
+/** Signs out; the contact and home the profile put into the open report go too. */
+export function signOutDemo() {
+  update((s) => {
+    const p = s.profile
+    s.profile = null
+    s.draft.memberAsked = true
+    for (const f of s.draft.fields) {
+      const fromProfile = (f.k === "contact" && !!p && (f.v === p.phone || f.v === p.email)) || (f.k === "home" && f.v.startsWith("Saved in your profile"))
+      if (fromProfile) Object.assign(f, { v: "", s: "optional" })
+    }
+  })
+}
+
+/** "Yes" / "no" typed as an answer, in the app's languages. */
+// (\b doesn't see Cyrillic letters as word characters, so the word end is spelled out)
+const END = String.raw`(?=$|[\s.,!?;:)])`
+const YES = new RegExp(String.raw`^\s*(yes|yeah|yep|sure|i am|да|ага|конечно|зарегистрирован[аы]?|sim)${END}`, "i")
+const NO = new RegExp(String.raw`^\s*(no|nope|not yet|i'?m not|нет|не зарегистрирован[аы]?|não|nao)${END}`, "i")
+export const saysYes = (t: string) => YES.test(t)
+export const saysNo = (t: string) => NO.test(t)
 
 export const INTENT_PATH: Record<NonNullable<Intent>, string> = {
   lost: "/lost-found/lost/report",
