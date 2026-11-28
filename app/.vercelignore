@@ -1,0 +1,6 @@
+# Not uploaded to Vercel: it installs and builds the app itself.
+node_modules
+.next
+# The Parakeet voice sidecar runs on your own computer only (Python + a 2.5 GB model)
+stt-server
+.env*
