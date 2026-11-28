@@ -18,8 +18,9 @@ function whisperBin() {
 
 export function whisperHealth() {
   const bin = whisperBin()
-  const binOk = bin.includes("/") ? existsSync(bin) : true
-  const modelOk = existsSync(WHISPER_MODEL)
+  // paths outside the project (a system binary, a model in ~/.cache): not something to bundle
+  const binOk = bin.includes("/") ? existsSync(/*turbopackIgnore: true*/ bin) : true
+  const modelOk = existsSync(/*turbopackIgnore: true*/ WHISPER_MODEL)
   return { ok: binOk && modelOk, model: basename(WHISPER_MODEL), bin: binOk, modelFile: modelOk }
 }
 
@@ -34,7 +35,7 @@ export async function transcribe(wav: Uint8Array, lang = "auto", signal?: AbortS
     await writeFile(file, wav)
     const out = await new Promise<string>((resolve, reject) => {
       execFile(
-        whisperBin(),
+        /*turbopackIgnore: true*/ whisperBin(),
         ["-m", WHISPER_MODEL, "-f", file, "-l", lang, "-nt", "-np"],
         { timeout: 60_000, maxBuffer: 1 << 20, signal },
         (err, stdout) => (err ? reject(err) : resolve(stdout))
